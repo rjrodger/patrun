@@ -104,7 +104,7 @@ Do this:
 // really custom logic (and there is, see US, NY below)
 // in the normal case, just pass the rate back out with
 // an identity function
-function I(val) { return function(){return val} }
+function I(val) { return function rate(){return val} }
 
 var salestax = patrun()
 salestax
@@ -125,7 +125,7 @@ salestax
   .add({ country:'US', state:'AL', city:'Montgomery' }, I(0.10) ) 
 
   .add({ country:'US', state:'NY' }, I(0.07) ) 
-  .add({ country:'US', state:'NY', type:'reduced' }, function(net){
+  .add({ country:'US', state:'NY', type:'reduced' }, function under110(net){
     return net < 110 ? 0.0 : salestax.find( {country:'US', state:'NY'} )
   }) 
 
@@ -156,6 +156,41 @@ console.log('Reduced rate in New York for clothes on $99: ' +
 // Standard rate in Alabama on $99: 0.04
 // Standard rate in Montgomery, Alabama on $99: 0.1
 // Reduced rate in New York for clothes on $99: 0
+```
+
+You can take a look a the decision tree at any time:
+
+```JavaScript
+
+// print out decision tree
+console.log(salestax)
+
+// prints:
+<rate>
+city:
+ Montgomery ->
+  country:
+   US ->
+    state:
+     AL ->      <rate>
+ * ->
+  country:
+   IE ->    <rate>
+    type:
+     reduced ->      <rate>
+     food ->      <rate>
+   UK ->    <rate>
+    type:
+     food ->      <rate>
+   DE ->    <rate>
+    type:
+     reduced ->      <rate>
+   US ->    <rate>
+    state:
+     AL ->      <rate>
+     NY ->      <rate>
+      type:
+       reduced ->        <under110>
 ```
 
 

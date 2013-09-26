@@ -111,6 +111,11 @@
       }
       while( keymap )
 
+      // special case for default with no properties
+      if( null === data && 0 === _.keys(pat).length && void 0 !== top.d ) {
+        data = top.d
+      }
+
       return data
     }
 
@@ -203,7 +208,8 @@
 
 
     self.toString = function(dstr) {
-      dstr = _.isFunction(dstr) ? dstr : function(d){return '<'+d+'>'}
+      dstr = _.isFunction(dstr) ? dstr : function(d){
+        return _.isFunction(d) ? '<'+d.name+'>' : '<'+d+'>'}
 
       function indent(o,d) {
         for(var i = 0; i < d; i++ ) {
@@ -213,12 +219,15 @@
 
       function walk(n,o,d, p){
         //console.log('walk',n.k,n.v,n.d,o.join('').replace(/\n/g,''),d,p)
-        //o.push('\n')
         if( !(void 0 === n.d) ) {
           indent(o,d)
           o.push(dstr(n.d))
+          //if( 0 === d ) {
+          //  o.push('\n')
+          //}
         }
         if( n.k ) {
+          o.push('\n')
           indent(o,d)
           o.push(n.k+':')
         }

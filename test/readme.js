@@ -23,10 +23,12 @@ console.log( pm.find({b:2,c:3}) )
 // really custom logic (and there is, see US, NY below)
 // in the normal case, just pass the rate back out with
 // an identity function
-function I(val) { return function(){return val} }
+function I(val) { return function rate(){return val}; }
 
 var salestax = patrun()
 salestax
+  .add({}, I(0.0) )
+
   .add({ country:'IE' }, I(0.25) )
   .add({ country:'UK' }, I(0.20) )
   .add({ country:'DE' }, I(0.19) )
@@ -44,10 +46,14 @@ salestax
   .add({ country:'US', state:'AL', city:'Montgomery' }, I(0.10) ) 
 
   .add({ country:'US', state:'NY' }, I(0.07) ) 
-  .add({ country:'US', state:'NY', type:'reduced' }, function(net){
+  .add({ country:'US', state:'NY', type:'reduced' }, function under110(net){
     return net < 110 ? 0.0 : salestax.find( {country:'US', state:'NY'} )
   }) 
 
+
+
+console.log('Default rate: ' + 
+            salestax.find({})(99) )
 
 console.log('Standard rate in Ireland on E99: ' + 
             salestax.find({country:'IE'})(99) )
@@ -69,9 +75,14 @@ console.log('Reduced rate in New York for clothes on $99: ' +
 
 
 // prints:
+// Default rate: 0
 // Standard rate in Ireland on E99: 0.25
 // Food rate in Ireland on E99:     0.048
 // Reduced rate in Germany on E99:  0.135
 // Standard rate in Alabama on $99: 0.04
 // Standard rate in Montgomery, Alabama on $99: 0.1
 // Reduced rate in New York for clothes on $99: 0
+
+
+// print out decision tree
+console.log(salestax)
