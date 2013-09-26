@@ -110,6 +110,8 @@ function I(val) { var rate = function(){return val}; rate.val=val; return rate }
 
 var salestax = patrun()
 salestax
+  .add({}, I(0.0) )
+
   .add({ country:'IE' }, I(0.25) )
   .add({ country:'UK' }, I(0.20) )
   .add({ country:'DE' }, I(0.19) )
@@ -132,6 +134,9 @@ salestax
   }) 
 
 
+console.log('Default rate: ' + 
+            salestax.find({})(99) )
+
 console.log('Standard rate in Ireland on E99: ' + 
             salestax.find({country:'IE'})(99) )
 
@@ -152,6 +157,7 @@ console.log('Reduced rate in New York for clothes on $99: ' +
 
 
 // prints:
+// Default rate: 0
 // Standard rate in Ireland on E99: 0.25
 // Food rate in Ireland on E99:     0.048
 // Reduced rate in Germany on E99:  0.135
