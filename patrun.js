@@ -89,7 +89,7 @@
     self.find = function( pat ) {
       var keymap = top
       var data = null
-      var key,valmap
+      var key
 
       do {
         key = keymap.k
@@ -123,7 +123,7 @@
     self.remove = function( pat ) {
       var keymap = top
       var data = null
-      var key,valmap
+      var key
       var path = []
 
       do {
