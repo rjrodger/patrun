@@ -23,7 +23,8 @@ console.log( pm.find({b:2,c:3}) )
 // really custom logic (and there is, see US, NY below)
 // in the normal case, just pass the rate back out with
 // an identity function
-function I(val) { return function rate(){return val}; }
+// also record the rate for custom printing later
+function I(val) { var rate = function(){return val}; rate.val=val; return rate }
 
 var salestax = patrun()
 salestax
@@ -85,4 +86,4 @@ console.log('Reduced rate in New York for clothes on $99: ' +
 
 
 // print out decision tree
-console.log(salestax)
+console.log(salestax.toString(function(f){return f.name+':'+f.val}))

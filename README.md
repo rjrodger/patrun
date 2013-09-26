@@ -104,7 +104,9 @@ Do this:
 // really custom logic (and there is, see US, NY below)
 // in the normal case, just pass the rate back out with
 // an identity function
-function I(val) { return function rate(){return val} }
+// also record the rate for custom printing later
+function I(val) { var rate = function(){return val}; rate.val=val; return rate }
+
 
 var salestax = patrun()
 salestax
@@ -162,42 +164,43 @@ You can take a look a the decision tree at any time:
 
 ```JavaScript
 
-// print out decision tree
-console.log(salestax)
+// print out decision tree, using a custom format function
+console.log(salestax.toString( function(f){return f.name+':'+f.val} ))
+
 
 // prints:
-<rate>
+:0
 city:
  Montgomery ->
   country:
    US ->
     state:
-     AL ->      <rate>
+     AL ->      :0.1
  * ->
   country:
-   IE ->    <rate>
+   IE ->    :0.25
     type:
-     reduced ->      <rate>
-     food ->      <rate>
-   UK ->    <rate>
+     reduced ->      :0.135
+     food ->      :0.048
+   UK ->    :0.2
     type:
-     food ->      <rate>
-   DE ->    <rate>
+     food ->      :0
+   DE ->    :0.19
     type:
-     reduced ->      <rate>
-   US ->    <rate>
+     reduced ->      :0.07
+   US ->    :0
     state:
-     AL ->      <rate>
-     NY ->      <rate>
+     AL ->      :0.04
+     NY ->      :0.07
       type:
-       reduced ->        <under110>
+       reduced ->        under110:undefined
 ```
 
 
 # The Rules
 
-    * 1: More specific mathches beat less specific matches. That is, more property values beat fewer.
-    * 2: Property names are checked in alphabetical order.
+   * 1: More specific mathches beat less specific matches. That is, more property values beat fewer.
+   * 2: Property names are checked in alphabetical order.
 
 And that's it.
 
