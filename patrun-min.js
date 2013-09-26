@@ -1,0 +1,3 @@
+/* Copyright (c) 2013 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+"use strict";(function(){var t=this,n=t.patrun,e=t.patrun={};"undefined"!=typeof exports?("undefined"!=typeof module&&module.exports&&(exports=module.exports=e),exports.patrun=e):t.patrun=e,e.foo=function(t){return"a"+t},e.noConflict=function(){return t.patrun=n,this}}).call(this);
+//# sourceMappingURL=patrun-min.map

@@ -1,49 +1,5 @@
-# patrun
 
-### A fast pattern matcher on JavaScript object properties. 
-
-Need to pick out an object based on a subset of it's properties? Say you've got:
-
-```JavaScript
-{ x:1,     } -> A
-{ x:1, y:1 } -> B
-{ x:1, y:2 } -> C
-```
-
-Then patrun can give you the following results:
-
-```JavaScript
-{ x:1 }      -> A
-{ x:2 }      -> no match
-{ x:1, y:1 } -> B
-{ x:1, y:2 } -> C
-{ x:2, y:2 } -> no match
-{ y:1 }      -> no match
-```
-
-It's basically _query-by-example_ for property sets.
-
-This module is used by the [Seneca](http://senecajs.org) framework to pattern match actions.
-
-
-### Support
-
-If you're using this library, feel free to contact me on twitter if you have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
-
-This module works on both Node.js and browsers.
-
-Current Version: 0.1.0
-
-Tested on: Node.js 0.10.19, Chrome 29
-
-
-
-### Quick example
-
-Here's how you register some patterns, and then search for matches:
-
-```JavaScript
-var patrun = require('patrun')
+var patrun = require('..')
 
 var pm = patrun()
       .add({a:1},'A')
@@ -60,45 +16,8 @@ console.log( pm.find({a:1,b:1}) )
 
 // prints B, c:3 is ignored, it was never registered
 console.log( pm.find({b:2,c:3}) ) 
-```
-
-You're matching a subset, so your input can contain any number of other properties.
 
 
-## Install
-
-For Node.js:
-
-```sh
-npm install jsonic
-```
-
-For Bower:
-
-```sh
-bower install patrun
-```
-
-
-# The Why
-
-This module let's you build a simple decision tree so you can avoid
-writing _if_ statements. It tries to make the minimum number of
-comparisons necessary to pick out the most specific match.
-
-This is very useful for handling situations where you have lots of
-"cases", some of which have "sub-cases", and even "sub-sub-sub-cases".
-
-For example, here are some sales tax rules:
-
-   * default: no sales tax
-   * here's a list of countries with known rates: Ireland: 23%, UK: 20%, Germany: 19%, ...
-   * but wait, that's only standard rates, here's [the other rates](http://www.vatlive.com/vat-rates/european-vat-rates/eu-vat-rates/)
-   * Oh, and we also have the USA, where we need to worry about each state...
-
-Do this:
-
-```JavaScript
 
 // queries return a function, in case there is some
 // really custom logic (and there is, see US, NY below)
@@ -156,20 +75,3 @@ console.log('Reduced rate in New York for clothes on $99: ' +
 // Standard rate in Alabama on $99: 0.04
 // Standard rate in Montgomery, Alabama on $99: 0.1
 // Reduced rate in New York for clothes on $99: 0
-```
-
-
-# The Rules
-
-    * 1: More specific mathches beat less specific matches. That is, more property values beat fewer.
-    * 2: Property names are checked in alphabetical order.
-
-And that's it.
-
-
-
-# Development
-
-From the Irish patr&uacute;n: [pattern](http://www.focloir.ie/en/dictionary/ei/pattern). Pronounced _pah-troon_.
-
-sudo npm install phantomjs@1.9.1-0 uglify-js -g

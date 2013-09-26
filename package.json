@@ -1,0 +1,37 @@
+{
+  "name": "patrun",
+  "description": "A fast pattern matcher on JavaScript object properties.",
+  "homepage": "https://github.com/rjrodger/patrun",
+  "keywords": [
+    "pattern",
+    "matcher",
+    "object",
+    "property",
+    "json"
+  ],
+  "author": "Richard Rodger (http://richardrodger.com)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rjrodger/patrun.git"
+  },
+  "main": "patrun.js",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine-node ./test",
+    "browser": "phantomjs test/run-jasmine.js test/jasmine.html",
+    "build": "uglifyjs patrun.js -c \"evaluate=false\" --comments \"/ Copyright .*/\" -m --source-map patrun-min.map -o patrun-min.js"
+  },
+  "license": "MIT",
+  "files": [
+    "patrun.js",
+    "patrun-min.js",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "jasmine-node": "~1.11.0"
+  },
+  "dependencies": {
+    "underscore": "~1.5.2",
+    "gex": "~0.1.2"
+  }
+}
