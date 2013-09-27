@@ -32,7 +32,7 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.1.0
+Current Version: 0.1.1
 
 Tested on: Node.js 0.10.19, Chrome 29
 
