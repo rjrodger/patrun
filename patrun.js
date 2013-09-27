@@ -4,7 +4,7 @@
 
 (function() {
   var root           = this
-  var previousPatrun = root.patrun
+  var previous_patrun = root.patrun
 
   var has_require = typeof require !== 'undefined'
 
@@ -31,8 +31,9 @@
 
     var top = {}
 
-    _.noConflict = function() {
-      root._ = previousPatrun;
+
+    self.noConflict = function() {
+      root.previous_patrun = previous_patrun;
       return self;
     }
 

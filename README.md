@@ -206,11 +206,62 @@ city:
 
 # The Rules
 
-   * 1: More specific mathches beat less specific matches. That is, more property values beat fewer.
+   * 1: More specific matches beat less specific matches. That is, more property values beat fewer.
    * 2: Property names are checked in alphabetical order.
 
 And that's it.
 
+
+# API
+
+## patrun()
+
+Generates a new pattern matcher instance.
+
+
+## .add( {...pattern...}, object )
+
+Register a pattern, and the object that will be returned if an input matches.
+
+
+## .find( {...pattern...} )
+
+Return the unique match for this pattern, or null if not found
+
+
+## .findall( {...pattern...} )
+
+Return the list of matches for this pattern. You can use wildcards for property values. 
+Omitted values are *not* equivalent to a wildcard of _"*"_, you must specify each property explicitly.
+
+```JavaScript
+pm = patrun()
+  .add({a:1,b:1},'B1')
+  .add({a:1,b:2},'B2')
+
+// finds nothing: []
+console.log( pm.findall({a:1}) )
+
+// finds:
+// [ { match: { a: '1', b: '1' }, data: 'B1' },
+//   { match: { a: '1', b: '2' }, data: 'B2' } ]
+console.log( pm.findall({a:1,b:'*'}) )
+```
+
+
+## .remove( {...pattern...} )
+
+Remove this pattern, and it's object, from the matcher.
+
+
+## .toString( func )
+
+Generate a string representation of the decision tree for debugging. Optionally provide a formatting function for objects.
+
+
+## .toJSON( indent )
+
+Generate JSON representation of the tree.
 
 
 # Development

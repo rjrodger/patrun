@@ -87,3 +87,17 @@ console.log('Reduced rate in New York for clothes on $99: ' +
 
 // print out decision tree
 console.log(salestax.toString(function(f){return f.name+':'+f.val}))
+
+
+
+pm = patrun()
+  .add({a:1,b:1},'B1')
+  .add({a:1,b:2},'B2')
+
+// finds nothing: []
+console.log( pm.findall({a:1}) )
+
+// finds:
+// [ { match: { a: '1', b: '1' }, data: 'B1' },
+//   { match: { a: '1', b: '2' }, data: 'B2' } ]
+console.log( pm.findall({a:1,b:'*'}) )

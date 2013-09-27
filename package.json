@@ -15,7 +15,7 @@
     "url": "git://github.com/rjrodger/patrun.git"
   },
   "main": "patrun.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./test",
     "browser": "phantomjs test/run-jasmine.js test/jasmine.html",
@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "underscore": "~1.5.2",
-    "gex": "~0.1.2"
+    "gex": "~0.1.3"
   }
 }
