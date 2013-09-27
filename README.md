@@ -36,6 +36,7 @@ Current Version: 0.1.0
 
 Tested on: Node.js 0.10.19, Chrome 29
 
+[![Build Status](https://travis-ci.org/rjrodger/patrun.png?branch=master)](https://travis-ci.org/rjrodger/patrun)
 
 
 ### Quick example

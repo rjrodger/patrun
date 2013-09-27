@@ -25,6 +25,7 @@
   "files": [
     "patrun.js",
     "patrun-min.js",
+    "patrun-min.map",
     "LICENSE"
   ],
   "devDependencies": {
