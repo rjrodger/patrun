@@ -19,7 +19,7 @@
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./test",
     "browser": "phantomjs test/run-jasmine.js test/jasmine.html",
-    "build": "uglifyjs patrun.js -c \"evaluate=false\" --comments \"/ Copyright .*/\" -m --source-map patrun-min.map -o patrun-min.js"
+    "build": "./node_modules/.bin/jshint patrun.js; uglifyjs patrun.js -c \"evaluate=false\" --comments \"/ Copyright .*/\" -m --source-map patrun-min.map -o patrun-min.js"
   },
   "license": "MIT",
   "files": [
@@ -29,7 +29,8 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "jasmine-node": "~1.11.0"
+    "jasmine-node": "~1.11.0",
+    "jshint": "~2.1.11"
   },
   "dependencies": {
     "underscore": "~1.5.2",

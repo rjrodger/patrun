@@ -1,8 +1,9 @@
 /* Copyright (c) 2013 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
-"use strict";
-
 
 (function() {
+  /* jshint node:true, asi:true, eqnull:true */
+  "use strict";
+
   var root           = this
   var previous_patrun = root.patrun
 
@@ -79,7 +80,7 @@
         }
       }
 
-      if( !(void 0 === data) && keymap ) {
+      if( void 0 !== data && keymap ) {
         keymap.d = data
       }
       
@@ -134,18 +135,11 @@
       var data = null
       var key
       var path = []
-      var todo = _.clone(pat)
 
       do {
         key = keymap.k
         
-        /*
-        delete todo[key]
-        if( 0 == _.keys(todo).length ) {
-          keymap = null
-        } 
-        else*/ 
-          if( keymap.v ) {
+        if( keymap.v ) {
           var nextkeymap = keymap.v[pat[key]]
           if( nextkeymap ) {
             path.push({km:keymap,v:pat[key]})
@@ -162,8 +156,7 @@
       }
       while( keymap )
 
-      if( !(void 0 === data) ) {
-        //console.dir(path)
+      if( void 0 !== data ) {
         var part = path[path.length-1]
         if( part && part.km && part.km.v ) {
           //delete part.km.v[part.v]
@@ -181,25 +174,19 @@
         if( keymap.v ) {
           var key = keymap.k
           var gexval = gex( pat[key] )
-
+          var nextkeymap, itermatch, itermissing
           
-          //for( var val in keymap.v ) {
-          //  eachval(val)
-          //}
-          //if( keymap.s) { eachval(keymap.s) }
-          //function eachval() {
-
           for( var val in keymap.v ) {
-            var itermatch   = _.extend({},match)
-            var itermissing = _.extend({},missing)
+            itermatch   = _.extend({},match)
+            itermissing = _.extend({},missing)
 
             if( gexval.on(val) ) {
               itermatch[key]=val
               delete itermissing[key]
 
-              var nextkeymap = keymap.v[ val ]
+              nextkeymap = keymap.v[ val ]
 
-              if( 0 == _.keys(itermissing).length && nextkeymap && nextkeymap.d ) {
+              if( 0 === _.keys(itermissing).length && nextkeymap && nextkeymap.d ) {
                 acc.push({match:itermatch,data:nextkeymap.d})
               }
               else if( nextkeymap && nextkeymap.v ) {
@@ -208,8 +195,7 @@
             }
           }
 
-          //var nextkeymap = keymap.v['']
-          var nextkeymap = keymap.s
+          nextkeymap = keymap.s
           if( nextkeymap ) {
             descend(nextkeymap, _.extend({},itermatch), _.extend({},itermissing), acc)
           }
@@ -238,11 +224,10 @@
 
       var str = []
 
-      function walk(n,o,d, p,vs){
+      function walk(n,o,d,vs){
         var vsc
 
-        //console.log('walk',n.k,n.v,n.d,o.join('').replace(/\n/g,''),d,p)
-        if( !(void 0 === n.d) ) {
+        if( void 0 !== n.d ) {
           indent(o,d)
           o.push(dstr(n.d))
           //if( 0 === d ) {
@@ -269,7 +254,7 @@
             vsc = _.clone(vs)
             vsc.push(n.k+'='+p)
 
-            walk(n.v[p],o,d+1, p,vsc)
+            walk(n.v[p],o,d+1,vsc)
           }
 
           if( n.s ) {
@@ -280,13 +265,13 @@
             vsc = _.clone(vs)
             //vsc.push(n.k+'=*')
             
-            walk(n.s,o,d+1, p,vsc)
+            walk(n.s,o,d+1,vsc)
           }
         }
       }
 
       var o = []
-      walk(top,o,0, '',[])
+      walk(top,o,0,[])
       return tree ? o.join('') : str.join('\n')
     }
 
