@@ -188,4 +188,22 @@ describe('patrun', function(){
   })
 
 
+  it('star-backtrack', function(){
+    var p = patrun()
+    
+    p.add( {a:1,b:2}, 'X' )
+    p.add( {c:3}, 'Y' )
+    
+    //console.log(p)
+    expect( p.find({a:1,b:2}) ).toBe('X')
+    expect( p.find({a:1,b:0,c:3}) ).toBe('Y')
+
+    p.add( {a:1,b:2,d:4}, 'XX' )
+    p.add( {c:3,d:4}, 'YY' )
+    //console.log(p)
+    expect( p.find({a:1,b:2,d:4}) ).toBe('XX')
+    expect( p.find({a:1,c:3,d:4}) ).toBe('YY')
+    expect( p.find({a:1,b:2}) ).toBe('X')
+    expect( p.find({a:1,b:0,c:3}) ).toBe('Y')
+  })
 })

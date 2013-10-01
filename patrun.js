@@ -33,7 +33,7 @@
 
 
     self.noConflict = function() {
-      root.previous_patrun = previous_patrun;
+      root.patrun = previous_patrun;
       return self;
     }
 
@@ -91,6 +91,7 @@
       var keymap = top
       var data = null
       var key
+      var stars = []
 
       do {
         key = keymap.k
@@ -98,16 +99,23 @@
         if( keymap.v ) {
           var nextkeymap = keymap.v[pat[key]]
           if( nextkeymap ) {
-            data   = nextkeymap.d
+            if( keymap.s ) {
+              stars.push(keymap.s)
+            }
+
+            data = nextkeymap.d
             keymap = nextkeymap
           }
           else {
-            //keymap = keymap.v['']
             keymap = keymap.s
           }
         }
         else {
           keymap = null
+        }
+       
+        if( null == keymap && null == data && 0 < stars.length ) {
+          keymap = stars.pop()
         }
       }
       while( keymap )
@@ -138,7 +146,6 @@
             keymap = nextkeymap
           }
           else {
-            //keymap = keymap.v['']
             keymap = keymap.s
           }
         }
