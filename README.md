@@ -171,36 +171,24 @@ You can take a look a the decision tree at any time:
 
 ```JavaScript
 
-// print out decision tree, using a custom format function
+// print out patterns, using a custom format function
 console.log(salestax.toString( function(f){return f.name+':'+f.val} ))
 
 
 // prints:
-:0
-city:
- Montgomery ->
-  country:
-   US ->
-    state:
-     AL ->      :0.1
- * ->
-  country:
-   IE ->    :0.25
-    type:
-     reduced ->      :0.135
-     food ->      :0.048
-   UK ->    :0.2
-    type:
-     food ->      :0
-   DE ->    :0.19
-    type:
-     reduced ->      :0.07
-   US ->    :0
-    state:
-     AL ->      :0.04
-     NY ->      :0.07
-      type:
-       reduced ->        under110:undefined
+ -> :0
+city=Montgomery, country=US, state=AL -> :0.1
+country=IE -> :0.25
+country=IE, type=reduced -> :0.135
+country=IE, type=food -> :0.048
+country=UK -> :0.2
+country=UK, type=food -> :0
+country=DE -> :0.19
+country=DE, type=reduced -> :0.07
+country=US -> :0
+country=US, state=AL -> :0.04
+country=US, state=NY -> :0.07
+country=US, state=NY, type=reduced -> under110:undefined
 ```
 
 
@@ -254,10 +242,12 @@ console.log( pm.findall({a:1,b:'*'}) )
 Remove this pattern, and it's object, from the matcher.
 
 
-## .toString( func )
+## .toString( func, tree )
 
 Generate a string representation of the decision tree for debugging. Optionally provide a formatting function for objects.
 
+   * func: format function for data, optional
+   * tree: boolean flag, if true, print an indented tree rather than a list of patterns, default: false
 
 ## .toJSON( indent )
 
