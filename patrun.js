@@ -103,7 +103,7 @@
               stars.push(keymap.s)
             }
 
-            data = nextkeymap.d
+            data = nextkeymap.d || null
             keymap = nextkeymap
           }
           else {
@@ -114,7 +114,7 @@
           keymap = null
         }
        
-        if( null == keymap && null == data && 0 < stars.length ) {
+        if( null == keymap && null === data && 0 < stars.length ) {
           keymap = stars.pop()
         }
       }
@@ -134,11 +134,18 @@
       var data = null
       var key
       var path = []
+      var todo = _.clone(pat)
 
       do {
         key = keymap.k
-
-        if( keymap.v ) {
+        
+        /*
+        delete todo[key]
+        if( 0 == _.keys(todo).length ) {
+          keymap = null
+        } 
+        else*/ 
+          if( keymap.v ) {
           var nextkeymap = keymap.v[pat[key]]
           if( nextkeymap ) {
             path.push({km:keymap,v:pat[key]})
@@ -159,7 +166,8 @@
         //console.dir(path)
         var part = path[path.length-1]
         if( part && part.km && part.km.v ) {
-          delete part.km.v[part.v]
+          //delete part.km.v[part.v]
+          delete part.km.v[part.v].d
         }
       }
     }
@@ -215,9 +223,12 @@
 
 
 
-    self.toString = function(dstr) {
+    self.toString = function(dstr,tree) {
       dstr = _.isFunction(dstr) ? dstr : function(d){
         return _.isFunction(d) ? '<'+d.name+'>' : '<'+d+'>'}
+
+      tree = _.isBoolean( arguments[0] ) ? arguments[0] : tree
+      tree = void 0 === tree ? false : tree
 
       function indent(o,d) {
         for(var i = 0; i < d; i++ ) {
@@ -225,7 +236,11 @@
         }
       }
 
-      function walk(n,o,d, p){
+      var str = []
+
+      function walk(n,o,d, p,vs){
+        var vsc
+
         //console.log('walk',n.k,n.v,n.d,o.join('').replace(/\n/g,''),d,p)
         if( !(void 0 === n.d) ) {
           indent(o,d)
@@ -233,6 +248,8 @@
           //if( 0 === d ) {
           //  o.push('\n')
           //}
+
+          str.push( vs.join(', ')+' -> '+dstr(n.d))
         }
         if( n.k ) {
           o.push('\n')
@@ -248,21 +265,29 @@
             o.push( p+' ->')
 
             //console.log('DESC',''+p,JSON.stringify(n.v[p]),JSON.stringify(n.v))
-            walk(n.v[p],o,d+1, p)
+
+            vsc = _.clone(vs)
+            vsc.push(n.k+'='+p)
+
+            walk(n.v[p],o,d+1, p,vsc)
           }
 
           if( n.s ) {
             o.push('\n')
             indent(o,d)
             o.push( '* ->')
-            walk(n.s,o,d+1, p)
+
+            vsc = _.clone(vs)
+            //vsc.push(n.k+'=*')
+            
+            walk(n.s,o,d+1, p,vsc)
           }
         }
       }
 
       var o = []
-      walk(top,o,0, '')
-      return o.join('')
+      walk(top,o,0, '',[])
+      return tree ? o.join('') : str.join('\n')
     }
 
 

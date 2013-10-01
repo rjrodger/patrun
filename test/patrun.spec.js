@@ -8,7 +8,7 @@ if( typeof patrun === 'undefined' ) {
 
 
 function rs(x) {
-  return (''+x).replace(/\s+/g,'').replace(/\n+/g,'')
+  return x.toString(true).replace(/\s+/g,'').replace(/\n+/g,'')
 }
 
 describe('patrun', function(){
@@ -23,8 +23,9 @@ describe('patrun', function(){
 
     r = patrun()
     r.add( {a:'1'}, 'r1' )
-    //console.log('01 '+rs(r))
+    expect( ''+r ).toBe( "a=1 -> <r1>" )
     expect( rs(r) ).toBe( "a:1-><r1>")
+
 
     r = patrun()
     r.add( {a:'1',b:'2'}, 'r1' )
@@ -39,7 +40,8 @@ describe('patrun', function(){
     r = patrun()
     r.add( {a:'1',b:'2'}, 'r1' )
     r.add( {a:'1',b:'3'}, 'r2' )
-    //console.log('04 '+rs(r))
+    //console.log('04 '+r)
+    expect( ''+r ).toBe( "a=1, b=2 -> <r1>\na=1, b=3 -> <r2>" )
     expect( rs(r) ).toBe( "a:1->b:2-><r1>3-><r2>")
 
     r = patrun()
@@ -127,7 +129,7 @@ describe('patrun', function(){
 
     rt1.remove( {p2:'v2',p3:'v3'} )
     //console.log(''+rt1)
-    expect( undefined ).toBe( rt1.find({p2:'v2',p3:'v3'}))
+    expect( null ).toBe( rt1.find({p2:'v2',p3:'v3'}))
     expect( 'r2' ).toBe( rt1.find({p2:'v2',p4:'v4'}))
 
   })
@@ -188,6 +190,25 @@ describe('patrun', function(){
   })
 
 
+  it('multi-star', function(){
+    var p = patrun()
+
+    p.add( {a:1}, 'A' )
+    p.add( {a:1,b:2}, 'B' )
+    p.add( {c:3}, 'C' )
+    p.add( {b:1,c:4}, 'D' )
+    //console.log(p)
+    //console.log(p.toString(true))
+
+    expect( rs(p) ).toBe( "a:1-><A>b:2-><B>*->b:1->c:4-><D>*->c:3-><C>" )
+    expect( ''+p ).toBe( "a=1 -> <A>\na=1, b=2 -> <B>\nb=1, c=4 -> <D>\nc=3 -> <C>" )
+
+    expect( p.find({c:3}) ).toBe('C')
+    expect( p.find({c:3,a:0}) ).toBe('C')
+    expect( p.find({c:3,a:0,b:0}) ).toBe('C')
+  })
+
+
   it('star-backtrack', function(){
     var p = patrun()
     
@@ -205,5 +226,38 @@ describe('patrun', function(){
     expect( p.find({a:1,c:3,d:4}) ).toBe('YY')
     expect( p.find({a:1,b:2}) ).toBe('X')
     expect( p.find({a:1,b:0,c:3}) ).toBe('Y')
+
+    expect( p.findall({a:1,b:'*'})[0].data ).toBe( 'X' )
+    expect( p.findall({c:3})[0].data ).toBe( 'Y' )
+    expect( p.findall({c:3,d:'*'})[0].data ).toBe( 'YY' )
+    expect( p.findall({a:1,b:'*',d:'*'})[0].data ).toBe( 'XX' )
+    //console.log( p.findall({a:1,b:'*',d:'*'}) )
+
+    expect( ''+p ).toBe( "a=1, b=2 -> <X>\na=1, b=2, d=4 -> <XX>\nc=3 -> <Y>\nc=3, d=4 -> <YY>" )
+  })
+
+
+  it('remove-intermediate', function(){
+    var p = patrun()
+    
+    p.add( {a:1,b:2,d:4}, 'XX' )
+    p.add( {c:3,d:4}, 'YY' )
+    p.add( {a:1,b:2}, 'X' )
+    p.add( {c:3}, 'Y' )
+
+    p.remove( {c:3} )
+    //console.log(p)
+    expect( p.find({c:3}) ).toBe( null )
+    expect( p.find({a:1,c:3,d:4}) ).toBe('YY')
+    expect( p.find({a:1,b:2,d:4}) ).toBe('XX')
+    expect( p.find({a:1,b:2}) ).toBe('X')
+
+    p.remove( {a:1,b:2} )
+    //console.log(p)
+    expect( p.find({c:3}) ).toBe( null )
+    expect( p.find({a:1,c:3,d:4}) ).toBe('YY')
+    expect( p.find({a:1,b:2,d:4}) ).toBe('XX')
+    expect( p.find({a:1,b:2}) ).toBe( null )
   })
 })
+
