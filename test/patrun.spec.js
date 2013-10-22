@@ -259,5 +259,16 @@ describe('patrun', function(){
     expect( p.find({a:1,b:2,d:4}) ).toBe('XX')
     expect( p.find({a:1,b:2}) ).toBe( null )
   })
+
+  
+  it('exact', function(){
+    var p = patrun()
+
+    p.add( {a:1}, 'X' )
+    
+    expect( p.findexact({a:1}) ).toBe( 'X' )
+    expect( p.findexact({a:1,b:2}) ).toBe( null )
+  })
+
 })
 

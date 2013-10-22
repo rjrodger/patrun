@@ -88,11 +88,16 @@
     }
 
 
-    self.find = function( pat ) {
+    self.findexact = function( pat ) {
+      return self.find( pat, true )
+    }
+
+    self.find = function( pat, exact ) {
       var keymap = top
       var data = null
       var key
       var stars = []
+      var foundkeys = {}
 
       do {
         key = keymap.k
@@ -100,6 +105,8 @@
         if( keymap.v ) {
           var nextkeymap = keymap.v[pat[key]]
           if( nextkeymap ) {
+            foundkeys[key]=true
+
             if( keymap.s ) {
               stars.push(keymap.s)
             }
@@ -124,6 +131,11 @@
       // special case for default with no properties
       if( null === data && 0 === _.keys(pat).length && void 0 !== top.d ) {
         data = top.d
+      }
+
+      //console.dir(foundkeys)
+      if( exact && _.keys(foundkeys).length != _.keys(pat).length ) {
+        data = null
       }
 
       return data
