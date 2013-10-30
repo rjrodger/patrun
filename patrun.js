@@ -133,7 +133,6 @@
         data = top.d
       }
 
-      //console.dir(foundkeys)
       if( exact && _.keys(foundkeys).length != _.keys(pat).length ) {
         data = null
       }
