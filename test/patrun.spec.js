@@ -63,7 +63,7 @@ describe('patrun', function(){
     //console.log(r.top)
     expect( rs(r) ).toBe( "a:1->b:3-><r2>*->c:2-><r1>")
 
-    expect( JSON.stringify(r.findall()) ).toBe('[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","b":"3","c":"2"},"data":"r1"}]')
+    expect( JSON.stringify(r.findall()) ).toBe('[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]')
   })
 
 
@@ -272,6 +272,16 @@ describe('patrun', function(){
     
     expect( p.findexact({a:1}) ).toBe( 'X' )
     expect( p.findexact({a:1,b:2}) ).toBe( null )
+  })
+
+
+  it('all', function(){
+    var p = patrun()
+
+    p.add( {a:1}, 'X' )
+    p.add( {b:2}, 'Y' )
+    
+    expect( JSON.stringify(p.findall()) ).toBe('[{"match":{"a":"1"},"data":"X"},{"match":{"b":"2"},"data":"Y"}]')
   })
 
 })

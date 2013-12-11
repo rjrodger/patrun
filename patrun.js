@@ -192,16 +192,17 @@
             itermissing = _.extend({},missing)
 
             if( gexval.on(val) ) {
-              itermatch[key]=val
+              var valitermatch = _.clone(itermatch)
+              valitermatch[key]=val
               delete itermissing[key]
 
               nextkeymap = keymap.v[ val ]
 
               if( 0 === _.keys(itermissing).length && nextkeymap && nextkeymap.d ) {
-                acc.push({match:itermatch,data:nextkeymap.d})
+                acc.push({match:valitermatch,data:nextkeymap.d})
               }
               else if( nextkeymap && nextkeymap.v ) {
-                descend(nextkeymap, _.extend({},itermatch), _.extend({},itermissing), acc)
+                descend(nextkeymap, _.extend({},valitermatch), _.extend({},itermissing), acc)
               }
             }
           }
