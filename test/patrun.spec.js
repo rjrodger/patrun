@@ -26,6 +26,8 @@ describe('patrun', function(){
     expect( ''+r ).toBe( "a=1 -> <r1>" )
     expect( rs(r) ).toBe( "a:1-><r1>")
 
+    expect( JSON.stringify(r.findall()) ).toBe('[{"match":{"a":"1"},"data":"r1"}]')
+
 
     r = patrun()
     r.add( {a:'1',b:'2'}, 'r1' )
@@ -60,6 +62,8 @@ describe('patrun', function(){
     //console.log('07 '+rs(r))
     //console.log(r.top)
     expect( rs(r) ).toBe( "a:1->b:3-><r2>*->c:2-><r1>")
+
+    expect( JSON.stringify(r.findall()) ).toBe('[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","b":"3","c":"2"},"data":"r1"}]')
   })
 
 

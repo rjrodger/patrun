@@ -32,9 +32,9 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.1.3
+Current Version: 0.1.4
 
-Tested on: Node.js 0.10.19, Chrome 29
+Tested on: Node.js 0.10.22, Chrome 31, Firefox 25
 
 [![Build Status](https://travis-ci.org/rjrodger/patrun.png?branch=master)](https://travis-ci.org/rjrodger/patrun)
 
@@ -83,7 +83,7 @@ bower install patrun
 
 # The Why
 
-This module let's you build a simple decision tree so you can avoid
+This module lets you build a simple decision tree so you can avoid
 writing _if_ statements. It tries to make the minimum number of
 comparisons necessary to pick out the most specific match.
 
@@ -236,6 +236,11 @@ console.log( pm.findall({a:1}) )
 console.log( pm.findall({a:1,b:'*'}) )
 ```
 
+If you provide no pattern argument at all, findall will list all patterns that have been added.
+```JavaScript
+// finds everything
+console.log( pm.findall() )
+```
 
 ## .remove( {...pattern...} )
 

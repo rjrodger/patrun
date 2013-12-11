@@ -184,7 +184,7 @@
 
         if( keymap.v ) {
           var key = keymap.k
-          var gexval = gex( pat[key] )
+          var gexval = gex( pat ? pat[key] : '*'  )
           var nextkeymap, itermatch, itermissing
           
           for( var val in keymap.v ) {
