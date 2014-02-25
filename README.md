@@ -264,3 +264,7 @@ Generate JSON representation of the tree.
 From the Irish patr&uacute;n: [pattern](http://www.focloir.ie/en/dictionary/ei/pattern). Pronounced _pah-troon_.
 
 sudo npm install phantomjs@1.9.1-0 uglify-js -g
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rjrodger/patrun/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
