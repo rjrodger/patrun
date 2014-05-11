@@ -27,7 +27,7 @@
   }
 
 
-  var patrun = root.patrun = function() {
+  var patrun = root.patrun = function( custom ) {
     var self = {}
 
     var top = {}
@@ -40,6 +40,14 @@
 
 
     self.add = function( pat, data ) {
+      pat = _.clone(pat)
+
+      var finalfind
+      if( custom ) {
+        // can modify pat
+        finalfind = custom.call(self,pat,data)
+      }
+
       var keys = _.keys(pat).sort()
 
       var keymap = top
@@ -57,7 +65,9 @@
         }
         else if( !keymap.k ) {
           keymap.k = key
+
           keymap.v = {}
+
           keymap = keymap.v[val] = {}
         }
         else {
@@ -65,7 +75,6 @@
             var curv = keymap.v
             var curs   = keymap.s
             keymap.v = {}
-            //keymap.v[''] = {k:keymap.k,v:curvalmap}
             keymap.s = {k:keymap.k,v:curv,s:curs}
 
             keymap.k = key
@@ -73,7 +82,6 @@
           }
           else {
             valmap = keymap.v
-            //keymap = valmap[''] || (valmap['']={})
             keymap = keymap.s || (keymap.s = {})
             i--
           }
@@ -82,6 +90,7 @@
 
       if( void 0 !== data && keymap ) {
         keymap.d = data
+        keymap.f = finalfind
       }
       
       return self
@@ -93,11 +102,13 @@
     }
 
     self.find = function( pat, exact ) {
-      var keymap = top
-      var data = null
-      var key
-      var stars = []
+      var keymap    = top
+      var data      = null
+      var finalfind = null
+      var key       = null
+      var stars     = []
       var foundkeys = {}
+      var patlen    = _.keys(pat).length
 
       do {
         key = keymap.k
@@ -111,8 +122,9 @@
               stars.push(keymap.s)
             }
 
-            data = nextkeymap.d || null
-            keymap = nextkeymap
+            data      = null == nextkeymap.d ? null : nextkeymap.d
+            finalfind = nextkeymap.f
+            keymap    = nextkeymap
           }
           else {
             keymap = keymap.s
@@ -129,16 +141,22 @@
       while( keymap )
 
       // special case for default with no properties
-      if( null === data && 0 === _.keys(pat).length && void 0 !== top.d ) {
-        data = top.d
+      if( null === data && 0 === patlen && void 0 !== top.d ) {
+        data      = top.d
+        finalfind = top.f
       }
 
-      if( exact && _.keys(foundkeys).length != _.keys(pat).length ) {
+      if( exact && _.keys(foundkeys).length != patlen ) {
         data = null
+      }
+
+      if( finalfind ) {
+        data = finalfind.call(self,pat,data)
       }
 
       return data
     }
+
 
 
     self.remove = function( pat ) {
@@ -179,7 +197,7 @@
 
 
     // values can be veratim, glob, or array of globs
-    self.findall = function( pat ) {
+    self.list = function( pat ) {
       function descend(keymap,match,missing,acc) {
 
         if( keymap.v ) {
@@ -199,7 +217,7 @@
               nextkeymap = keymap.v[ val ]
 
               if( 0 === _.keys(itermissing).length && nextkeymap && nextkeymap.d ) {
-                acc.push({match:valitermatch,data:nextkeymap.d})
+                acc.push({match:valitermatch,data:nextkeymap.d,find:nextkeymap.f})
               }
               else if( nextkeymap && nextkeymap.v ) {
                 descend(nextkeymap, _.extend({},valitermatch), _.extend({},itermissing), acc)

@@ -30,7 +30,8 @@
   ],
   "devDependencies": {
     "jasmine-node": "~1.11.0",
-    "jshint": "~2.3.0"
+    "jshint": "~2.3.0",
+    "benchmark": "~1.0.0"
   },
   "dependencies": {
     "underscore": "~1.5.2",
