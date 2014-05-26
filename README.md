@@ -222,7 +222,7 @@ alwaysAddFoo.find( {a:1,foo:true} ) // == "bar"
 Your custom function can also return a modifer function for found
 data, and optionally a modifier for removing data.
 
-Here's a example that modifies found data:
+Here's an example that modifies found data:
 
 ```JavaScript
 var upperify = patrun( function(pat){
@@ -267,6 +267,8 @@ many.find( {a:1} ) // [ 'A' ]
 many.remove( {b:1} ) 
 many.find( {b:1} ) // null
 ```
+
+Check out the (_custom-gex_ test case)[https://github.com/rjrodger/patrun/blob/master/test/patrun.spec.js#L324] for some really funky pattern matching using * globs.
 
 
 # API
