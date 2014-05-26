@@ -2,7 +2,7 @@
 
 ### A fast pattern matcher on JavaScript object properties. 
 
-Need to pick out an object based on a subset of it's properties? Say you've got:
+Need to pick out an object based on a subset of its properties? Say you've got:
 
 ```JavaScript
 { x:1,     } -> A
