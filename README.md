@@ -268,7 +268,7 @@ many.remove( {b:1} )
 many.find( {b:1} ) // null
 ```
 
-Check out the (_custom-gex_ test case)[https://github.com/rjrodger/patrun/blob/master/test/patrun.spec.js#L324] for some really funky pattern matching using * globs.
+Check out the [_custom-gex_ test case]([https://github.com/rjrodger/patrun/blob/master/test/patrun.spec.js#L324) for some really funky pattern matching using * globs.
 
 
 # API
