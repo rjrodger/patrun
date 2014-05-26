@@ -95,9 +95,60 @@ pm = patrun()
   .add({a:1,b:2},'B2')
 
 // finds nothing: []
-console.log( pm.findall({a:1}) )
+console.log( pm.list({a:1}) )
 
 // finds:
 // [ { match: { a: '1', b: '1' }, data: 'B1' },
 //   { match: { a: '1', b: '2' }, data: 'B2' } ]
-console.log( pm.findall({a:1,b:'*'}) )
+console.log( pm.list({a:1,b:'*'}) )
+
+
+var alwaysAddFoo = patrun( function(pat){
+  pat.foo = true
+})
+
+alwaysAddFoo.add( {a:1}, "bar" )
+    
+console.log(alwaysAddFoo.find( {a:1} )) // null!
+console.log(alwaysAddFoo.find( {a:1,foo:true} )) // == "bar"
+
+
+
+var upperify = patrun( function(pat){
+  return function(args,data) {
+    return (''+data).toUpperCase()
+  }
+})
+
+upperify.add( {a:1}, "bar" )
+    
+console.log( upperify.find( {a:1} ) ) // BAR
+
+
+var many = patrun( function(pat,data){
+  var items = this.find(pat,true) || []
+  items.push(data)
+
+  return {
+    find: function(args,data){
+      return 0 < items.length ? items : null
+    },
+    remove: function(args,data){
+      items.pop()
+      return 0 == items.length;
+    }
+  }
+})
+
+many.add( {a:1}, 'A' )
+many.add( {a:1}, 'B' )
+many.add( {b:1}, 'C' )
+
+console.log( many.find( {a:1} ) ) 
+console.log( many.find( {b:1} ) ) 
+
+many.remove( {a:1} ) 
+console.log( many.find( {a:1} ) ) 
+
+many.remove( {b:1} ) 
+console.log( many.find( {b:1} ) ) 

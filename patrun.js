@@ -42,10 +42,10 @@
     self.add = function( pat, data ) {
       pat = _.clone(pat)
 
-      var finalfind
+      var customizer
       if( custom ) {
         // can modify pat
-        finalfind = custom.call(self,pat,data)
+        customizer = custom.call(self,pat,data)
       }
 
       var keys = _.keys(pat).sort()
@@ -90,7 +90,10 @@
 
       if( void 0 !== data && keymap ) {
         keymap.d = data
-        keymap.f = finalfind
+        if( customizer ) { 
+          keymap.f = _.isFunction(customizer) ? customizer : customizer.find
+          keymap.r = _.isFunction(customizer.remove) ? customizer.remove : void 0
+        }
       }
       
       return self
@@ -100,6 +103,7 @@
     self.findexact = function( pat ) {
       return self.find( pat, true )
     }
+
 
     self.find = function( pat, exact ) {
       var keymap    = top
@@ -188,8 +192,10 @@
       if( void 0 !== data ) {
         var part = path[path.length-1]
         if( part && part.km && part.km.v ) {
-          //delete part.km.v[part.v]
-          delete part.km.v[part.v].d
+          var point = part.km.v[part.v]
+          if( !point.r || point.r(pat,point.d) ) {
+            delete point.d
+          }
         }
       }
     }

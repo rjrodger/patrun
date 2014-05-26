@@ -265,7 +265,8 @@ describe('patrun', function(){
   })
 
 
-  it('custom', function(){
+
+  it('custom-happy', function(){
     var p1 = patrun( function(pat){
       pat.q=9
     })
@@ -274,7 +275,53 @@ describe('patrun', function(){
     
     expect( p1.find({a:1}) ).toBe( null )
     expect( p1.find({a:1,q:9}) ).toBe( 'Q' )
+  })
 
+
+  it('custom-many', function(){
+    var p1 = patrun( function(pat,data){
+      var items = this.find(pat,true) || []
+      items.push(data)
+
+      return {
+        find: function(args,data){
+          return 0 < items.length ? items : null
+        },
+        remove: function(args,data){
+          items.pop()
+          return 0 == items.length;
+        }
+      }
+    })
+
+    p1.add( {a:1}, 'A' )
+    p1.add( {a:1}, 'B' )
+    p1.add( {b:1}, 'C' )
+    
+    expect( p1.find({a:1}).toString() ).toBe( ['A','B'].toString() )
+    expect( p1.find({b:1}).toString() ).toBe( ['C'].toString() )
+    expect( p1.list().length).toBe(2)
+
+    p1.remove( {b:1} )
+    expect( p1.list().length).toBe(1)
+    expect( p1.find({b:1}) ).toBe( null )
+    expect( p1.find({a:1}).toString() ).toBe( ['A','B'].toString() )
+
+    p1.remove( {a:1} )
+    expect( p1.list().length).toBe(1)
+    expect( p1.find({b:1}) ).toBe( null )
+    
+    expect( JSON.stringify(p1.find({a:1})).toString() ).toBe( '["A"]' )
+
+    p1.remove( {a:1} )
+    expect( p1.list().length).toBe(0)
+    expect( p1.find({b:1}) ).toBe( null )
+    expect( p1.find({a:1}) ).toBe( null )
+  })
+
+
+
+  it('custom-gex', function(){
 
     // this custom function matches glob expressions
     var p2 = patrun( function(pat,data){

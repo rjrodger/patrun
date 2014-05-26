@@ -26,17 +26,19 @@ It's basically _query-by-example_ for property sets.
 This module is used by the [Seneca](http://senecajs.org) framework to pattern match actions.
 
 
+
 ### Support
 
 If you're using this library, feel free to contact me on twitter if you have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.1.5
+Current Version: 0.2.0
 
-Tested on: Node.js 0.10.22, Chrome 31, Firefox 25
+Tested on: Node.js 0.10.26, Chrome 35, Firefox 29, Safari 5.1.10, Opera 12.16
 
 [![Build Status](https://travis-ci.org/rjrodger/patrun.png?branch=master)](https://travis-ci.org/rjrodger/patrun)
+
 
 
 ### Quick example
@@ -200,11 +202,78 @@ country=US, state=NY, type=reduced -> under110:undefined
 And that's it.
 
 
+# Customization
+
+You can customize the way that data is stored. For example, you might want to add a constant property to each pattern.
+
+To do this, you provide a custom function when you create the _patrun_ object:
+
+```JavaScript
+var alwaysAddFoo = patrun( function(pat){
+  pat.foo = true
+})
+
+alwaysAddFoo.add( {a:1}, "bar" )
+    
+alwaysAddFoo.find( {a:1} ) // nothing!
+alwaysAddFoo.find( {a:1,foo:true} ) // == "bar"
+```
+
+Your custom function can also return a modifer function for found
+data, and optionally a modifier for removing data.
+
+Here's a example that modifies found data:
+
+```JavaScript
+var upperify = patrun( function(pat){
+  return function(args,data) {
+    return (''+data).toUpperCase()
+  }
+})
+
+upperify.add( {a:1}, "bar" )
+    
+upperify.find( {a:1} ) // BAR
+```
+
+Finally, here's an example that allows you to add multiple matches for a given pattern:
+
+```JavaScript
+var many = patrun( function(pat,data){
+  var items = this.find(pat,true) || []
+  items.push(data)
+
+  return {
+    find: function(args,data){
+      return 0 < items.length ? items : null
+    },
+    remove: function(args,data){
+      items.pop()
+      return 0 == items.length;
+    }
+  }
+})
+
+many.add( {a:1}, 'A' )
+many.add( {a:1}, 'B' )
+many.add( {b:1}, 'C' )
+
+many.find( {a:1} ) // [ 'A', 'B' ]
+many.find( {b:1} ) // [ 'C' ]
+
+many.remove( {a:1} ) 
+many.find( {a:1} ) // [ 'A' ]
+
+many.remove( {b:1} ) 
+many.find( {b:1} ) // null
+```
+
+
 # API
 
-## patrun()
+## patrun( custom )
 
-Generates a new pattern matcher instance.
+Generates a new pattern matcher instance. Optionally provide a customisation function.
 
 
 ## .add( {...pattern...}, object )
@@ -217,7 +286,7 @@ Register a pattern, and the object that will be returned if an input matches.
 Return the unique match for this pattern, or null if not found
 
 
-## .findall( {...pattern...} )
+## .list( {...pattern...} )
 
 Return the list of matches for this pattern. You can use wildcards for property values. 
 Omitted values are *not* equivalent to a wildcard of _"*"_, you must specify each property explicitly.
@@ -228,18 +297,18 @@ pm = patrun()
   .add({a:1,b:2},'B2')
 
 // finds nothing: []
-console.log( pm.findall({a:1}) )
+console.log( pm.list({a:1}) )
 
 // finds:
 // [ { match: { a: '1', b: '1' }, data: 'B1' },
 //   { match: { a: '1', b: '2' }, data: 'B2' } ]
-console.log( pm.findall({a:1,b:'*'}) )
+console.log( pm.list({a:1,b:'*'}) )
 ```
 
-If you provide no pattern argument at all, findall will list all patterns that have been added.
+If you provide no pattern argument at all, _list_ will list all patterns that have been added.
 ```JavaScript
 // finds everything
-console.log( pm.findall() )
+console.log( pm.list() )
 ```
 
 ## .remove( {...pattern...} )
