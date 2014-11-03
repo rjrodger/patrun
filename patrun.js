@@ -202,38 +202,59 @@
 
 
 
-    // values can be veratim, glob, or array of globs
-    self.list = function( pat ) {
+    // values can be verbatim, glob, or array of globs
+    self.list = function( pat, exact ) {
       function descend(keymap,match,missing,acc) {
 
         if( keymap.v ) {
           var key = keymap.k
-          var gexval = gex( pat ? pat[key] : '*'  )
-          var nextkeymap, itermatch, itermissing
-          
-          for( var val in keymap.v ) {
-            itermatch   = _.extend({},match)
-            itermissing = _.extend({},missing)
+          var gexval = gex( pat ? 
+                            (null==pat[key] ?
+                             ( exact ? null : '*' )
+                             : pat[key]) 
+                            : '*' )
+          var itermatch   = _.extend({},match)
+          var itermissing = _.extend({},missing)
+          var nextkeymap
 
+          for( var val in keymap.v ) {
             if( gexval.on(val) ) {
               var valitermatch = _.clone(itermatch)
               valitermatch[key]=val
-              delete itermissing[key]
+
+              var valitermissing = _.extend({},itermissing)
+              delete valitermissing[key]
 
               nextkeymap = keymap.v[ val ]
 
-              if( 0 === _.keys(itermissing).length && nextkeymap && nextkeymap.d ) {
-                acc.push({match:valitermatch,data:nextkeymap.d,find:nextkeymap.f})
+              if( 0 === _.keys(valitermissing).length && 
+                  nextkeymap && 
+                  nextkeymap.d ) 
+              {
+                acc.push({
+                  match:valitermatch,
+                  data:nextkeymap.d,
+                  find:nextkeymap.f
+                })
               }
-              else if( nextkeymap && nextkeymap.v ) {
-                descend(nextkeymap, _.extend({},valitermatch), _.extend({},itermissing), acc)
+
+              if( nextkeymap && nextkeymap.v ) {
+                descend(
+                  nextkeymap, 
+                  _.extend({},valitermatch), 
+                  _.extend({},valitermissing), 
+                  acc)
               }
             }
           }
 
           nextkeymap = keymap.s
           if( nextkeymap ) {
-            descend(nextkeymap, _.extend({},itermatch), _.extend({},itermissing), acc)
+            descend(
+              nextkeymap, 
+              _.extend({},itermatch), 
+              _.extend({},itermissing), 
+              acc)
           }
         }
       }
@@ -266,9 +287,6 @@
         if( void 0 !== n.d ) {
           indent(o,d)
           o.push(dstr(n.d))
-          //if( 0 === d ) {
-          //  o.push('\n')
-          //}
 
           str.push( vs.join(', ')+' -> '+dstr(n.d))
         }
@@ -282,10 +300,7 @@
           for( var p in n.v ) {
             o.push('\n')
             indent(o,d)
-            //o.push( (''===p?'*':p)+' ->')
             o.push( p+' ->')
-
-            //console.log('DESC',''+p,JSON.stringify(n.v[p]),JSON.stringify(n.v))
 
             vsc = _.clone(vs)
             vsc.push(n.k+'='+p)
@@ -299,8 +314,6 @@
             o.push( '* ->')
 
             vsc = _.clone(vs)
-            //vsc.push(n.k+'=*')
-            
             walk(n.s,o,d+1,vsc)
           }
         }

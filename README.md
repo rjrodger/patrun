@@ -33,9 +33,9 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.2.0
+Current Version: 0.3.0
 
-Tested on: Node.js 0.10.26, Chrome 35, Firefox 29, Safari 5.1.10, Opera 12.16
+Tested on: Node.js 0.10.31, Chrome 38, Firefox 33, Safari 7, Opera 25
 
 [![Build Status](https://travis-ci.org/rjrodger/patrun.png?branch=master)](https://travis-ci.org/rjrodger/patrun)
 
@@ -283,15 +283,24 @@ Generates a new pattern matcher instance. Optionally provide a customisation fun
 Register a pattern, and the object that will be returned if an input matches.
 
 
-## .find( {...pattern...} )
+## .find( {...subject...}, exact )
 
-Return the unique match for this pattern, or null if not found
+Return the unique match for this subject, or null if not found. The
+properties of the subject are matched against the patterns previously
+added, and the most specifc pattern wins. Unknown properties in the
+subject are ignored. You can optionally provide a second boolean
+parameter, _exact_. If true, then all properties of the subject must
+match.
 
 
-## .list( {...pattern...} )
+## .list( {...pattern-partial...}, exact )
 
-Return the list of matches for this pattern. You can use wildcards for property values. 
-Omitted values are *not* equivalent to a wildcard of _"*"_, you must specify each property explicitly.
+Return the list of registered patterns that contain this partial
+pattern. You can use wildcards for property values.  Omitted values
+are *not* equivalent to a wildcard of _"*"_, you must specify each
+property explicitly. You can optionally provide a second boolean
+parameter, _exact_. If true, then only those patterns matching the
+pattern-partial exactly are returned.
 
 ```JavaScript
 pm = patrun()

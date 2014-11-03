@@ -143,7 +143,6 @@ describe('patrun', function(){
       var found = rt1.list({p1:'v1'})
       expect( '[{"match":{"p1":"v1"} ).toBe( "data":"r0"}]',JSON.stringify(found))
 
-      //return 
 
       found = rt1.list({p1:'v1',p2:'*'})
       expect( '[{"match":{"p1":"v1" ).toBe( "p2":"v2a"},"data":"r1"},{"match":{"p1":"v1","p2":"v2b"},"data":"r2"}]',JSON.stringify(found))
@@ -375,6 +374,100 @@ describe('patrun', function(){
     expect( p2.find({w:1}) ).toBe( 'W' )
     expect( p2.find({w:1,q:'x'}) ).toBe( 'Q' )
     expect( p2.find({w:1,q:'y'}) ).toBe( 'W' )
+  })
+
+
+  it('find-exact',function(){
+    var p1 = patrun()
+    p1.add({a:1},'A')
+    p1.add({a:1,b:2},'B')
+    p1.add({a:1,b:2,c:3},'C')
+
+    expect( p1.find({a:1}) ).toBe('A')
+    expect( p1.find({a:1},true) ).toBe('A')
+    expect( p1.find({a:1,b:8}) ).toBe('A')
+    expect( p1.find({a:1,b:8},true) ).toBe(null)
+    expect( p1.find({a:1,b:8,c:3}) ).toBe('A')
+    expect( p1.find({a:1,b:8,c:3},true) ).toBe(null)
+
+    expect( p1.find({a:1,b:2}) ).toBe('B')
+    expect( p1.find({a:1,b:2},true) ).toBe('B')
+    expect( p1.find({a:1,b:2,c:9}) ).toBe('B')
+    expect( p1.find({a:1,b:2,c:9},true) ).toBe(null)
+
+    expect( p1.find({a:1,b:2,c:3}) ).toBe('C')
+    expect( p1.find({a:1,b:2,c:3},true) ).toBe('C')
+    expect( p1.find({a:1,b:2,c:3,d:7}) ).toBe('C')
+    expect( p1.find({a:1,b:2,c:3,d:7},true) ).toBe(null)
+
+  })
+
+
+  it('list-any', function(){
+    var p1 = patrun()
+    p1.add({a:1},'A')
+    p1.add({a:1,b:2},'B')
+    p1.add({a:1,b:2,c:3},'C')
+    
+    var mA = '{"match":{"a":"1"},"data":"A"}'
+    var mB = '{"match":{"a":"1","b":"2"},"data":"B"}'
+    var mC = '{"match":{"a":"1","b":"2","c":"3"},"data":"C"}'
+
+    expect( JSON.stringify(p1.list()) ).toBe( '['+[mA,mB,mC]+']' )
+
+    expect( JSON.stringify(p1.list({a:1})) ).toBe( '['+[mA,mB,mC]+']' )
+    expect( JSON.stringify(p1.list({b:2})) ).toBe( '['+[mB,mC]+']' )
+    expect( JSON.stringify(p1.list({c:3})) ).toBe( '['+[mC]+']' )
+
+    expect( JSON.stringify(p1.list({a:'*'})) ).toBe( '['+[mA,mB,mC]+']' )
+    expect( JSON.stringify(p1.list({b:'*'})) ).toBe( '['+[mB,mC]+']' )
+    expect( JSON.stringify(p1.list({c:'*'})) ).toBe( '['+[mC]+']' )
+
+    expect( JSON.stringify(p1.list({a:1,b:2}) ) ).toBe( '['+[mB,mC]+']' )
+    expect( JSON.stringify(p1.list({a:1,b:'*'}) ) ).toBe( '['+[mB,mC]+']' )
+    expect( JSON.stringify(p1.list({a:1,b:'*',c:3}) ) ).toBe( '['+[mC]+']' )
+    expect( JSON.stringify(p1.list({a:1,b:'*',c:'*'}) ) ).toBe( '['+[mC]+']' )
+
+    expect( JSON.stringify(p1.list({a:1,c:'*'}) ) ).toBe( '['+[mC]+']' )
+
+
+    // test star descent
+
+    p1.add({a:1,d:4},'D')
+    var mD = '{"match":{"a":"1","d":"4"},"data":"D"}'
+
+    expect( JSON.stringify(p1.list()) ).toBe( '['+[mA,mB,mC,mD]+']' )
+    expect( JSON.stringify(p1.list({a:1})) ).toBe( '['+[mA,mB,mC,mD]+']' )
+    expect( JSON.stringify(p1.list({d:4})) ).toBe( '['+[mD]+']' )
+    expect( JSON.stringify(p1.list({a:1,d:4})) ).toBe( '['+[mD]+']' )
+    expect( JSON.stringify(p1.list({a:1,d:'*'})) ).toBe( '['+[mD]+']' )
+    expect( JSON.stringify(p1.list({d:'*'})) ).toBe( '['+[mD]+']' )
+
+    p1.add({a:1,c:33},'CC')
+    var mCC = '{"match":{"a":"1","c":"33"},"data":"CC"}'
+
+    expect( JSON.stringify(p1.list()) ).toBe( '['+[mA,mB,mC,mCC,mD]+']' )
+    expect( JSON.stringify(p1.list({a:1})) ).toBe( '['+[mA,mB,mC,mCC,mD]+']' )
+
+    expect( JSON.stringify(p1.list({d:4})) ).toBe( '['+[mD]+']' )
+    expect( JSON.stringify(p1.list({a:1,d:4})) ).toBe( '['+[mD]+']' )
+    expect( JSON.stringify(p1.list({a:1,d:'*'})) ).toBe( '['+[mD]+']' )
+    expect( JSON.stringify(p1.list({d:'*'})) ).toBe( '['+[mD]+']' )
+
+    expect( JSON.stringify(p1.list({c:33})) ).toBe( '['+[mCC]+']' )
+    expect( JSON.stringify(p1.list({a:1,c:33})) ).toBe( '['+[mCC]+']' )
+    expect( JSON.stringify(p1.list({a:1,c:'*'})) ).toBe( '['+[mC,mCC]+']' )
+    expect( JSON.stringify(p1.list({c:'*'})) ).toBe( '['+[mC,mCC]+']' )
+
+
+    // exact
+    expect( JSON.stringify(p1.list({a:1},true)) ).toBe( '['+[mA]+']' )
+    expect( JSON.stringify(p1.list({a:'*'},true)) ).toBe( '['+[mA]+']' )
+    expect( JSON.stringify(p1.list({a:1,b:2},true) ) ).toBe( '['+[mB]+']' )
+    expect( JSON.stringify(p1.list({a:1,b:'*'},true) ) ).toBe( '['+[mB]+']' )
+    expect( JSON.stringify(p1.list({a:1,c:3},true) ) ).toBe( '[]' )
+    expect( JSON.stringify(p1.list({a:1,c:33},true) ) ).toBe( '['+[mCC]+']' )
+    expect( JSON.stringify(p1.list({a:1,c:'*'},true) ) ).toBe( '['+[mCC]+']' )
   })
 
 })
