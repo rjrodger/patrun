@@ -107,7 +107,7 @@
 
     self.find = function( pat, exact ) {
       var keymap    = top
-      var data      = null
+      var data      = top.d || null
       var finalfind = null
       var key       = null
       var stars     = []
@@ -260,6 +260,15 @@
       }
 
       var acc = []
+
+      if( top.d ) {
+        acc.push({
+          match:{},
+          data:top.d,
+          find:top.f
+        })
+      }
+
       descend(top,{},_.extend({},pat),acc)
       return acc
     }

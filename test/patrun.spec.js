@@ -26,6 +26,25 @@ describe('patrun', function(){
   })
 
 
+  it('root-data', function() {
+    var r = patrun()
+    r.add({},'R')
+    expect( ''+r ).toBe( " -> <R>" )
+    expect( rs(r) ).toBe( "<R>")
+    expect( JSON.stringify(r.list()) ).toBe('[{"match":{},"data":"R"}]')
+
+    expect( r.find({}) ).toBe( "R" )
+    expect( r.find({x:1}) ).toBe( "R" )
+
+    r.add( {a:'1'}, 'r1' )
+    expect( ''+r ).toBe( " -> <R>\na=1 -> <r1>" )
+    expect( rs(r) ).toBe( "<R>a:1-><r1>")
+
+    expect( JSON.stringify(r.list()) ).toBe(
+      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"}]')
+  })
+
+
   it('add', function() {
     var r
 
