@@ -33,7 +33,7 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.4.0
+Current Version: 0.4.1
 
 Tested on: Node.js 0.10.31, Chrome 38, Firefox 33, Safari 7, Opera 25
 
@@ -280,8 +280,9 @@ Generates a new pattern matcher instance. Optionally provide a customisation fun
 
 ## .add( {...pattern...}, object )
 
-Register a pattern, and the object that will be returned if an input matches.
-
+Register a pattern, and the object that will be returned if an input
+matches.  Both keys and values are considered to be strings. Other
+types are converted to strings.
 
 ## .find( {...subject...}, exact )
 

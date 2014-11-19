@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+/* Copyright (c) 2013-2014 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
 (function() {
   /* jshint node:true, asi:true, eqnull:true */
@@ -108,7 +108,7 @@
     self.find = function( pat, exact ) {
       var keymap    = top
       var data      = top.d || null
-      var finalfind = null
+      var finalfind = top.f
       var key       = null
       var stars     = []
       var foundkeys = {}

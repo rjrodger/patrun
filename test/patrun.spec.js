@@ -489,5 +489,43 @@ describe('patrun', function(){
     expect( JSON.stringify(p1.list({a:1,c:'*'},true) ) ).toBe( '['+[mCC]+']' )
   })
 
+
+  it('top-custom', function(){
+    var p1 = patrun(function(pat,data){
+      return function(args,data){
+        data += '!'
+        return data
+      }
+    })
+
+    p1.add({},'Q')
+    p1.add({a:1},'A')
+    p1.add({a:1,b:2},'B')
+    p1.add({a:1,b:2,c:3},'C')
+
+    expect( p1.find({}) ).toBe( 'Q!' )
+    expect( p1.find({a:1}) ).toBe( 'A!' )
+    expect( p1.find({a:1,b:2}) ).toBe( 'B!' )
+    expect( p1.find({a:1,b:2,c:3}) ).toBe( 'C!' )
+
+  })
+
+
+  it('mixed-values', function(){
+    var p1 = patrun()
+
+    p1.add({},'Q')
+    p1.add({a:1},'A')
+    p1.add({a:true},'AA')
+    p1.add({a:'A',b:2},'B')
+    p1.add({a:'A',b:'B',c:3},'C')
+
+    expect( p1.find({}) ).toBe( 'Q' )
+    expect( p1.find({a:1}) ).toBe( 'A' )
+    expect( p1.find({a:true}) ).toBe( 'AA' )
+    expect( p1.find({a:'A',b:2}) ).toBe( 'B' )
+    expect( p1.find({a:'A',b:'B',c:3}) ).toBe( 'C' )
+  })
+
 })
 
