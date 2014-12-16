@@ -33,7 +33,7 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.4.1
+Current Version: 0.4.2
 
 Tested on: Node.js 0.10.31, Chrome 38, Firefox 33, Safari 7, Opera 25
 
