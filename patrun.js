@@ -106,6 +106,8 @@
 
 
     self.find = function( pat, exact ) {
+      if( null == pat ) return null;
+
       var keymap    = top
       var data      = top.d || null
       var finalfind = top.f

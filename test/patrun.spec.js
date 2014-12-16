@@ -22,7 +22,22 @@ function rs(x) {
 describe('patrun', function(){
 
   it('empty', function(){
-    expect( patrun().toString() ).toBe('')
+    var r = patrun()
+    expect( r.toString() ).toBe('')
+
+    expect( r.find(NaN) ).toBe( null )
+    expect( r.find(void 0) ).toBe( null )
+    expect( r.find(null) ).toBe( null )
+    expect( r.find({}) ).toBe( null )
+    expect( r.find({a:1}) ).toBe( null )
+
+    r.add({a:1},'A')
+
+    expect( r.find(NaN) ).toBe( null )
+    expect( r.find(void 0) ).toBe( null )
+    expect( r.find(null) ).toBe( null )
+    expect( r.find({}) ).toBe( null )
+    expect( r.find({a:1}) ).toBe( 'A' )
   })
 
 
