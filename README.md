@@ -1,5 +1,7 @@
 # patrun
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rjrodger/patrun?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ### A fast pattern matcher on JavaScript object properties. 
 
 Need to pick out an object based on a subset of its properties? Say you've got:
