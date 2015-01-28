@@ -73,7 +73,7 @@ You're matching a subset, so your input can contain any number of other properti
 For Node.js:
 
 ```sh
-npm install jsonic
+npm install patrun
 ```
 
 For Bower:
