@@ -15,11 +15,10 @@
     "url": "git://github.com/rjrodger/patrun.git"
   },
   "main": "patrun.js",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node ./test",
-    "browser": "phantomjs test/run-jasmine.js test/jasmine.html",
-    "build": "./node_modules/.bin/jshint patrun.js; uglifyjs patrun.js -c \"evaluate=false\" --comments \"/ Copyright .*/\" -m --source-map patrun-min.map -o patrun-min.js"
+    "test": "./test.sh",
+    "build": "./build.sh"
   },
   "license": "MIT",
   "files": [
@@ -28,13 +27,8 @@
     "patrun-min.map",
     "LICENSE"
   ],
-  "devDependencies": {
-    "jasmine-node": "~1.14.5",
-    "jshint": "~2.5.10",
-    "benchmark": "~1.0.0"
-  },
   "dependencies": {
-    "underscore": "~1.7.0",
-    "gex": "~0.1.4"
+    "lodash": "~2.4.1",
+    "gex": "~0.2.0"
   }
 }

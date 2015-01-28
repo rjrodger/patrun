@@ -1,6 +1,6 @@
-/* Copyright (c) 2013-2014 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+/* Copyright (c) 2013-2015 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
-(function() {
+;(function() {
   /* jshint node:true, asi:true, eqnull:true */
   "use strict";
 
@@ -14,7 +14,7 @@
 
   if( typeof _ === 'undefined' ) {
     if( has_require ) {
-      _ = require('underscore')
+      _ = require('lodash')
     }
     else throw new Error('patrun requires underscore, see http://underscorejs.org');
   }

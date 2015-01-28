@@ -7,7 +7,7 @@ if( typeof patrun === 'undefined' ) {
 }
 
 if( typeof _ === 'undefined' ) {
-  var _ = require('underscore')
+  var _ = require('lodash')
 }
 
 if( typeof gex === 'undefined' ) {

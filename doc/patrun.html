@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>patrun.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>patrun.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* Copyright (c) 2013-2015 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */</span>
+
+;(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-comment">/* jshint node:true, asi:true, eqnull:true */</span>
+<span class="hljs-pi">  "use strict"</span>;
+
+  <span class="hljs-keyword">var</span> root           = <span class="hljs-keyword">this</span>
+  <span class="hljs-keyword">var</span> previous_patrun = root.patrun
+
+  <span class="hljs-keyword">var</span> has_require = <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">require</span> !== <span class="hljs-string">'undefined'</span>
+
+  <span class="hljs-keyword">var</span> _   = root._
+  <span class="hljs-keyword">var</span> gex = root.gex
+
+  <span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> _ === <span class="hljs-string">'undefined'</span> ) {
+    <span class="hljs-keyword">if</span>( has_require ) {
+      _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'patrun requires underscore, see http://underscorejs.org'</span>);
+  }
+
+  <span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> gex === <span class="hljs-string">'undefined'</span> ) {
+    <span class="hljs-keyword">if</span>( has_require ) {
+      gex = <span class="hljs-built_in">require</span>(<span class="hljs-string">'gex'</span>)
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'patrun requires gex, see https://github.com/rjrodger/gex'</span>)
+  }
+
+
+  <span class="hljs-keyword">var</span> patrun = root.patrun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( custom )</span> </span>{
+    <span class="hljs-keyword">var</span> self = {}
+
+    <span class="hljs-keyword">var</span> top = {}
+
+
+    self.noConflict = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      root.patrun = previous_patrun;
+      <span class="hljs-keyword">return</span> self;
+    }
+
+
+    self.add = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat, data )</span> </span>{
+      pat = _.clone(pat)
+
+      <span class="hljs-keyword">var</span> customizer
+      <span class="hljs-keyword">if</span>( custom ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>can modify pat</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        customizer = custom.call(self,pat,data)
+      }
+
+      <span class="hljs-keyword">var</span> keys = _.keys(pat).sort()
+
+      <span class="hljs-keyword">var</span> keymap = top
+      <span class="hljs-keyword">var</span> valmap
+
+      <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; keys.length; i++ ) {
+        <span class="hljs-keyword">var</span> key = keys[i]
+        <span class="hljs-keyword">var</span> val = pat[key]
+        
+        <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> === val || <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === val ) <span class="hljs-keyword">continue</span>;
+
+        valmap = keymap.v
+        <span class="hljs-keyword">if</span>( valmap &amp;&amp; key == keymap.k) {
+          keymap = valmap[val] || (valmap[val]={})
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( !keymap.k ) {
+          keymap.k = key
+
+          keymap.v = {}
+
+          keymap = keymap.v[val] = {}
+        }
+        <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">if</span>( key &lt; keymap.k ) {
+            <span class="hljs-keyword">var</span> curv = keymap.v
+            <span class="hljs-keyword">var</span> curs   = keymap.s
+            keymap.v = {}
+            keymap.s = {k:keymap.k,v:curv,s:curs}
+
+            keymap.k = key
+            keymap = keymap.v[val] = {}
+          }
+          <span class="hljs-keyword">else</span> {
+            valmap = keymap.v
+            keymap = keymap.s || (keymap.s = {})
+            i--
+          }
+        }
+      }
+
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== data &amp;&amp; keymap ) {
+        keymap.d = data
+        <span class="hljs-keyword">if</span>( customizer ) { 
+          keymap.f = _.isFunction(customizer) ? customizer : customizer.find
+          keymap.r = _.isFunction(customizer.remove) ? customizer.remove : <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>
+        }
+      }
+      
+      <span class="hljs-keyword">return</span> self
+    }
+
+
+    self.findexact = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat )</span> </span>{
+      <span class="hljs-keyword">return</span> self.find( pat, <span class="hljs-literal">true</span> )
+    }
+
+
+    self.find = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat, exact )</span> </span>{
+      <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == pat ) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+
+      <span class="hljs-keyword">var</span> keymap    = top
+      <span class="hljs-keyword">var</span> data      = top.d || <span class="hljs-literal">null</span>
+      <span class="hljs-keyword">var</span> finalfind = top.f
+      <span class="hljs-keyword">var</span> key       = <span class="hljs-literal">null</span>
+      <span class="hljs-keyword">var</span> stars     = []
+      <span class="hljs-keyword">var</span> foundkeys = {}
+      <span class="hljs-keyword">var</span> patlen    = _.keys(pat).length
+
+      <span class="hljs-keyword">do</span> {
+        key = keymap.k
+
+        <span class="hljs-keyword">if</span>( keymap.v ) {
+          <span class="hljs-keyword">var</span> nextkeymap = keymap.v[pat[key]]
+          <span class="hljs-keyword">if</span>( nextkeymap ) {
+            foundkeys[key]=<span class="hljs-literal">true</span>
+
+            <span class="hljs-keyword">if</span>( keymap.s ) {
+              stars.push(keymap.s)
+            }
+
+            data      = <span class="hljs-literal">null</span> == nextkeymap.d ? <span class="hljs-literal">null</span> : nextkeymap.d
+            finalfind = nextkeymap.f
+            keymap    = nextkeymap
+          }
+          <span class="hljs-keyword">else</span> {
+            keymap = keymap.s
+          }
+        }
+        <span class="hljs-keyword">else</span> {
+          keymap = <span class="hljs-literal">null</span>
+        }
+       
+        <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == keymap &amp;&amp; <span class="hljs-literal">null</span> === data &amp;&amp; <span class="hljs-number">0</span> &lt; stars.length ) {
+          keymap = stars.pop()
+        }
+      }
+      <span class="hljs-keyword">while</span>( keymap )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>special case for default with no properties</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> === data &amp;&amp; <span class="hljs-number">0</span> === patlen &amp;&amp; <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== top.d ) {
+        data      = top.d
+        finalfind = top.f
+      }
+
+      <span class="hljs-keyword">if</span>( exact &amp;&amp; _.keys(foundkeys).length != patlen ) {
+        data = <span class="hljs-literal">null</span>
+      }
+
+      <span class="hljs-keyword">if</span>( finalfind ) {
+        data = finalfind.call(self,pat,data)
+      }
+
+      <span class="hljs-keyword">return</span> data
+    }
+
+
+
+    self.remove = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat )</span> </span>{
+      <span class="hljs-keyword">var</span> keymap = top
+      <span class="hljs-keyword">var</span> data = <span class="hljs-literal">null</span>
+      <span class="hljs-keyword">var</span> key
+      <span class="hljs-keyword">var</span> path = []
+
+      <span class="hljs-keyword">do</span> {
+        key = keymap.k
+        
+        <span class="hljs-keyword">if</span>( keymap.v ) {
+          <span class="hljs-keyword">var</span> nextkeymap = keymap.v[pat[key]]
+          <span class="hljs-keyword">if</span>( nextkeymap ) {
+            path.push({km:keymap,v:pat[key]})
+            data   = nextkeymap.d
+            keymap = nextkeymap
+          }
+          <span class="hljs-keyword">else</span> {
+            keymap = keymap.s
+          }
+        }
+        <span class="hljs-keyword">else</span> {
+          keymap = <span class="hljs-literal">null</span>
+        }
+      }
+      <span class="hljs-keyword">while</span>( keymap )
+
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== data ) {
+        <span class="hljs-keyword">var</span> part = path[path.length-<span class="hljs-number">1</span>]
+        <span class="hljs-keyword">if</span>( part &amp;&amp; part.km &amp;&amp; part.km.v ) {
+          <span class="hljs-keyword">var</span> point = part.km.v[part.v]
+          <span class="hljs-keyword">if</span>( !point.r || point.r(pat,point.d) ) {
+            <span class="hljs-keyword">delete</span> point.d
+          }
+        }
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>values can be verbatim, glob, or array of globs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.list = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat, exact )</span> </span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">descend</span><span class="hljs-params">(keymap,match,missing,acc)</span> </span>{
+
+        <span class="hljs-keyword">if</span>( keymap.v ) {
+          <span class="hljs-keyword">var</span> key = keymap.k
+          <span class="hljs-keyword">var</span> gexval = gex( pat ? 
+                            (<span class="hljs-literal">null</span>==pat[key] ?
+                             ( exact ? <span class="hljs-literal">null</span> : <span class="hljs-string">'*'</span> )
+                             : pat[key]) 
+                            : <span class="hljs-string">'*'</span> )
+          <span class="hljs-keyword">var</span> itermatch   = _.extend({},match)
+          <span class="hljs-keyword">var</span> itermissing = _.extend({},missing)
+          <span class="hljs-keyword">var</span> nextkeymap
+
+          <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> val <span class="hljs-keyword">in</span> keymap.v ) {
+            <span class="hljs-keyword">if</span>( gexval.on(val) ) {
+              <span class="hljs-keyword">var</span> valitermatch = _.clone(itermatch)
+              valitermatch[key]=val
+
+              <span class="hljs-keyword">var</span> valitermissing = _.extend({},itermissing)
+              <span class="hljs-keyword">delete</span> valitermissing[key]
+
+              nextkeymap = keymap.v[ val ]
+
+              <span class="hljs-keyword">if</span>( <span class="hljs-number">0</span> === _.keys(valitermissing).length &amp;&amp; 
+                  nextkeymap &amp;&amp; 
+                  nextkeymap.d ) 
+              {
+                acc.push({
+                  match:valitermatch,
+                  data:nextkeymap.d,
+                  find:nextkeymap.f
+                })
+              }
+
+              <span class="hljs-keyword">if</span>( nextkeymap &amp;&amp; nextkeymap.v ) {
+                descend(
+                  nextkeymap, 
+                  _.extend({},valitermatch), 
+                  _.extend({},valitermissing), 
+                  acc)
+              }
+            }
+          }
+
+          nextkeymap = keymap.s
+          <span class="hljs-keyword">if</span>( nextkeymap ) {
+            descend(
+              nextkeymap, 
+              _.extend({},itermatch), 
+              _.extend({},itermissing), 
+              acc)
+          }
+        }
+      }
+
+      <span class="hljs-keyword">var</span> acc = []
+
+      <span class="hljs-keyword">if</span>( top.d ) {
+        acc.push({
+          match:{},
+          data:top.d,
+          find:top.f
+        })
+      }
+
+      descend(top,{},_.extend({},pat),acc)
+      <span class="hljs-keyword">return</span> acc
+    }
+
+
+
+    self.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dstr,tree)</span> </span>{
+      dstr = _.isFunction(dstr) ? dstr : <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span></span>{
+        <span class="hljs-keyword">return</span> _.isFunction(d) ? <span class="hljs-string">'&lt;'</span>+d.name+<span class="hljs-string">'&gt;'</span> : <span class="hljs-string">'&lt;'</span>+d+<span class="hljs-string">'&gt;'</span>}
+
+      tree = _.isBoolean( <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] ) ? <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] : tree
+      tree = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === tree ? <span class="hljs-literal">false</span> : tree
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">indent</span><span class="hljs-params">(o,d)</span> </span>{
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; d; i++ ) {
+          o.push(<span class="hljs-string">' '</span>)
+        }
+      }
+
+      <span class="hljs-keyword">var</span> str = []
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">walk</span><span class="hljs-params">(n,o,d,vs)</span></span>{
+        <span class="hljs-keyword">var</span> vsc
+
+        <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== n.d ) {
+          indent(o,d)
+          o.push(dstr(n.d))
+
+          str.push( vs.join(<span class="hljs-string">', '</span>)+<span class="hljs-string">' -&gt; '</span>+dstr(n.d))
+        }
+        <span class="hljs-keyword">if</span>( n.k ) {
+          o.push(<span class="hljs-string">'\n'</span>)
+          indent(o,d)
+          o.push(n.k+<span class="hljs-string">':'</span>)
+        }
+        <span class="hljs-keyword">if</span>( n.v ) {
+          d++
+          <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> p <span class="hljs-keyword">in</span> n.v ) {
+            o.push(<span class="hljs-string">'\n'</span>)
+            indent(o,d)
+            o.push( p+<span class="hljs-string">' -&gt;'</span>)
+
+            vsc = _.clone(vs)
+            vsc.push(n.k+<span class="hljs-string">'='</span>+p)
+
+            walk(n.v[p],o,d+<span class="hljs-number">1</span>,vsc)
+          }
+
+          <span class="hljs-keyword">if</span>( n.s ) {
+            o.push(<span class="hljs-string">'\n'</span>)
+            indent(o,d)
+            o.push( <span class="hljs-string">'* -&gt;'</span>)
+
+            vsc = _.clone(vs)
+            walk(n.s,o,d+<span class="hljs-number">1</span>,vsc)
+          }
+        }
+      }
+
+      <span class="hljs-keyword">var</span> o = []
+      walk(top,o,<span class="hljs-number">0</span>,[])
+      <span class="hljs-keyword">return</span> tree ? o.join(<span class="hljs-string">''</span>) : str.join(<span class="hljs-string">'\n'</span>)
+    }
+
+
+    self.inspect = self.toString
+
+
+    self.toJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(indent)</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.stringify(top,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key,val)</span></span>{
+        <span class="hljs-keyword">if</span>( _.isFunction(val) ) <span class="hljs-keyword">return</span> <span class="hljs-string">'[Function]'</span>
+        <span class="hljs-keyword">return</span> val
+      },indent)
+    }
+
+    <span class="hljs-keyword">return</span> self
+
+  }
+
+
+
+  <span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> exports !== <span class="hljs-string">'undefined'</span> ) {
+    <span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> &amp;&amp; <span class="hljs-built_in">module</span>.exports ) {
+      exports = <span class="hljs-built_in">module</span>.exports = patrun
+    }
+    exports.patrun = patrun
+  } 
+  <span class="hljs-keyword">else</span> {
+    root.patrun = patrun
+  }
+
+}).call(<span class="hljs-keyword">this</span>);</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
