@@ -1,6 +1,8 @@
 # patrun
 
-### A fast pattern matcher on JavaScript object properties. 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rjrodger/patrun?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+### A fast pattern matcher on JavaScript object properties.
 
 Need to pick out an object based on a subset of its properties? Say you've got:
 
@@ -53,16 +55,16 @@ var pm = patrun()
       .add({b:2},'B')
 
 // prints A
-console.log( pm.find({a:1}) ) 
+console.log( pm.find({a:1}) )
 
 // prints null
-console.log( pm.find({a:2}) ) 
+console.log( pm.find({a:2}) )
 
 // prints A, b:1 is ignored, it was never registered
-console.log( pm.find({a:1,b:1}) ) 
+console.log( pm.find({a:1,b:1}) )
 
 // prints B, c:3 is ignored, it was never registered
-console.log( pm.find({b:2,c:3}) ) 
+console.log( pm.find({b:2,c:3}) )
 ```
 
 You're matching a subset, so your input can contain any number of other properties.
@@ -73,7 +75,7 @@ You're matching a subset, so your input can contain any number of other properti
 For Node.js:
 
 ```sh
-npm install jsonic
+npm install patrun
 ```
 
 For Bower:
@@ -128,34 +130,34 @@ salestax
 
   .add({ country:'US' }, I(0.0) ) // no federeal rate (yet!)
 
-  .add({ country:'US', state:'AL' }, I(0.04) ) 
-  .add({ country:'US', state:'AL', city:'Montgomery' }, I(0.10) ) 
+  .add({ country:'US', state:'AL' }, I(0.04) )
+  .add({ country:'US', state:'AL', city:'Montgomery' }, I(0.10) )
 
-  .add({ country:'US', state:'NY' }, I(0.07) ) 
+  .add({ country:'US', state:'NY' }, I(0.07) )
   .add({ country:'US', state:'NY', type:'reduced' }, function under110(net){
     return net < 110 ? 0.0 : salestax.find( {country:'US', state:'NY'} )
-  }) 
+  })
 
 
-console.log('Default rate: ' + 
+console.log('Default rate: ' +
             salestax.find({})(99) )
 
-console.log('Standard rate in Ireland on E99: ' + 
+console.log('Standard rate in Ireland on E99: ' +
             salestax.find({country:'IE'})(99) )
 
-console.log('Food rate in Ireland on E99:     ' + 
+console.log('Food rate in Ireland on E99:     ' +
             salestax.find({country:'IE',type:'food'})(99) )
 
-console.log('Reduced rate in Germany on E99:  ' + 
+console.log('Reduced rate in Germany on E99:  ' +
             salestax.find({country:'IE',type:'reduced'})(99) )
 
-console.log('Standard rate in Alabama on $99: ' + 
+console.log('Standard rate in Alabama on $99: ' +
             salestax.find({country:'US',state:'AL'})(99) )
 
-console.log('Standard rate in Montgomery, Alabama on $99: ' + 
+console.log('Standard rate in Montgomery, Alabama on $99: ' +
             salestax.find({country:'US',state:'AL',city:'Montgomery'})(99) )
 
-console.log('Reduced rate in New York for clothes on $99: ' + 
+console.log('Reduced rate in New York for clothes on $99: ' +
             salestax.find({country:'US',state:'NY',type:'reduced'})(99) )
 
 
@@ -214,7 +216,7 @@ var alwaysAddFoo = patrun( function(pat){
 })
 
 alwaysAddFoo.add( {a:1}, "bar" )
-    
+
 alwaysAddFoo.find( {a:1} ) // nothing!
 alwaysAddFoo.find( {a:1,foo:true} ) // == "bar"
 ```
@@ -232,7 +234,7 @@ var upperify = patrun( function(pat){
 })
 
 upperify.add( {a:1}, "bar" )
-    
+
 upperify.find( {a:1} ) // BAR
 ```
 
@@ -261,10 +263,10 @@ many.add( {b:1}, 'C' )
 many.find( {a:1} ) // [ 'A', 'B' ]
 many.find( {b:1} ) // [ 'C' ]
 
-many.remove( {a:1} ) 
+many.remove( {a:1} )
 many.find( {a:1} ) // [ 'A' ]
 
-many.remove( {b:1} ) 
+many.remove( {b:1} )
 many.find( {b:1} ) // null
 ```
 
@@ -308,13 +310,18 @@ pm = patrun()
   .add({a:1,b:1},'B1')
   .add({a:1,b:2},'B2')
 
-// finds nothing: []
+// finds: 
+// [ { match: { a: '1', b: '1' }, data: 'B1' },
+//   { match: { a: '1', b: '2' }, data: 'B2' } ]
 console.log( pm.list({a:1}) )
 
 // finds:
 // [ { match: { a: '1', b: '1' }, data: 'B1' },
 //   { match: { a: '1', b: '2' }, data: 'B2' } ]
 console.log( pm.list({a:1,b:'*'}) )
+
+// finds nothing: []
+console.log( pm.list({a:1, c:1}) )
 ```
 
 If you provide no pattern argument at all, _list_ will list all patterns that have been added.
