@@ -154,7 +154,7 @@
       <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == pat ) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
 
       <span class="hljs-keyword">var</span> keymap    = top
-      <span class="hljs-keyword">var</span> data      = top.d || <span class="hljs-literal">null</span>
+      <span class="hljs-keyword">var</span> data      = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === top.d ? <span class="hljs-literal">null</span> : top.d
       <span class="hljs-keyword">var</span> finalfind = top.f
       <span class="hljs-keyword">var</span> key       = <span class="hljs-literal">null</span>
       <span class="hljs-keyword">var</span> stars     = []
@@ -173,7 +173,7 @@
               stars.push(keymap.s)
             }
 
-            data      = <span class="hljs-literal">null</span> == nextkeymap.d ? <span class="hljs-literal">null</span> : nextkeymap.d
+            data      = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === nextkeymap.d ? <span class="hljs-literal">null</span> : nextkeymap.d
             finalfind = nextkeymap.f
             keymap    = nextkeymap
           }
@@ -185,29 +185,11 @@
           keymap = <span class="hljs-literal">null</span>
         }
        
-        <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == keymap &amp;&amp; <span class="hljs-literal">null</span> === data &amp;&amp; <span class="hljs-number">0</span> &lt; stars.length ) {
+        <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == keymap &amp;&amp; <span class="hljs-literal">null</span> == data &amp;&amp; <span class="hljs-number">0</span> &lt; stars.length ) {
           keymap = stars.pop()
         }
       }
-      <span class="hljs-keyword">while</span>( keymap )</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>special case for default with no properties</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> === data &amp;&amp; <span class="hljs-number">0</span> === patlen &amp;&amp; <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== top.d ) {
-        data      = top.d
-        finalfind = top.f
-      }
+      <span class="hljs-keyword">while</span>( keymap )
 
       <span class="hljs-keyword">if</span>( exact &amp;&amp; _.keys(foundkeys).length != patlen ) {
         data = <span class="hljs-literal">null</span>
@@ -262,11 +244,11 @@
         </li>
         
         
-        <li id="section-4">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>values can be verbatim, glob, or array of globs</p>
 
@@ -344,12 +326,13 @@
 
 
 
-    self.toString = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dstr,tree</span>) </span>{
-      dstr = _.isFunction(dstr) ? dstr : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>)</span>{
-        <span class="hljs-keyword">return</span> _.isFunction(d) ? <span class="hljs-string">'&lt;'</span>+d.name+<span class="hljs-string">'&gt;'</span> : <span class="hljs-string">'&lt;'</span>+d+<span class="hljs-string">'&gt;'</span>}
+    self.toString = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> tree = _.isBoolean( <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] ) ? <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] : !!<span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>]
 
-      tree = _.isBoolean( <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] ) ? <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] : tree
-      tree = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === tree ? <span class="hljs-literal">false</span> : tree
+      <span class="hljs-keyword">var</span> dstr = _.isFunction( <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] ) ?  <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) </span>{
+        <span class="hljs-keyword">return</span> _.isFunction(d) ? <span class="hljs-string">'&lt;'</span>+d.name+<span class="hljs-string">'&gt;'</span> : <span class="hljs-string">'&lt;'</span>+d+<span class="hljs-string">'&gt;'</span>
+      }
+
 
       <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">indent</span>(<span class="hljs-params">o,d</span>) </span>{
         <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; d; i++ ) {

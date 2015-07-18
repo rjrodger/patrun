@@ -271,7 +271,7 @@
 
 
 
-    self.toString = function(dstr,tree) {
+    self.toString = function() {
       var tree = _.isBoolean( arguments[0] ) ? arguments[0] : !!arguments[1]
 
       var dstr = _.isFunction( arguments[0] ) ?  arguments[0] : function(d) {
