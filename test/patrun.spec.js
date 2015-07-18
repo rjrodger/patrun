@@ -21,6 +21,14 @@ function rs(x) {
 
 describe('patrun', function(){
 
+  it('toString', function() {
+    var r = patrun()
+    r.add({},'R')
+    expect(r.toString(true)).toBe('<R>')
+    expect(r.toString(false)).toBe(' -> <R>')
+  })
+
+
   it('empty', function(){
     var r = patrun()
     expect( r.toString() ).toBe('')
@@ -529,17 +537,55 @@ describe('patrun', function(){
   it('mixed-values', function(){
     var p1 = patrun()
 
-    p1.add({},'Q')
     p1.add({a:1},'A')
     p1.add({a:true},'AA')
+    p1.add({a:0},'AAA')
     p1.add({a:'A',b:2},'B')
     p1.add({a:'A',b:'B',c:3},'C')
 
-    expect( p1.find({}) ).toBe( 'Q' )
     expect( p1.find({a:1}) ).toBe( 'A' )
     expect( p1.find({a:true}) ).toBe( 'AA' )
+    expect( p1.find({a:0}) ).toBe( 'AAA' )
     expect( p1.find({a:'A',b:2}) ).toBe( 'B' )
     expect( p1.find({a:'A',b:'B',c:3}) ).toBe( 'C' )
+
+    expect( p1.list({a:1}).length ).toBe( 1 )
+    expect( p1.list({a:true}).length ).toBe( 1 )
+    expect( p1.list({a:0}).length ).toBe( 1 )
+
+    p1.add({},'Q')
+    expect( p1.find({}) ).toBe( 'Q' )
+  })
+
+
+  it('no-props', function(){
+    var p1 = patrun()
+    p1.add({},'Z')
+    expect( p1.find({}) ).toBe( 'Z' )
+
+    p1.add({a:1},'X')
+    expect( p1.find({}) ).toBe( 'Z' )
+
+    p1.add({b:2},'Y')
+    expect( p1.find({}) ).toBe( 'Z' )
+
+    p1.remove({b:2})
+    expect( p1.find({}) ).toBe( 'Z' )
+  })
+
+
+  it('zero', function(){
+    var p1 = patrun()
+    p1.add({a:0},'X')
+    expect( p1.find({a:0}) ).toBe( 'X' )
+  })
+
+
+  it('noConflict', function() {
+    var r = patrun().noConflict()
+    r.add({},'R')
+    expect(r.toString(true)).toBe('<R>')
+    expect(r.toString(false)).toBe(' -> <R>')
   })
 
 })

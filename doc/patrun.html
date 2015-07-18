@@ -32,7 +32,7 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* Copyright (c) 2013-2015 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */</span>
 
-;(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+;(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
   <span class="hljs-comment">/* jshint node:true, asi:true, eqnull:true */</span>
 <span class="hljs-pi">  "use strict"</span>;
 
@@ -59,19 +59,19 @@
   }
 
 
-  <span class="hljs-keyword">var</span> patrun = root.patrun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( custom )</span> </span>{
+  <span class="hljs-keyword">var</span> patrun = root.patrun = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> custom </span>) </span>{
     <span class="hljs-keyword">var</span> self = {}
 
     <span class="hljs-keyword">var</span> top = {}
 
 
-    self.noConflict = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    self.noConflict = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
       root.patrun = previous_patrun;
       <span class="hljs-keyword">return</span> self;
     }
 
 
-    self.add = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat, data )</span> </span>{
+    self.add = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> pat, data </span>) </span>{
       pat = _.clone(pat)
 
       <span class="hljs-keyword">var</span> customizer
@@ -145,12 +145,12 @@
     }
 
 
-    self.findexact = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat )</span> </span>{
+    self.findexact = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> pat </span>) </span>{
       <span class="hljs-keyword">return</span> self.find( pat, <span class="hljs-literal">true</span> )
     }
 
 
-    self.find = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat, exact )</span> </span>{
+    self.find = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> pat, exact </span>) </span>{
       <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == pat ) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
 
       <span class="hljs-keyword">var</span> keymap    = top
@@ -222,7 +222,7 @@
 
 
 
-    self.remove = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat )</span> </span>{
+    self.remove = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> pat </span>) </span>{
       <span class="hljs-keyword">var</span> keymap = top
       <span class="hljs-keyword">var</span> data = <span class="hljs-literal">null</span>
       <span class="hljs-keyword">var</span> key
@@ -272,8 +272,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    self.list = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( pat, exact )</span> </span>{
-      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">descend</span><span class="hljs-params">(keymap,match,missing,acc)</span> </span>{
+            <div class="content"><div class='highlight'><pre>    self.list = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> pat, exact </span>) </span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">descend</span>(<span class="hljs-params">keymap,match,missing,acc</span>) </span>{
 
         <span class="hljs-keyword">if</span>( keymap.v ) {
           <span class="hljs-keyword">var</span> key = keymap.k
@@ -344,14 +344,14 @@
 
 
 
-    self.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dstr,tree)</span> </span>{
-      dstr = _.isFunction(dstr) ? dstr : <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(d)</span></span>{
+    self.toString = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dstr,tree</span>) </span>{
+      dstr = _.isFunction(dstr) ? dstr : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>)</span>{
         <span class="hljs-keyword">return</span> _.isFunction(d) ? <span class="hljs-string">'&lt;'</span>+d.name+<span class="hljs-string">'&gt;'</span> : <span class="hljs-string">'&lt;'</span>+d+<span class="hljs-string">'&gt;'</span>}
 
       tree = _.isBoolean( <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] ) ? <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] : tree
       tree = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === tree ? <span class="hljs-literal">false</span> : tree
 
-      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">indent</span><span class="hljs-params">(o,d)</span> </span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">indent</span>(<span class="hljs-params">o,d</span>) </span>{
         <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; d; i++ ) {
           o.push(<span class="hljs-string">' '</span>)
         }
@@ -359,7 +359,7 @@
 
       <span class="hljs-keyword">var</span> str = []
 
-      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">walk</span><span class="hljs-params">(n,o,d,vs)</span></span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">walk</span>(<span class="hljs-params">n,o,d,vs</span>)</span>{
         <span class="hljs-keyword">var</span> vsc
 
         <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== n.d ) {
@@ -406,8 +406,8 @@
     self.inspect = self.toString
 
 
-    self.toJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(indent)</span> </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.stringify(top,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key,val)</span></span>{
+    self.toJSON = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">indent</span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.stringify(top,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key,val</span>)</span>{
         <span class="hljs-keyword">if</span>( _.isFunction(val) ) <span class="hljs-keyword">return</span> <span class="hljs-string">'[Function]'</span>
         <span class="hljs-keyword">return</span> val
       },indent)

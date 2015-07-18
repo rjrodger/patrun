@@ -109,7 +109,7 @@
       if( null == pat ) return null;
 
       var keymap    = top
-      var data      = top.d || null
+      var data      = void 0 === top.d ? null : top.d
       var finalfind = top.f
       var key       = null
       var stars     = []
@@ -128,7 +128,7 @@
               stars.push(keymap.s)
             }
 
-            data      = null == nextkeymap.d ? null : nextkeymap.d
+            data      = void 0 === nextkeymap.d ? null : nextkeymap.d
             finalfind = nextkeymap.f
             keymap    = nextkeymap
           }
@@ -140,17 +140,11 @@
           keymap = null
         }
        
-        if( null == keymap && null === data && 0 < stars.length ) {
+        if( null == keymap && null == data && 0 < stars.length ) {
           keymap = stars.pop()
         }
       }
       while( keymap )
-
-      // special case for default with no properties
-      if( null === data && 0 === patlen && void 0 !== top.d ) {
-        data      = top.d
-        finalfind = top.f
-      }
 
       if( exact && _.keys(foundkeys).length != patlen ) {
         data = null
@@ -278,11 +272,12 @@
 
 
     self.toString = function(dstr,tree) {
-      dstr = _.isFunction(dstr) ? dstr : function(d){
-        return _.isFunction(d) ? '<'+d.name+'>' : '<'+d+'>'}
+      var tree = _.isBoolean( arguments[0] ) ? arguments[0] : !!arguments[1]
 
-      tree = _.isBoolean( arguments[0] ) ? arguments[0] : tree
-      tree = void 0 === tree ? false : tree
+      var dstr = _.isFunction( arguments[0] ) ?  arguments[0] : function(d) {
+        return _.isFunction(d) ? '<'+d.name+'>' : '<'+d+'>'
+      }
+
 
       function indent(o,d) {
         for(var i = 0; i < d; i++ ) {
