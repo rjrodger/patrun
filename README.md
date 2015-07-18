@@ -203,6 +203,22 @@ country=US, state=NY, type=reduced -> under110:undefined
 
 And that's it.
 
+OK, some examples might help! Let's say you have patterns:
+
+   * `a:0` -> `'A'`
+   * `b:1` -> `'B'`
+   * `c:2` -> `'C'`
+   * `a:0,b:1` -> `'AB'`
+
+Then you'll get the following results
+  
+   * `a:0` -> `'A'` as exact match
+   * `b:1` -> `'B'` as exact match
+   * `c:2` -> `'C'` as exact match
+   * `a:0,b:1` -> `'AB'` as more specific than `a:0`
+   * `a:0,c:2` -> `'A'` as `a` comes before `c`
+   * `b:1,c:2` -> `'B'` as `b` comes before `c`
+
 
 # Customization
 

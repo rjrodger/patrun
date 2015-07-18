@@ -581,6 +581,43 @@ describe('patrun', function(){
   })
 
 
+  it('multi-match', function(){
+    var p1 = patrun()
+    p1.add({a:0},'P')
+    p1.add({b:1},'Q')
+    p1.add({c:2},'R')
+
+    expect( p1.find({a:0}) ).toBe( 'P' )
+    expect( p1.find({a:0,b:1}) ).toBe( 'P' )
+    expect( p1.find({a:0,c:2}) ).toBe( 'P' )
+    expect( p1.find({a:0,b:1,c:2}) ).toBe( 'P' )
+    expect( p1.find({a:0,c:2}) ).toBe( 'P' )
+    expect( p1.find({b:1,c:2}) ).toBe( 'Q' )
+    expect( p1.find({c:2}) ).toBe( 'R' )
+
+    p1.add({a:0,b:1},'S')
+    expect( p1.find({a:0,b:1}) ).toBe( 'S' )
+    expect( p1.find({a:0,c:2}) ).toBe( 'P' )
+
+    p1.add({b:1,c:2},'T')
+    expect( p1.find({a:0,b:1}) ).toBe( 'S' )
+    expect( p1.find({a:0,c:2}) ).toBe( 'P' )
+    expect( p1.find({b:1,c:2}) ).toBe( 'T' )
+
+    p1.add({d:3},'U')
+    expect( p1.find({d:3}) ).toBe( 'U' )
+    expect( p1.find({a:0,d:3}) ).toBe( 'P' )
+    expect( p1.find({b:1,d:3}) ).toBe( 'Q' )
+    expect( p1.find({c:2,d:3}) ).toBe( 'R' )
+
+    p1.add({c:2,d:3},'V')
+    expect( p1.find({c:2,d:3}) ).toBe( 'V' )
+    expect( p1.find({a:0,b:1}) ).toBe( 'S' )
+    expect( p1.find({a:0,b:1,c:2,d:3}) ).toBe( 'S' )
+  })
+
+
+
   it('noConflict', function() {
     var r = patrun().noConflict()
     r.add({},'R')
