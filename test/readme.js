@@ -94,13 +94,19 @@ pm = patrun()
   .add({a:1,b:1},'B1')
   .add({a:1,b:2},'B2')
 
-// finds nothing: []
+// finds: 
+// [ { match: { a: '1', b: '1' }, data: 'B1' },
+//   { match: { a: '1', b: '2' }, data: 'B2' } ]
 console.log( pm.list({a:1}) )
 
 // finds:
 // [ { match: { a: '1', b: '1' }, data: 'B1' },
 //   { match: { a: '1', b: '2' }, data: 'B2' } ]
 console.log( pm.list({a:1,b:'*'}) )
+
+// finds nothing: []
+console.log( pm.list({a:1, c:1}) )
+
 
 
 var alwaysAddFoo = patrun( function(pat){
