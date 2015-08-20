@@ -10,13 +10,17 @@
 
 
   var _ = root._ || has_require && require('lodash')
-  if( !_ ) throw new Error('patrun requires underscore, see http://underscorejs.org')
+  if( !_ ) 
+    throw new Error('patrun requires underscore, see http://underscorejs.org')
 
   var gex = root.gex || has_require && require('gex')
-  if( !gex ) throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
+  if( !gex ) 
+    throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
 
 
   var patrun = root.patrun = function( custom ) {
+    custom = custom || {}
+
     var self = {}
     var top  = {}
 
@@ -30,11 +34,7 @@
     self.add = function( pat, data ) {
       pat = _.clone(pat)
 
-      var customizer
-      if( custom ) {
-        // can modify pat
-        customizer = custom.call(self,pat,data)
-      }
+      var customizer = _.isFunction(custom) ? custom.call(self,pat,data) : null
 
       var keys = _.keys(pat).sort()
 
@@ -44,28 +44,31 @@
       for( var i = 0; i < keys.length; i++ ) {
         var key = keys[i]
         var val = pat[key]
-        
+
         if( null === val || void 0 === val ) continue;
+        val = String(val)
+
+        var gexer = ( custom.gex && val.match(/[\*\?]/) ) ? gex(val) : null
+        if( gexer ) gexer.val$ = val
+        //console.log( custom.gex, val, val.match(/[\*\?]/), gexer )
 
         valmap = keymap.v
         if( valmap && key == keymap.k) {
           keymap = valmap[val] || (valmap[val]={})
         }
         else if( !keymap.k ) {
+          if( gexer ) (keymap.g = keymap.g || {})[key] = gexer
           keymap.k = key
-
           keymap.v = {}
-
           keymap = keymap.v[val] = {}
         }
         else {
           if( key < keymap.k ) {
-            var curv = keymap.v
-            var curs   = keymap.s
-            keymap.v = {}
-            keymap.s = {k:keymap.k,v:curv,s:curs}
+            if( gexer ) (keymap.g = keymap.g || {})[key] = gexer
+            keymap.s = {k:keymap.k,v:keymap.v,s:keymap.s}
 
             keymap.k = key
+            keymap.v = {}
             keymap = keymap.v[val] = {}
           }
           else {
@@ -83,6 +86,8 @@
           keymap.r = _.isFunction(customizer.remove) ? customizer.remove : void 0
         }
       }
+
+      //console.log(require('util').inspect(top,{depth:null}))
       
       return self
     }
@@ -109,6 +114,17 @@
 
         if( keymap.v ) {
           var nextkeymap = keymap.v[pat[key]]
+
+          if( custom.gex ) {
+            //console.log('find',key,nextkeymap,keymap.g)
+
+            nextkeymap = (keymap.g && keymap.g[key])
+              ? (null == (keymap.g[key].on(pat[key])) 
+                 ? null 
+                 : keymap.v[keymap.g[key].val$])
+            : nextkeymap
+          }
+
           if( nextkeymap ) {
             foundkeys[key]=true
 
@@ -218,7 +234,7 @@
                 acc.push({
                   match:valitermatch,
                   data:nextkeymap.d,
-                  find:nextkeymap.f
+                  find:nextkeymap.f,
                 })
               }
 
@@ -249,7 +265,7 @@
         acc.push({
           match:{},
           data:top.d,
-          find:top.f
+          find:top.f,
         })
       }
 

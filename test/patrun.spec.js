@@ -625,5 +625,25 @@ describe('patrun', function(){
     expect(r.toString(false)).toBe(' -> <R>')
   })
 
+
+  it('add-gex', function(){
+    var p1 = patrun({gex:true})
+
+    p1.add({a:'A'},'XA')
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
+    expect( p1.find({}) ).toBe( null )
+
+    p1.add({b:'*'},'XB')
+    expect( p1.find({b:'A'}) ).toBe( 'XB' )
+    expect( p1.find({b:'B'}) ).toBe( 'XB' )
+    expect( p1.find({b:'0'}) ).toBe( 'XB' )
+    expect( p1.find({b:2}) ).toBe( 'XB' )
+    expect( p1.find({b:1}) ).toBe( 'XB' )
+    expect( p1.find({b:0}) ).toBe( 'XB' )
+    expect( p1.find({b:''}) ).toBe( 'XB' ) // this is correct
+    expect( p1.find({}) ).toBe( null )
+
+  })
+
 })
 
