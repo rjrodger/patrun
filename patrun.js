@@ -4,33 +4,21 @@
   /* jshint node:true, asi:true, eqnull:true */
   "use strict";
 
-  var root           = this
+  var root            = this
   var previous_patrun = root.patrun
+  var has_require     = typeof require !== 'undefined'
 
-  var has_require = typeof require !== 'undefined'
 
-  var _   = root._
-  var gex = root.gex
+  var _ = root._ || has_require && require('lodash')
+  if( !_ ) throw new Error('patrun requires underscore, see http://underscorejs.org')
 
-  if( typeof _ === 'undefined' ) {
-    if( has_require ) {
-      _ = require('lodash')
-    }
-    else throw new Error('patrun requires underscore, see http://underscorejs.org');
-  }
-
-  if( typeof gex === 'undefined' ) {
-    if( has_require ) {
-      gex = require('gex')
-    }
-    else throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
-  }
+  var gex = root.gex || has_require && require('gex')
+  if( !gex ) throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
 
 
   var patrun = root.patrun = function( custom ) {
     var self = {}
-
-    var top = {}
+    var top  = {}
 
 
     self.noConflict = function() {
