@@ -24,6 +24,7 @@
     var self = {}
     var top  = {}
 
+    self.top = top
 
     self.noConflict = function() {
       root.patrun = previous_patrun;
@@ -36,17 +37,33 @@
 
       var customizer = _.isFunction(custom) ? custom.call(self,pat,data) : null
 
-      var keys = _.keys(pat).sort()
 
-      var keymap = top
-      var valmap
+      var keys = _.keys(pat), plains = [], gexers = []
+      
+      keys.forEach(function(key){
+        var val = pat[key]
+        if( null == val ) return;
+
+        val = String(val)
+        pat[key] = val;
+
+        (( custom.gex && val.match(/[\*\?]/) ) ? gexers : plains ).push(key)
+      })
+
+      plains = plains.sort()
+      gexers = gexers.sort()
+
+      keys = plains.concat(gexers)
+
+
+      var keymap = top, valmap
 
       for( var i = 0; i < keys.length; i++ ) {
         var key = keys[i]
         var val = pat[key]
 
-        if( null === val || void 0 === val ) continue;
-        val = String(val)
+        //if( null === val || void 0 === val ) continue;
+        //val = String(val)
 
         var gexer = ( custom.gex && val.match(/[\*\?]/) ) ? gex(val) : null
         if( gexer ) gexer.val$ = val
@@ -63,12 +80,17 @@
           keymap = keymap.v[val] = {}
         }
         else {
-          if( key < keymap.k ) {
-            if( gexer ) (keymap.g = keymap.g || {})[key] = gexer
-            keymap.s = {k:keymap.k,v:keymap.v,s:keymap.s}
+          if( key < keymap.k && ( !gexer || (gexer && keymap.g && keymap.g[keymap.k])) ) {
+            var s = keymap.s, g = keymap.g
+            keymap.s = {k:keymap.k,v:keymap.v}
+            if( s ) keymap.s.s = s
+            if( g ) keymap.s.g = g
+
+            if( gexer ) (keymap.g = {})[key] = gexer
 
             keymap.k = key
             keymap.v = {}
+
             keymap = keymap.v[val] = {}
           }
           else {
@@ -115,7 +137,7 @@
         if( keymap.v ) {
           var nextkeymap = keymap.v[pat[key]]
 
-          if( custom.gex ) {
+          if( !nextkeymap && custom.gex ) {
             //console.log('find',key,nextkeymap,keymap.g)
 
             nextkeymap = (keymap.g && keymap.g[key])

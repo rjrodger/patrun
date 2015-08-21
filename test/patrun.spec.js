@@ -643,6 +643,57 @@ describe('patrun', function(){
     expect( p1.find({b:''}) ).toBe( 'XB' ) // this is correct
     expect( p1.find({}) ).toBe( null )
 
+    p1.add({c:'*'},'XC')
+    expect( p1.find({c:'A'}) ).toBe( 'XC' )
+    expect( p1.find({c:'B'}) ).toBe( 'XC' )
+    expect( p1.find({c:'0'}) ).toBe( 'XC' )
+    expect( p1.find({c:2}) ).toBe( 'XC' )
+    expect( p1.find({c:1}) ).toBe( 'XC' )
+    expect( p1.find({c:0}) ).toBe( 'XC' )
+    expect( p1.find({c:''}) ).toBe( 'XC' ) // this is correct
+    expect( p1.find({}) ).toBe( null )
+
+    
+    expect( p1.find({b:'A',c:'A'}) ).toBe( 'XB' )
+
+    p1.add({e:'*'},'XE')
+    p1.add({d:'*'},'XD')
+
+    //console.log(require('util').inspect(p1.top,{depth:99}))
+
+    // alphanumeric ordering
+    expect( p1.find({d:'A',e:'A'}) ).toBe( 'XD' )
+
+
+    p1.add({b:0},'XB0')
+    //console.log(require('util').inspect(p1.top,{depth:99}))
+
+    p1.add({b:'B'},'XBB')
+    expect( p1.find({b:'A'}) ).toBe( 'XB' )
+    expect( p1.find({b:0}) ).toBe( 'XB0' )
+    expect( p1.find({b:'B'}) ).toBe( 'XBB' )
+  })
+
+
+  it('remove-gex', function(){
+    var p1 = patrun({gex:true})
+
+    p1.add({a:'A'},'XA')
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
+    expect( p1.find({}) ).toBe( null )
+
+    p1.add({b:'*'},'XB')
+    expect( p1.find({b:'A'}) ).toBe( 'XB' )
+    expect( p1.find({b:'B'}) ).toBe( 'XB' )
+    expect( p1.find({}) ).toBe( null )
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
+
+
+    p1.remove({b:'*'})
+    expect( p1.find({b:'A'}) ).toBe( null )
+    expect( p1.find({b:'B'}) ).toBe( null )
+    expect( p1.find({}) ).toBe( null )
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
   })
 
 })
