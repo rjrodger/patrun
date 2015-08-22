@@ -24,7 +24,6 @@
     var self = {}
     var top  = {}
 
-    self.top = top
 
     self.noConflict = function() {
       root.patrun = previous_patrun;
@@ -57,47 +56,50 @@
 
 
       var keymap = top, valmap
+      var patstr = require('util').inspect(pat)
 
       for( var i = 0; i < keys.length; i++ ) {
         var key = keys[i]
         var val = pat[key]
 
-        //if( null === val || void 0 === val ) continue;
-        //val = String(val)
-
         var gexer = ( custom.gex && val.match(/[\*\?]/) ) ? gex(val) : null
         if( gexer ) gexer.val$ = val
-        //console.log( custom.gex, val, val.match(/[\*\?]/), gexer )
+
+        var sort_prefix = (gexer?'1':'0')+'~'
+        var sort_key = sort_prefix+key
 
         valmap = keymap.v
-        if( valmap && key == keymap.k) {
+
+        if( valmap && sort_key == keymap.sk ) {
+          add_gexer( keymap, key, gexer )
           keymap = valmap[val] || (valmap[val]={})
         }
         else if( !keymap.k ) {
-          if( gexer ) (keymap.g = keymap.g || {})[key] = gexer
+          add_gexer( keymap, key, gexer )
           keymap.k = key
+          keymap.sk = sort_key
           keymap.v = {}
           keymap = keymap.v[val] = {}
         }
+        else if( sort_key < keymap.sk ) {
+          var s = keymap.s, g = keymap.g
+          keymap.s = {k:keymap.k,sk:keymap.sk,v:keymap.v}
+          if( s ) keymap.s.s = s
+          if( g ) keymap.s.g = g
+
+          if( keymap.g ) keymap.g = {}
+          add_gexer( keymap, key, gexer )
+
+          keymap.k = key
+          keymap.sk = sort_key
+          keymap.v = {}
+
+          keymap = keymap.v[val] = {}
+        }
         else {
-          if( key < keymap.k && ( !gexer || (gexer && keymap.g && keymap.g[keymap.k])) ) {
-            var s = keymap.s, g = keymap.g
-            keymap.s = {k:keymap.k,v:keymap.v}
-            if( s ) keymap.s.s = s
-            if( g ) keymap.s.g = g
-
-            if( gexer ) (keymap.g = {})[key] = gexer
-
-            keymap.k = key
-            keymap.v = {}
-
-            keymap = keymap.v[val] = {}
-          }
-          else {
-            valmap = keymap.v
-            keymap = keymap.s || (keymap.s = {})
-            i--
-          }
+          valmap = keymap.v
+          keymap = keymap.s || (keymap.s = {})
+          i--
         }
       }
 
@@ -112,6 +114,18 @@
       //console.log(require('util').inspect(top,{depth:null}))
       
       return self
+    }
+
+
+    function add_gexer( keymap, key, gexer ) {
+      if( !gexer ) return;
+
+      var g = keymap.g = keymap.g || {}
+      var ga = g[key] = g[key] || []
+      ga.push( gexer )
+      ga.sort( function(a,b) {
+        return a.val$ < b.val$
+      })
     }
 
 
@@ -135,16 +149,17 @@
         key = keymap.k
 
         if( keymap.v ) {
-          var nextkeymap = keymap.v[pat[key]]
+          var val = pat[key]
+          var nextkeymap = keymap.v[val]
 
-          if( !nextkeymap && custom.gex ) {
-            //console.log('find',key,nextkeymap,keymap.g)
-
-            nextkeymap = (keymap.g && keymap.g[key])
-              ? (null == (keymap.g[key].on(pat[key])) 
-                 ? null 
-                 : keymap.v[keymap.g[key].val$])
-            : nextkeymap
+          if( !nextkeymap && custom.gex && keymap.g && keymap.g[key] ) {
+            var ga = keymap.g[key]
+            for( var gi = 0; gi < ga.length; gi++ ) {
+              if( null != ga[gi].on(val) ) {
+                nextkeymap = keymap.v[ga[gi].val$]
+                break;
+              }
+            }
           }
 
           if( nextkeymap ) {
@@ -317,8 +332,7 @@
         var vsc
 
         if( void 0 !== n.d ) {
-          indent(o,d)
-          o.push(dstr(n.d))
+          o.push(' '+dstr(n.d))
 
           str.push( vs.join(', ')+' -> '+dstr(n.d))
         }
@@ -329,7 +343,15 @@
         }
         if( n.v ) {
           d++
-          for( var p in n.v ) {
+          var pa = _.keys(n.v)
+          var pal = _.filter(pa,function(x){ return !x.match(/[\*\?]/) })
+          var pas = _.filter(pa,function(x){ return x.match(/[\*\?]/) })
+          pal.sort()
+          pas.sort()
+          pa = pal.concat(pas)
+
+          for( var pi = 0; pi < pa.length; pi++ ) {
+            var p = pa[pi]
             o.push('\n')
             indent(o,d)
             o.push( p+' ->')
@@ -343,7 +365,7 @@
           if( n.s ) {
             o.push('\n')
             indent(o,d)
-            o.push( '* ->')
+            o.push( '|')
 
             vsc = _.clone(vs)
             walk(n.s,o,d+1,vsc)

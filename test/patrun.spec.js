@@ -24,7 +24,7 @@ describe('patrun', function(){
   it('toString', function() {
     var r = patrun()
     r.add({},'R')
-    expect(r.toString(true)).toBe('<R>')
+    expect(r.toString(true)).toBe(' <R>')
     expect(r.toString(false)).toBe(' -> <R>')
   })
 
@@ -96,15 +96,15 @@ describe('patrun', function(){
     r = patrun()
     r.add( {a:'1',b:'2'}, 'r1' )
     r.add( {a:'1',c:'3'}, 'r2' )
-    expect( rs(r) ).toBe( "a:1->b:2-><r1>*->c:3-><r2>")
+    expect( rs(r) ).toBe( "a:1->b:2-><r1>|c:3-><r2>")
 
     r.add( {a:'1',d:'4'}, 'r3' )
-    expect( rs(r) ).toBe( "a:1->b:2-><r1>*->c:3-><r2>*->d:4-><r3>")
+    expect( rs(r) ).toBe( "a:1->b:2-><r1>|c:3-><r2>|d:4-><r3>")
 
     r = patrun()
     r.add( {a:'1',c:'2'}, 'r1' )
     r.add( {a:'1',b:'3'}, 'r2' )
-    expect( rs(r) ).toBe( "a:1->b:3-><r2>*->c:2-><r1>")
+    expect( rs(r) ).toBe( "a:1->b:3-><r2>|c:2-><r1>")
 
     expect( JSON.stringify(r.list()) ).toBe('[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]')
   })
@@ -227,7 +227,7 @@ describe('patrun', function(){
     p.add( {c:3}, 'C' )
     p.add( {b:1,c:4}, 'D' )
 
-    expect( rs(p) ).toBe( "a:1-><A>b:2-><B>*->b:1->c:4-><D>*->c:3-><C>" )
+    expect( rs(p) ).toBe( "a:1-><A>b:2-><B>|b:1->c:4-><D>|c:3-><C>" )
     expect( ''+p ).toBe( "a=1 -> <A>\na=1, b=2 -> <B>\nb=1, c=4 -> <D>\nc=3 -> <C>" )
 
     expect( p.find({c:3}) ).toBe('C')
@@ -621,7 +621,7 @@ describe('patrun', function(){
   it('noConflict', function() {
     var r = patrun().noConflict()
     r.add({},'R')
-    expect(r.toString(true)).toBe('<R>')
+    expect(r.toString(true)).toBe(' <R>')
     expect(r.toString(false)).toBe(' -> <R>')
   })
 
@@ -675,6 +675,95 @@ describe('patrun', function(){
   })
 
 
+  it('add-mixed-gex', function(){
+    var p1 = patrun({gex:true})
+
+    p1.add({a:'*'},'XAS')
+    p1.add({a:'A'},'XA')
+
+    p1.add({b:'A'},'XB')
+    p1.add({b:'*'},'XBS')
+
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
+    expect( p1.find({a:'Q'}) ).toBe( 'XAS' )
+
+    expect( p1.find({b:'A'}) ).toBe( 'XB' )
+    expect( p1.find({b:'Q'}) ).toBe( 'XBS' )
+
+
+    p1.add({c:'B'},'XCB')
+    p1.add({c:'A'},'XCA')
+    p1.add({c:'*b'},'XCBe')
+    p1.add({c:'*a'},'XCAe')
+    p1.add({c:'b*'},'XCsB')
+    p1.add({c:'a*'},'XCsA')
+
+    expect( p1.find({c:'A'}) ).toBe( 'XCA' )
+    expect( p1.find({c:'B'}) ).toBe( 'XCB' )
+    expect( p1.find({c:'qb'}) ).toBe( 'XCBe' )
+    expect( p1.find({c:'qa'}) ).toBe( 'XCAe' )
+    expect( p1.find({c:'bq'}) ).toBe( 'XCsB' )
+    expect( p1.find({c:'aq'}) ).toBe( 'XCsA' )
+
+
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
+    expect( p1.find({a:'Q'}) ).toBe( 'XAS' )
+    expect( p1.find({b:'A'}) ).toBe( 'XB' )
+    expect( p1.find({b:'Q'}) ).toBe( 'XBS' )
+  })
+
+
+  it('add-order-gex', function(){
+    var p1 = patrun({gex:true})
+
+    p1.add({c:'A'},'XC')
+    p1.add({c:'*'},'XCS')
+
+    p1.add({a:'A'},'XA')
+    p1.add({a:'*'},'XAS')
+
+    p1.add({b:'A'},'XB')
+    p1.add({b:'*'},'XBS')
+
+    //console.log('\n'+require('util').inspect(p1.top,{depth:99}))
+    //console.log(p1.toString(true))
+
+    expect( p1.find({c:'A'}) ).toBe( 'XC' )
+    expect( p1.find({b:'A'}) ).toBe( 'XB' )
+    expect( p1.find({a:'A'}) ).toBe( 'XA' )
+
+    expect( p1.find({c:'Q'}) ).toBe( 'XCS' )
+    expect( p1.find({b:'Q'}) ).toBe( 'XBS' )
+    expect( p1.find({a:'Q'}) ).toBe( 'XAS' )
+  })
+
+
+  it('multi-gex', function(){
+    var p1 = patrun({gex:true})
+
+    p1.add({a:1,b:2},'Xa1b2')
+    p1.add({a:1,b:'*'},'Xa1b*')
+    p1.add({a:1,c:3},'Xa1c3')
+    p1.add({a:1,c:'*'},'Xa1c*')
+    p1.add({a:1,b:4,c:5},'Xa1b4c5')
+    p1.add({a:1,b:'*',c:5},'Xa1b*c5')
+    p1.add({a:1,b:4,c:'*'},'Xa1b4c*')
+    p1.add({a:1,b:'*',c:'*'},'Xa1b*c*')
+
+    //console.log(p1.toString(true))
+
+    expect( p1.find({a:1,b:2}) ).toBe( 'Xa1b2' )
+    expect( p1.find({a:1,b:0}) ).toBe( 'Xa1b*')
+    expect( p1.find({a:1,c:3}) ).toBe( 'Xa1c3')
+    expect( p1.find({a:1,c:0}) ).toBe( 'Xa1c*')
+    expect( p1.find({a:1,b:4,c:5}) ).toBe( 'Xa1b4c5')
+    expect( p1.find({a:1,b:0,c:5}) ).toBe( 'Xa1b*c5')
+    expect( p1.find({a:1,b:4,c:0}) ).toBe( 'Xa1b4c*')
+    expect( p1.find({a:1,b:0,c:0}) ).toBe( 'Xa1b*c*')
+
+  })
+
+
   it('remove-gex', function(){
     var p1 = patrun({gex:true})
 
@@ -687,7 +776,6 @@ describe('patrun', function(){
     expect( p1.find({b:'B'}) ).toBe( 'XB' )
     expect( p1.find({}) ).toBe( null )
     expect( p1.find({a:'A'}) ).toBe( 'XA' )
-
 
     p1.remove({b:'*'})
     expect( p1.find({b:'A'}) ).toBe( null )
