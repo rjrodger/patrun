@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "lodash": "3.10.0",
-    "gex": "0.2.1"
+    "gex": "0.2.2"
   },
   "devDependencies": {
     "serve": "1.4.0"

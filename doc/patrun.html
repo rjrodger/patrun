@@ -36,34 +36,27 @@
   <span class="hljs-comment">/* jshint node:true, asi:true, eqnull:true */</span>
 <span class="hljs-pi">  "use strict"</span>;
 
-  <span class="hljs-keyword">var</span> root           = <span class="hljs-keyword">this</span>
+  <span class="hljs-keyword">var</span> root            = <span class="hljs-keyword">this</span>
   <span class="hljs-keyword">var</span> previous_patrun = root.patrun
+  <span class="hljs-keyword">var</span> has_require     = <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">require</span> !== <span class="hljs-string">'undefined'</span>
 
-  <span class="hljs-keyword">var</span> has_require = <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">require</span> !== <span class="hljs-string">'undefined'</span>
 
-  <span class="hljs-keyword">var</span> _   = root._
-  <span class="hljs-keyword">var</span> gex = root.gex
+  <span class="hljs-keyword">var</span> _ = root._ || has_require &amp;&amp; <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
+  <span class="hljs-keyword">if</span>( !_ ) 
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'patrun requires underscore, see http://underscorejs.org'</span>)
 
-  <span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> _ === <span class="hljs-string">'undefined'</span> ) {
-    <span class="hljs-keyword">if</span>( has_require ) {
-      _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
-    }
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'patrun requires underscore, see http://underscorejs.org'</span>);
-  }
-
-  <span class="hljs-keyword">if</span>( <span class="hljs-keyword">typeof</span> gex === <span class="hljs-string">'undefined'</span> ) {
-    <span class="hljs-keyword">if</span>( has_require ) {
-      gex = <span class="hljs-built_in">require</span>(<span class="hljs-string">'gex'</span>)
-    }
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'patrun requires gex, see https://github.com/rjrodger/gex'</span>)
-  }
+  <span class="hljs-keyword">var</span> gex = root.gex || has_require &amp;&amp; <span class="hljs-built_in">require</span>(<span class="hljs-string">'gex'</span>)
+  <span class="hljs-keyword">if</span>( !gex ) 
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'patrun requires gex, see https://github.com/rjrodger/gex'</span>)
 
 
   <span class="hljs-keyword">var</span> patrun = root.patrun = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> custom </span>) </span>{
+    custom = custom || {}
+
     <span class="hljs-keyword">var</span> self = {}
+    <span class="hljs-keyword">var</span> top  = {}
 
-    <span class="hljs-keyword">var</span> top = {}
-
+    self.top = top
 
     self.noConflict = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
       root.patrun = previous_patrun;
@@ -74,8 +67,82 @@
     self.add = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> pat, data </span>) </span>{
       pat = _.clone(pat)
 
-      <span class="hljs-keyword">var</span> customizer
-      <span class="hljs-keyword">if</span>( custom ) {</pre></div></div>
+      <span class="hljs-keyword">var</span> customizer = _.isFunction(custom) ? custom.call(self,pat,data) : <span class="hljs-literal">null</span>
+
+
+      <span class="hljs-keyword">var</span> keys = _.keys(pat), plains = [], gexers = []
+      
+      keys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>)</span>{
+        <span class="hljs-keyword">var</span> val = pat[key]
+        <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> == val ) <span class="hljs-keyword">return</span>;
+
+        val = <span class="hljs-built_in">String</span>(val)
+        pat[key] = val;
+
+        (( custom.gex &amp;&amp; val.match(<span class="hljs-regexp">/[\*\?]/</span>) ) ? gexers : plains ).push(key)
+      })
+
+      plains = plains.sort()
+      gexers = gexers.sort()
+
+      keys = plains.concat(gexers)
+
+
+      <span class="hljs-keyword">var</span> keymap = top, valmap
+      <span class="hljs-keyword">var</span> patstr = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>).inspect(pat)
+
+      <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; keys.length; i++ ) {
+        <span class="hljs-keyword">var</span> key = keys[i]
+        <span class="hljs-keyword">var</span> val = pat[key]
+
+        <span class="hljs-keyword">var</span> gexer = ( custom.gex &amp;&amp; val.match(<span class="hljs-regexp">/[\*\?]/</span>) ) ? gex(val) : <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">if</span>( gexer ) gexer.val$ = val
+
+        <span class="hljs-keyword">var</span> sort_prefix = (gexer?<span class="hljs-string">'1'</span>:<span class="hljs-string">'0'</span>)+<span class="hljs-string">'~'</span>
+        <span class="hljs-keyword">var</span> sort_key = sort_prefix+key
+
+        valmap = keymap.v
+
+        <span class="hljs-keyword">if</span>( valmap &amp;&amp; sort_key == keymap.sk ) {
+          add_gexer( keymap, key, gexer )
+          keymap = valmap[val] || (valmap[val]={})
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( !keymap.k ) {
+          add_gexer( keymap, key, gexer )
+          keymap.k = key
+          keymap.sk = sort_key
+          keymap.v = {}
+          keymap = keymap.v[val] = {}
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( sort_key &lt; keymap.sk ) {
+          <span class="hljs-keyword">var</span> s = keymap.s, g = keymap.g
+          keymap.s = {k:keymap.k,sk:keymap.sk,v:keymap.v}
+          <span class="hljs-keyword">if</span>( s ) keymap.s.s = s
+          <span class="hljs-keyword">if</span>( g ) keymap.s.g = g
+
+          <span class="hljs-keyword">if</span>( keymap.g ) keymap.g = {}
+          add_gexer( keymap, key, gexer )
+
+          keymap.k = key
+          keymap.sk = sort_key
+          keymap.v = {}
+
+          keymap = keymap.v[val] = {}
+        }
+        <span class="hljs-keyword">else</span> {
+          valmap = keymap.v
+          keymap = keymap.s || (keymap.s = {})
+          i--
+        }
+      }
+
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== data &amp;&amp; keymap ) {
+        keymap.d = data
+        <span class="hljs-keyword">if</span>( customizer ) { 
+          keymap.f = _.isFunction(customizer) ? customizer : customizer.find
+          keymap.r = _.isFunction(customizer.remove) ? customizer.remove : <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>
+        }
+      }</pre></div></div>
             
         </li>
         
@@ -86,62 +153,24 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>can modify pat</p>
+              <p>console.log(require(‘util’).inspect(top,{depth:null}))</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        customizer = custom.call(self,pat,data)
-      }
-
-      <span class="hljs-keyword">var</span> keys = _.keys(pat).sort()
-
-      <span class="hljs-keyword">var</span> keymap = top
-      <span class="hljs-keyword">var</span> valmap
-
-      <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; keys.length; i++ ) {
-        <span class="hljs-keyword">var</span> key = keys[i]
-        <span class="hljs-keyword">var</span> val = pat[key]
-        
-        <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> === val || <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> === val ) <span class="hljs-keyword">continue</span>;
-
-        valmap = keymap.v
-        <span class="hljs-keyword">if</span>( valmap &amp;&amp; key == keymap.k) {
-          keymap = valmap[val] || (valmap[val]={})
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( !keymap.k ) {
-          keymap.k = key
-
-          keymap.v = {}
-
-          keymap = keymap.v[val] = {}
-        }
-        <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">if</span>( key &lt; keymap.k ) {
-            <span class="hljs-keyword">var</span> curv = keymap.v
-            <span class="hljs-keyword">var</span> curs   = keymap.s
-            keymap.v = {}
-            keymap.s = {k:keymap.k,v:curv,s:curs}
-
-            keymap.k = key
-            keymap = keymap.v[val] = {}
-          }
-          <span class="hljs-keyword">else</span> {
-            valmap = keymap.v
-            keymap = keymap.s || (keymap.s = {})
-            i--
-          }
-        }
-      }
-
-      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== data &amp;&amp; keymap ) {
-        keymap.d = data
-        <span class="hljs-keyword">if</span>( customizer ) { 
-          keymap.f = _.isFunction(customizer) ? customizer : customizer.find
-          keymap.r = _.isFunction(customizer.remove) ? customizer.remove : <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>
-        }
-      }
-      
+            <div class="content"><div class='highlight'><pre>      
       <span class="hljs-keyword">return</span> self
+    }
+
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add_gexer</span>(<span class="hljs-params"> keymap, key, gexer </span>) </span>{
+      <span class="hljs-keyword">if</span>( !gexer ) <span class="hljs-keyword">return</span>;
+
+      <span class="hljs-keyword">var</span> g = keymap.g = keymap.g || {}
+      <span class="hljs-keyword">var</span> ga = g[key] = g[key] || []
+      ga.push( gexer )
+      ga.sort( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a,b</span>) </span>{
+        <span class="hljs-keyword">return</span> a.val$ &lt; b.val$
+      })
     }
 
 
@@ -165,7 +194,19 @@
         key = keymap.k
 
         <span class="hljs-keyword">if</span>( keymap.v ) {
-          <span class="hljs-keyword">var</span> nextkeymap = keymap.v[pat[key]]
+          <span class="hljs-keyword">var</span> val = pat[key]
+          <span class="hljs-keyword">var</span> nextkeymap = keymap.v[val]
+
+          <span class="hljs-keyword">if</span>( !nextkeymap &amp;&amp; custom.gex &amp;&amp; keymap.g &amp;&amp; keymap.g[key] ) {
+            <span class="hljs-keyword">var</span> ga = keymap.g[key]
+            <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> gi = <span class="hljs-number">0</span>; gi &lt; ga.length; gi++ ) {
+              <span class="hljs-keyword">if</span>( <span class="hljs-literal">null</span> != ga[gi].on(val) ) {
+                nextkeymap = keymap.v[ga[gi].val$]
+                <span class="hljs-keyword">break</span>;
+              }
+            }
+          }
+
           <span class="hljs-keyword">if</span>( nextkeymap ) {
             foundkeys[key]=<span class="hljs-literal">true</span>
 
@@ -285,7 +326,7 @@
                 acc.push({
                   match:valitermatch,
                   data:nextkeymap.d,
-                  find:nextkeymap.f
+                  find:nextkeymap.f,
                 })
               }
 
@@ -316,7 +357,7 @@
         acc.push({
           match:{},
           data:top.d,
-          find:top.f
+          find:top.f,
         })
       }
 
@@ -346,8 +387,7 @@
         <span class="hljs-keyword">var</span> vsc
 
         <span class="hljs-keyword">if</span>( <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> !== n.d ) {
-          indent(o,d)
-          o.push(dstr(n.d))
+          o.push(<span class="hljs-string">' '</span>+dstr(n.d))
 
           str.push( vs.join(<span class="hljs-string">', '</span>)+<span class="hljs-string">' -&gt; '</span>+dstr(n.d))
         }
@@ -358,7 +398,15 @@
         }
         <span class="hljs-keyword">if</span>( n.v ) {
           d++
-          <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> p <span class="hljs-keyword">in</span> n.v ) {
+          <span class="hljs-keyword">var</span> pa = _.keys(n.v)
+          <span class="hljs-keyword">var</span> pal = _.filter(pa,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>)</span>{ <span class="hljs-keyword">return</span> !x.match(<span class="hljs-regexp">/[\*\?]/</span>) })
+          <span class="hljs-keyword">var</span> pas = _.filter(pa,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>)</span>{ <span class="hljs-keyword">return</span> x.match(<span class="hljs-regexp">/[\*\?]/</span>) })
+          pal.sort()
+          pas.sort()
+          pa = pal.concat(pas)
+
+          <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> pi = <span class="hljs-number">0</span>; pi &lt; pa.length; pi++ ) {
+            <span class="hljs-keyword">var</span> p = pa[pi]
             o.push(<span class="hljs-string">'\n'</span>)
             indent(o,d)
             o.push( p+<span class="hljs-string">' -&gt;'</span>)
@@ -372,7 +420,7 @@
           <span class="hljs-keyword">if</span>( n.s ) {
             o.push(<span class="hljs-string">'\n'</span>)
             indent(o,d)
-            o.push( <span class="hljs-string">'* -&gt;'</span>)
+            o.push( <span class="hljs-string">'|'</span>)
 
             vsc = _.clone(vs)
             walk(n.s,o,d+<span class="hljs-number">1</span>,vsc)

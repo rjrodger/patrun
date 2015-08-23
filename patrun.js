@@ -56,7 +56,6 @@
 
 
       var keymap = top, valmap
-      var patstr = require('util').inspect(pat)
 
       for( var i = 0; i < keys.length; i++ ) {
         var key = keys[i]
@@ -111,8 +110,6 @@
         }
       }
 
-      //console.log(require('util').inspect(top,{depth:null}))
-      
       return self
     }
 
