@@ -35,7 +35,7 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.4.4
+Current Version: 0.5.0
 
 Tested on: node 0.10, 0.11, 0.12, iojs, Chrome 43, Safari 7, Firefox 38
 
@@ -218,6 +218,35 @@ Then you'll get the following results
    * `a:0,b:1` -> `'AB'` as more specific than `a:0`
    * `a:0,c:2` -> `'A'` as `a` comes before `c`
    * `b:1,c:2` -> `'B'` as `b` comes before `c`
+
+
+# Glob matching
+
+You can also have glob matching using
+[gex](https://github.com/rjrodger/gex). Create a new patrun instance
+with:
+
+`js
+var glob_patterns = patrun({gex:true})
+`
+
+This extends the rules with glob matching:
+
+   * `a:0` -> `'A'`
+   * `a:*` -> `'AA'`
+   * `b:1,c:x*y` -> `'BC'`
+
+So that you can do this:
+
+   * `a:0` -> `'A'` as exact match
+   * `a:1` -> `'AA'` as glob match `a:*`
+   * `b:1,c:xhy` -> `'BC'` as exact `b:1` and glob `c:x*y`
+
+As always, more specific matches win, and matches are disambiguated
+using alphanumeric sorting, so it doesn't matter what order you add
+them. Exact matches are considered more specific than globs. See the
+tests for an [example
+(multi-gex)](https://github.com/rjrodger/patrun/blob/master/test/patrun.spec.js#L741).
 
 
 # Customization
