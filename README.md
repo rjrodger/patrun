@@ -1,6 +1,10 @@
 # patrun
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rjrodger/patrun?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm version][npm-badge]][npm-url]
+[![Build Status][travis-badge]][travis-url]
+[![Coverage Status][coveralls-badge]][coveralls-url]
+[![Dependency Status][david-badge]][david-url]
+[![Gitter chat][gitter-badge]][gitter-url]
 
 ### A fast pattern matcher on JavaScript object properties.
 
@@ -37,11 +41,7 @@ This module works on both Node.js and browsers.
 
 Current Version: 0.5.0
 
-Tested on: node 0.10, 0.11, 0.12, iojs, Chrome 43, Safari 7, Firefox 38
-
-[![Build Status](https://travis-ci.org/rjrodger/patrun.png?branch=master)](https://travis-ci.org/rjrodger/patrun)
-
-
+Tested on: node 0.10, 0.11, 0.12, iojs,4, 5, Chrome 43, Safari 7, Firefox 38
 
 ### Quick example
 
@@ -397,3 +397,15 @@ Generate JSON representation of the tree.
 From the Irish patr&uacute;n: [pattern](http://www.focloir.ie/en/dictionary/ei/pattern). Pronounced _pah-troon_.
 
 sudo npm install phantomjs@1.9.1-0 uglify-js -g
+
+
+[npm-badge]: https://badge.fury.io/js/patrun.svg
+[npm-url]: https://badge.fury.io/js/patrun
+[travis-badge]: https://api.travis-ci.org/rjrodger/patrun.svg
+[travis-url]: https://travis-ci.org/rjrodger/patrun
+[coveralls-badge]:https://coveralls.io/repos/rjrodger/patrun/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/rjrodger/patrun?branch=master
+[david-badge]: https://david-dm.org/rjrodger/patrun.svg
+[david-url]: https://david-dm.org/rjrodger/patrun
+[gitter-badge]: https://badges.gitter.im/rjrodger/patrun.svg
+[gitter-url]: https://gitter.im/rjrodger/seneca
