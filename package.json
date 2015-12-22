@@ -33,7 +33,10 @@
   },
   "devDependencies": {
     "code": "^2.0.1",
+    "docco": "^0.7.0",
+    "jshint": "^2.8.0",
     "lab": "^8.0.0",
-    "serve": "1.4.0"
+    "serve": "1.4.0",
+    "uglify-js": "^2.6.1"
   }
 }
