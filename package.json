@@ -18,6 +18,7 @@
   "version": "0.5.0",
   "scripts": {
     "test": "lab test/*.spec.js",
+    "coverage": "lab -s test/*.spec.js -r lcov | coveralls",
     "build": "./build.sh"
   },
   "license": "MIT",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "code": "^2.0.1",
+    "coveralls": "^2.11.6",
     "docco": "^0.7.0",
     "jshint": "^2.8.0",
     "lab": "^8.0.0",
