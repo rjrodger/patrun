@@ -1,8 +1,6 @@
 /* Copyright (c) 2013-2014 Richard Rodger, MIT License */
 "use strict";
 
-
-
 var util = require('util')
 
 
@@ -11,8 +9,6 @@ var assert = require('assert')
 
 
 var patrun = require('..')
-
-
 
 
 var p0 = patrun()
