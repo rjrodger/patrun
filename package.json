@@ -28,16 +28,19 @@
     "patrun-min.map",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "dependencies": {
     "lodash": "3.10.0",
     "gex": "0.2.2"
   },
   "devDependencies": {
-    "code": "^2.0.1",
+    "code": "^1.5.0",
     "coveralls": "^2.11.6",
     "docco": "^0.7.0",
     "jshint": "^2.8.0",
-    "lab": "^8.0.0",
+    "lab": "^6.2.0",
     "serve": "1.4.0",
     "uglify-js": "^2.6.1"
   }
