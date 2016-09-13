@@ -29,10 +29,11 @@
     "LICENSE"
   ],
   "dependencies": {
-    "lodash": "3.10.0",
+    "lodash": "4.15.0",
     "gex": "0.2.2"
   },
   "devDependencies": {
+    "jasmine-node": "1.14.5",
     "serve": "1.4.0"
   }
 }
