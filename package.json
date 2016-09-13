@@ -17,7 +17,8 @@
   "main": "patrun.js",
   "version": "0.5.0",
   "scripts": {
-    "test": "./test.sh",
+    "test": "jasmine-node test",
+    "browser-test": "./test.sh",
     "build": "./build.sh"
   },
   "license": "MIT",
