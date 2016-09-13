@@ -35,10 +35,6 @@ If you're using this library, feel free to contact me on twitter if you have any
 
 This module works on both Node.js and browsers.
 
-Current Version: 0.5.0
-
-Tested on: node 0.10, 0.11, 0.12, iojs, Chrome 43, Safari 7, Firefox 38
-
 [![Build Status](https://travis-ci.org/rjrodger/patrun.png?branch=master)](https://travis-ci.org/rjrodger/patrun)
 
 
