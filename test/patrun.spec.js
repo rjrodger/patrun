@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2014 Richard Rodger, MIT License */
+/* Copyright (c) 2013-2016 Richard Rodger, MIT License */
 "use strict";
 
 
@@ -57,14 +57,36 @@ describe('patrun', function(){
     expect( JSON.stringify(r.list()) ).toBe('[{"match":{},"data":"R"}]')
 
     expect( r.find({}) ).toBe( "R" )
+    expect( r.find({}, true) ).toBe( "R" )
     expect( r.find({x:1}) ).toBe( "R" )
+    expect( r.find({x:1}, true) ).toBe( null )
 
     r.add( {a:'1'}, 'r1' )
     expect( ''+r ).toBe( " -> <R>\na=1 -> <r1>" )
     expect( rs(r) ).toBe( "<R>a:1-><r1>")
 
+    expect( r.find({x:1}) ).toBe( "R" )
+    expect( r.find({a:1}) ).toBe( "r1" )
+    expect( r.find({a:2}) ).toBe( "R" )
+
+    r.add( {a:'1', b:'1'}, 'r2' )
+    expect( r.find({x:1}) ).toBe( "R" )
+    expect( r.find({a:1}) ).toBe( "r1" )
+    expect( r.find({a:1,b:1}) ).toBe( "r2" )
+    expect( r.find({a:2}) ).toBe( "R" )
+    expect( r.find({a:1,b:2}) ).toBe( "r1" ) // a:1 is defined
+    expect( r.find({a:1,b:2}, true) ).toBe( null )  // exact must be ... exact
+    expect( r.find({a:2,b:2}) ).toBe( "R" )
+    expect( r.find({b:2}) ).toBe( "R" )
+
+
+    r.add( {x:'1', y:'1'}, 'r3' )
+    expect( r.find({x:1}) ).toBe( "R" )
+
+    expect( r.find({x:1}, true) ).toBe( null )
+
     expect( JSON.stringify(r.list()) ).toBe(
-      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"}]')
+      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"},{"match":{"a":"1","b":"1"},"data":"r2"},{"match":{"x":"1","y":"1"},"data":"r3"}]')
   })
 
 

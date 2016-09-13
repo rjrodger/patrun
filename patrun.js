@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+/* Copyright (c) 2013-2016 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
 ;(function() {
   /* jshint node:true, asi:true, eqnull:true */
@@ -117,8 +117,8 @@
     function add_gexer( keymap, key, gexer ) {
       if( !gexer ) return;
 
-      var g = keymap.g = keymap.g || {}
-      var ga = g[key] = g[key] || []
+      var g = (keymap.g = keymap.g || {})
+      var ga = (g[key] = g[key] || [])
       ga.push( gexer )
       ga.sort( function(a,b) {
         return a.val$ < b.val$
@@ -184,8 +184,16 @@
       }
       while( keymap )
 
-      if( exact && _.keys(foundkeys).length != patlen ) {
-        data = null
+      if( exact ) {
+        if( _.keys(foundkeys).length !== patlen ) {
+          data = null
+        }
+      }
+      else {
+        // If there's root data, return as a catch all
+        if( null == data && void 0 !== top.d ) {
+          data = top.d
+        }
       }
 
       if( finalfind ) {
@@ -194,6 +202,7 @@
 
       return data
     }
+
 
 
 
