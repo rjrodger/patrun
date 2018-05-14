@@ -1,5 +1,6 @@
 {
   "name": "patrun",
+  "version": "0.5.1",
   "description": "A fast pattern matcher on JavaScript object properties.",
   "homepage": "https://github.com/rjrodger/patrun",
   "keywords": [
@@ -15,11 +16,10 @@
     "url": "git://github.com/rjrodger/patrun.git"
   },
   "main": "patrun.js",
-  "version": "0.5.1",
   "scripts": {
-    "test": "jasmine-node test",
-    "browser-test": "./test.sh",
-    "build": "./build.sh"
+    "test": "lab -v -P test -t 90 -I URL,URLSearchParams",
+    "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
+    "prettier": "prettier --write --no-semi --single-quote patrun.js lib/*.js test/*.js"
   },
   "license": "MIT",
   "files": [
@@ -28,12 +28,20 @@
     "patrun-min.map",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=4"
+  },
+  "contributors": [
+    "Adrien Becchis (https://github.com/AdrieanKhisbe)"
+  ],
   "dependencies": {
-    "lodash": "4.15.0",
-    "gex": "0.2.2"
+    "lodash": "4.17",
+    "gex": "0.3"
   },
   "devDependencies": {
-    "jasmine-node": "1.14.5",
-    "serve": "1.4.0"
+    "serve": "6",
+    "code": "4",
+    "coveralls": "3",
+    "lab": "14"
   }
 }
