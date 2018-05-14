@@ -12,6 +12,9 @@ install:
   - node_version=$(node -v); if [ ${node_version:1:2} -ge 10 ]; then npm i -g npm@6; npm ci; else npm install; fi
 
 
-after_script:
+script:
+  - npm test
   - node_version=$(node -v); if [ ${node_version:1:2} -ge 10 ]; then npm audit; fi
+
+after_script:
   - npm run coveralls
