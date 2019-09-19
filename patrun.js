@@ -21,6 +21,11 @@
     var self = {}
     var top = {}
 
+    // Provide internal search order structure
+    self.top = function() {
+      return top
+    }
+    
     self.noConflict = function() {
       root.patrun = previous_patrun
       return self
@@ -29,6 +34,8 @@
     self.add = function(pat, data) {
       pat = _.clone(pat)
 
+      var PS = JSON.stringify(pat).replace(/ /g,'')
+      
       var customizer = _.isFunction(custom)
         ? custom.call(self, pat, data)
         : null
@@ -49,7 +56,11 @@
 
       keys = plains.concat(gexers)
 
-      var keymap = top, valmap
+      var keymap = top
+      var valmap
+
+      // Partial matches return next wider match - see partial-match test
+      //var last_data
 
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i]
@@ -64,15 +75,24 @@
         valmap = keymap.v
 
         if (valmap && sort_key == keymap.sk) {
+          // console.log('ADD A', PS, sort_key, keymap.d)
+          //last_data = null == keymap.d ? last_data : keymap.d
           add_gexer(keymap, key, gexer)
           keymap = valmap[val] || (valmap[val] = {})
-        } else if (!keymap.k) {
+
+        }
+        else if (!keymap.k) {
+          // console.log('ADD B', PS, sort_key, keymap.d)
+          //last_data = null == keymap.d ? last_data : keymap.d
           add_gexer(keymap, key, gexer)
           keymap.k = key
           keymap.sk = sort_key
           keymap.v = {}
+          // keymap.d = null == keymap.d ? last_data : keymap.d
           keymap = keymap.v[val] = {}
-        } else if (sort_key < keymap.sk) {
+        }
+        else if (sort_key < keymap.sk) {
+          // console.log('ADD C', PS, sort_key, keymap.d)
           var s = keymap.s, g = keymap.g
           keymap.s = { k: keymap.k, sk: keymap.sk, v: keymap.v }
           if (s) keymap.s.s = s
@@ -86,7 +106,10 @@
           keymap.v = {}
 
           keymap = keymap.v[val] = {}
-        } else {
+
+        }
+        else {
+          // console.log('ADD D', PS, sort_key, keymap.d)
           valmap = keymap.v
           keymap = keymap.s || (keymap.s = {})
           i--
@@ -156,10 +179,16 @@
               stars.push(keymap.s)
             }
 
-            data = void 0 === nextkeymap.d ? null : nextkeymap.d
+            data = void 0 === nextkeymap.d ? (exact ? null : data) : nextkeymap.d
+            //data = void 0 === nextkeymap.d ? null : nextkeymap.d
+
             finalfind = nextkeymap.f
             keymap = nextkeymap
           } else {
+
+            // last data
+            // data = (exact || void 0 === keymap.d) ? data : keymap.d
+
             keymap = keymap.s
           }
         } else {

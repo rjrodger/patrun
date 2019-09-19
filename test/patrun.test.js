@@ -682,6 +682,93 @@ describe('patrun', function() {
     done()
   })
 
+
+  it('partial-match', function(done) {
+    var p1 = patrun()
+    p1.add({ a: 0 }, 'P')
+    p1.add({ a:0, b: 1, c: 2 }, 'Q')
+    
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+
+    p1.add({ a: 0, d: 3 }, 'S')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+
+    p1.add({ a:0, b: 1, c: 2, e: 4, f: 5 }, 'T')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.add({ a:0, b: 1 }, 'M')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('M')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.add({ a: 0, b: 1, c: 2, e: 4 }, 'N')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('M')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('N')
+
+    done()
+  })
+
+
+    it('partial-match-remove', function(done) {
+    var p1 = patrun()
+    p1.add({ a: 0 }, 'P')
+    p1.add({ a:0, b: 1, c: 2 }, 'Q')
+    
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+
+    p1.add({ a: 0, d: 3 }, 'S')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+
+    p1.add({ a:0, b: 1, c: 2, e: 4, f: 5 }, 'T')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.remove({a: 0})
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal(null)
+    expect(p1.find({ a: 0 })).to.equal(null)
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.remove({ a:0, b: 1, c: 2 })
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal(null)
+    expect(p1.find({ a: 0, b: 1 })).to.equal(null)
+    expect(p1.find({ a: 0 })).to.equal(null)
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal(null)
+      
+    done()
+  })
+
+  
   it('noConflict', function(done) {
     var r = patrun().noConflict()
     r.add({}, 'R')
