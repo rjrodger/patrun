@@ -1,6 +1,6 @@
 {
   "name": "patrun",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A fast pattern matcher on JavaScript object properties.",
   "homepage": "https://github.com/rjrodger/patrun",
   "keywords": [
@@ -20,12 +20,13 @@
     "test": "lab -v -P test -t 90",
     "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
     "prettier": "prettier --write --no-semi --single-quote patrun.js lib/*.js test/*.js"
+    "clean": "rm -rf node_modules yarn.lock package-lock.json",
+    "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
+    "repo-publish": "npm run prettier && npm test && npm run repo-tag && npm publish --registry http://registry.npmjs.org "
   },
   "license": "MIT",
   "files": [
     "patrun.js",
-    "patrun-min.js",
-    "patrun-min.map",
     "LICENSE"
   ],
   "engines": {
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@hapi/code": "^6.0.0",
     "@hapi/lab": "^20.2.2",
+    "benchmark": "^2.1.4",
     "coveralls": "^3.0.6",
     "prettier": "^1.18.2",
     "serve": "^11.1.0"

@@ -2,11 +2,9 @@ language: node_js
 sudo: false
 
 node_js:
+  - '11'
   - '10'
   - '8'
-  - '6'
-  - '4'
-
 
 install:
   - node_version=$(node -v); if [ ${node_version:1:2} -ge 10 ]; then npm i -g npm@6; npm ci; else npm install; fi
