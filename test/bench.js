@@ -26,12 +26,14 @@ for (var i = 0; i < 100; i++) {
   assert.equal(p0.find(p), k0[i])
 }
 
-var I = 300, J = 1000
+var I = 300,
+  J = 1000
 
 var bs = Date.now()
 
 var p1 = patrun()
-var k1x = [], k1y = []
+var k1x = [],
+  k1y = []
 for (var i = 0; i < I; i++) {
   k1x[i] = 'x' + i
 }
@@ -79,13 +81,11 @@ function run0() {
     })
   }
 
-  s0
-    .on('cycle', function(event) {
-      console.log(
-        event.target.toString() + ':' + util.inspect(process.memoryUsage())
-      )
-    })
-    .run({ maxTime: 2 })
+  s0.on('cycle', function(event) {
+    console.log(
+      event.target.toString() + ':' + util.inspect(process.memoryUsage())
+    )
+  }).run({ maxTime: 2 })
 }
 
 function run1() {
@@ -101,19 +101,18 @@ function run1() {
     i %= 100
   })
 
-  s1
-    .on('cycle', function(event) {
-      console.log(
-        event.target.toString() + ':' + util.inspect(process.memoryUsage())
-      )
-    })
-    .run({ maxTime: 20 })
+  s1.on('cycle', function(event) {
+    console.log(
+      event.target.toString() + ':' + util.inspect(process.memoryUsage())
+    )
+  }).run({ maxTime: 20 })
 }
 
 function run2() {
   var s2 = new Benchmark.Suite()
 
-  var ij = [], ijmax = []
+  var ij = [],
+    ijmax = []
 
   for (var k = 1; k <= 10; k++) {
     for (var l = 1; l <= 10; l++) {
@@ -126,7 +125,9 @@ function run2() {
         'd2-find ' + ijmax[w][0] + ',' + ijmax[w][1],
         (function(w, imax, jmax) {
           return function() {
-            var p = {}, i = ij[w][0], j = ij[w][1]
+            var p = {},
+              i = ij[w][0],
+              j = ij[w][1]
             p[k1x[i]] = k1x[i]
             p[k1y[j]] = k1y[j]
             p0.find(p)
@@ -144,13 +145,11 @@ function run2() {
     }
   }
 
-  s2
-    .on('cycle', function(event) {
-      console.log(
-        event.target.toString() + ':' + util.inspect(process.memoryUsage())
-      )
-    })
-    .run({ maxTime: 2 })
+  s2.on('cycle', function(event) {
+    console.log(
+      event.target.toString() + ':' + util.inspect(process.memoryUsage())
+    )
+  }).run({ maxTime: 2 })
 }
 
 run2()

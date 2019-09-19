@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2016 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+/* Copyright (c) 2013-2019 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
 ;(function() {
   /* jshint node:true, asi:true, eqnull:true */
@@ -25,22 +25,23 @@
     self.top = function() {
       return top
     }
-    
+
     self.noConflict = function() {
       root.patrun = previous_patrun
       return self
     }
 
     self.add = function(pat, data) {
-      pat = _.clone(pat)
+      pat = { ...pat }
 
-      var PS = JSON.stringify(pat).replace(/ /g,'')
-      
-      var customizer = _.isFunction(custom)
-        ? custom.call(self, pat, data)
-        : null
+      var PS = JSON.stringify(pat).replace(/ /g, '')
 
-      var keys = _.keys(pat), plains = [], gexers = []
+      var customizer =
+        'function' === typeof custom ? custom.call(self, pat, data) : null
+
+      var keys = Object.keys(pat)
+      var plains = []
+      var gexers = []
 
       keys.forEach(function(key) {
         var val = pat[key]
@@ -79,9 +80,7 @@
           //last_data = null == keymap.d ? last_data : keymap.d
           add_gexer(keymap, key, gexer)
           keymap = valmap[val] || (valmap[val] = {})
-
-        }
-        else if (!keymap.k) {
+        } else if (!keymap.k) {
           // console.log('ADD B', PS, sort_key, keymap.d)
           //last_data = null == keymap.d ? last_data : keymap.d
           add_gexer(keymap, key, gexer)
@@ -90,10 +89,10 @@
           keymap.v = {}
           // keymap.d = null == keymap.d ? last_data : keymap.d
           keymap = keymap.v[val] = {}
-        }
-        else if (sort_key < keymap.sk) {
+        } else if (sort_key < keymap.sk) {
           // console.log('ADD C', PS, sort_key, keymap.d)
-          var s = keymap.s, g = keymap.g
+          var s = keymap.s,
+            g = keymap.g
           keymap.s = { k: keymap.k, sk: keymap.sk, v: keymap.v }
           if (s) keymap.s.s = s
           if (g) keymap.s.g = g
@@ -106,9 +105,7 @@
           keymap.v = {}
 
           keymap = keymap.v[val] = {}
-
-        }
-        else {
+        } else {
           // console.log('ADD D', PS, sort_key, keymap.d)
           valmap = keymap.v
           keymap = keymap.s || (keymap.s = {})
@@ -119,10 +116,10 @@
       if (void 0 !== data && keymap) {
         keymap.d = data
         if (customizer) {
-          keymap.f = _.isFunction(customizer) ? customizer : customizer.find
-          keymap.r = _.isFunction(customizer.remove)
-            ? customizer.remove
-            : void 0
+          keymap.f =
+            'function' === typeof customizer ? customizer : customizer.find
+          keymap.r =
+            'function' === typeof customizer.remove ? customizer.remove : void 0
         }
       }
 
@@ -153,7 +150,7 @@
       var key = null
       var stars = []
       var foundkeys = {}
-      var patlen = _.keys(pat).length
+      var patlen = Object.keys(pat).length
 
       do {
         key = keymap.k
@@ -179,13 +176,13 @@
               stars.push(keymap.s)
             }
 
-            data = void 0 === nextkeymap.d ? (exact ? null : data) : nextkeymap.d
+            data =
+              void 0 === nextkeymap.d ? (exact ? null : data) : nextkeymap.d
             //data = void 0 === nextkeymap.d ? null : nextkeymap.d
 
             finalfind = nextkeymap.f
             keymap = nextkeymap
           } else {
-
             // last data
             // data = (exact || void 0 === keymap.d) ? data : keymap.d
 
@@ -201,7 +198,7 @@
       } while (keymap)
 
       if (exact) {
-        if (_.keys(foundkeys).length !== patlen) {
+        if (Object.keys(foundkeys).length !== patlen) {
           data = null
         }
       } else {
@@ -258,24 +255,24 @@
         if (keymap.v) {
           var key = keymap.k
           var gexval = gex(
-            pat ? null == pat[key] ? exact ? null : '*' : pat[key] : '*'
+            pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*'
           )
-          var itermatch = _.extend({}, match)
-          var itermissing = _.extend({}, missing)
+          var itermatch = { ...match }
+          var itermissing = { ...missing }
           var nextkeymap
 
           for (var val in keymap.v) {
             if (gexval.on(val)) {
-              var valitermatch = _.clone(itermatch)
+              var valitermatch = { ...itermatch }
               valitermatch[key] = val
 
-              var valitermissing = _.extend({}, itermissing)
+              var valitermissing = { ...itermissing }
               delete valitermissing[key]
 
               nextkeymap = keymap.v[val]
 
               if (
-                0 === _.keys(valitermissing).length &&
+                0 === Object.keys(valitermissing).length &&
                 nextkeymap &&
                 nextkeymap.d
               ) {
@@ -289,8 +286,8 @@
               if (nextkeymap && nextkeymap.v) {
                 descend(
                   nextkeymap,
-                  _.extend({}, valitermatch),
-                  _.extend({}, valitermissing),
+                  { ...valitermatch },
+                  { ...valitermissing },
                   acc
                 )
               }
@@ -299,12 +296,7 @@
 
           nextkeymap = keymap.s
           if (nextkeymap) {
-            descend(
-              nextkeymap,
-              _.extend({}, itermatch),
-              _.extend({}, itermissing),
-              acc
-            )
+            descend(nextkeymap, { ...itermatch }, { ...itermissing }, acc)
           }
         }
       }
@@ -319,18 +311,21 @@
         })
       }
 
-      descend(top, {}, _.extend({}, pat), acc)
+      descend(top, {}, { ...pat }, acc)
       return acc
     }
 
-    self.toString = function() {
-      var tree = _.isBoolean(arguments[0]) ? arguments[0] : !!arguments[1]
+    self.toString = function(first, second) {
+      var tree = true === first ? true : !!second
 
-      var dstr = _.isFunction(arguments[0])
-        ? arguments[0]
-        : function(d) {
-            return _.isFunction(d) ? '<' + d.name + '>' : '<' + d + '>'
-          }
+      var dstr =
+        'function' === typeof first
+          ? first
+          : function(d) {
+              return 'function' === typeof d
+                ? '<' + d.name + '>'
+                : '<' + d + '>'
+            }
 
       function indent(o, d) {
         for (var i = 0; i < d; i++) {
@@ -355,11 +350,11 @@
         }
         if (n.v) {
           d++
-          var pa = _.keys(n.v)
-          var pal = _.filter(pa, function(x) {
+          var pa = Object.keys(n.v)
+          var pal = pa.filter(function(x) {
             return !x.match(/[\*\?]/)
           })
-          var pas = _.filter(pa, function(x) {
+          var pas = pa.filter(function(x) {
             return x.match(/[\*\?]/)
           })
           pal.sort()
@@ -372,7 +367,7 @@
             indent(o, d)
             o.push(p + ' ->')
 
-            vsc = _.clone(vs)
+            vsc = vs.slice()
             vsc.push(n.k + '=' + p)
 
             walk(n.v[p], o, d + 1, vsc)
@@ -383,7 +378,7 @@
             indent(o, d)
             o.push('|')
 
-            vsc = _.clone(vs)
+            vsc = vs.slice()
             walk(n.s, o, d + 1, vsc)
           }
         }
@@ -400,7 +395,7 @@
       return JSON.stringify(
         top,
         function(key, val) {
-          if (_.isFunction(val)) return '[Function]'
+          if ('function' === typeof val) return '[Function]'
           return val
         },
         indent

@@ -1,6 +1,8 @@
 var patrun = require('..')
 
-var pm = patrun().add({ a: 1 }, 'A').add({ b: 2 }, 'B')
+var pm = patrun()
+  .add({ a: 1 }, 'A')
+  .add({ b: 2 }, 'B')
 
 // prints A
 console.log(pm.find({ a: 1 }))
@@ -31,7 +33,7 @@ var salestax = patrun()
 salestax
   .add({}, I(0.0))
   .add({ country: 'IE' }, I(0.25))
-  .add({ country: 'UK' }, I(0.20))
+  .add({ country: 'UK' }, I(0.2))
   .add({ country: 'DE' }, I(0.19))
   .add({ country: 'IE', type: 'reduced' }, I(0.135))
   .add({ country: 'IE', type: 'food' }, I(0.048))
@@ -39,7 +41,7 @@ salestax
   .add({ country: 'DE', type: 'reduced' }, I(0.07))
   .add({ country: 'US' }, I(0.0)) // no federeal rate (yet!)
   .add({ country: 'US', state: 'AL' }, I(0.04))
-  .add({ country: 'US', state: 'AL', city: 'Montgomery' }, I(0.10))
+  .add({ country: 'US', state: 'AL', city: 'Montgomery' }, I(0.1))
   .add({ country: 'US', state: 'NY' }, I(0.07))
   .add({ country: 'US', state: 'NY', type: 'reduced' }, function under110(net) {
     return net < 110 ? 0.0 : salestax.find({ country: 'US', state: 'NY' })
@@ -92,7 +94,9 @@ console.log(
   })
 )
 
-pm = patrun().add({ a: 1, b: 1 }, 'B1').add({ a: 1, b: 2 }, 'B2')
+pm = patrun()
+  .add({ a: 1, b: 1 }, 'B1')
+  .add({ a: 1, b: 2 }, 'B2')
 
 // finds:
 // [ { match: { a: '1', b: '1' }, data: 'B1' },

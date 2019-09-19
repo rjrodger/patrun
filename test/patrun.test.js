@@ -1,33 +1,59 @@
-/* Copyright (c) 2013-2018 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2013-2019 Richard Rodger and other contributors, MIT License */
 'use strict'
 
-var Lab = require('lab')
-var Code = require('code')
+var Lab = require('@hapi/lab')
+var Code = require('@hapi/code')
 
 var lab = (exports.lab = Lab.script())
 var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-var patrun = require('..')
-var _ = require('lodash')
-var gex = require('gex')
+var Patrun = require('..')
+var Gex = require('gex')
 
 function rs(x) {
-  return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')
+  return x
+    .toString(true)
+    .replace(/\s+/g, '')
+    .replace(/\n+/g, '')
 }
 
 describe('patrun', function() {
-  it('toString', function(done) {
-    var r = patrun()
+  it('toString', async () => {
+    var r = Patrun()
     r.add({}, 'R')
     expect(r.toString(true)).to.equal(' <R>')
     expect(r.toString(false)).to.equal(' -> <R>')
-    done()
+    expect(r.toString(d => 'D:' + d)).to.equal(' -> D:R')
+    expect(r.toString(d => 'D:' + d, true)).to.equal(' D:R')
+    expect(r.toString(d => 'D:' + d, false)).to.equal(' -> D:R')
+
+    r.add({ a: 1 }, 'S')
+    expect(r.toString(true)).to.equal(' <R>\na:\n 1 -> <S>')
+    expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>')
+    expect(r.toString(d => 'D:' + d)).to.equal(' -> D:R\na=1 -> D:S')
+    expect(r.toString(d => 'D:' + d, true)).to.equal(' D:R\na:\n 1 -> D:S')
+    expect(r.toString(d => 'D:' + d, false)).to.equal(' -> D:R\na=1 -> D:S')
+
+    r.add({ a: 1, b: 2 }, function foo() {})
+    expect(r.toString(true)).to.equal(
+      ' <R>\na:\n 1 -> <S>\n  b:\n   2 -> <foo>'
+    )
+    expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>\na=1, b=2 -> <foo>')
+    expect(r.toString(d => 'D:' + d)).to.equal(
+      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
+    )
+    expect(r.toString(d => 'D:' + d, true)).to.equal(
+      ' D:R\na:\n 1 -> D:S\n  b:\n   2 -> D:function foo() {}'
+    )
+    expect(r.toString(d => 'D:' + d, false)).to.equal(
+      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
+    )
   })
 
-  it('empty', function(done) {
-    var r = patrun()
+  it('empty', async () => {
+    var r = Patrun()
     expect(r.toString()).to.equal('')
 
     expect(r.find(NaN)).to.not.exist()
@@ -43,11 +69,10 @@ describe('patrun', function() {
     expect(r.find(null)).to.not.exist()
     expect(r.find({})).to.not.exist()
     expect(r.find({ a: 1 })).to.equal('A')
-    done()
   })
 
-  it('root-data', function(done) {
-    var r = patrun()
+  it('root-data', async () => {
+    var r = Patrun()
     r.add({}, 'R')
     expect('' + r).to.equal(' -> <R>')
     expect(rs(r)).to.equal('<R>')
@@ -82,14 +107,12 @@ describe('patrun', function() {
     expect(JSON.stringify(r.list())).equal(
       '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"},{"match":{"a":"1","b":"1"},"data":"r2"},{"match":{"x":"1","y":"1"},"data":"r3"}]'
     )
-
-    done()
   })
 
-  it('add', function(done) {
+  it('add', async () => {
     var r
 
-    r = patrun()
+    r = Patrun()
     r.add({ a: '1' }, 'r1')
     expect('' + r).to.equal('a=1 -> <r1>')
     expect(rs(r)).to.equal('a:1-><r1>')
@@ -98,21 +121,21 @@ describe('patrun', function() {
       '[{"match":{"a":"1"},"data":"r1"}]'
     )
 
-    r = patrun()
+    r = Patrun()
     r.add({ a: '1', b: '2' }, 'r1')
     expect(rs(r)).to.equal('a:1->b:2-><r1>')
 
-    r = patrun()
+    r = Patrun()
     r.add({ a: '1', b: '2', c: '3' }, 'r1')
     expect(rs(r)).to.equal('a:1->b:2->c:3-><r1>')
 
-    r = patrun()
+    r = Patrun()
     r.add({ a: '1', b: '2' }, 'r1')
     r.add({ a: '1', b: '3' }, 'r2')
     expect('' + r).to.equal('a=1, b=2 -> <r1>\na=1, b=3 -> <r2>')
     expect(rs(r)).to.equal('a:1->b:2-><r1>3-><r2>')
 
-    r = patrun()
+    r = Patrun()
     r.add({ a: '1', b: '2' }, 'r1')
     r.add({ a: '1', c: '3' }, 'r2')
     expect(rs(r)).to.equal('a:1->b:2-><r1>|c:3-><r2>')
@@ -120,7 +143,7 @@ describe('patrun', function() {
     r.add({ a: '1', d: '4' }, 'r3')
     expect(rs(r)).to.equal('a:1->b:2-><r1>|c:3-><r2>|d:4-><r3>')
 
-    r = patrun()
+    r = Patrun()
     r.add({ a: '1', c: '2' }, 'r1')
     r.add({ a: '1', b: '3' }, 'r2')
     expect(rs(r)).to.equal('a:1->b:3-><r2>|c:2-><r1>')
@@ -128,11 +151,10 @@ describe('patrun', function() {
     expect(JSON.stringify(r.list())).to.equal(
       '[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]'
     )
-    done()
   })
 
-  it('basic', function(done) {
-    var rt1 = patrun()
+  it('basic', async () => {
+    var rt1 = Patrun()
 
     rt1.add({ p1: 'v1' }, 'r1')
     expect('r1').to.equal(rt1.find({ p1: 'v1' }))
@@ -155,11 +177,10 @@ describe('patrun', function() {
     expect('r4').to.equal(rt1.find({ p1: 'v1', p3: 'v4' }))
     expect('r1x').to.equal(rt1.find({ p1: 'v1', p3: 'v5' }))
     expect(null).to.equal(rt1.find({ p2: 'v1' }))
-    done()
   })
 
-  it('culdesac', function(done) {
-    var rt1 = patrun()
+  it('culdesac', async () => {
+    var rt1 = Patrun()
 
     rt1.add({ p1: 'v1' }, 'r1')
     rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
@@ -167,32 +188,30 @@ describe('patrun', function() {
 
     expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }))
     expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
-    done()
-  }), it('remove', function(done) {
-    var rt1 = patrun()
-    rt1.remove({ p1: 'v1' })
+  }),
+    it('remove', async () => {
+      var rt1 = Patrun()
+      rt1.remove({ p1: 'v1' })
 
-    rt1.add({ p1: 'v1' }, 'r0')
-    expect('r0').to.equal(rt1.find({ p1: 'v1' }))
+      rt1.add({ p1: 'v1' }, 'r0')
+      expect('r0').to.equal(rt1.find({ p1: 'v1' }))
 
-    rt1.remove({ p1: 'v1' })
-    expect(null).to.equal(rt1.find({ p1: 'v1' }))
+      rt1.remove({ p1: 'v1' })
+      expect(null).to.equal(rt1.find({ p1: 'v1' }))
 
-    rt1.add({ p2: 'v2', p3: 'v3' }, 'r1')
-    rt1.add({ p2: 'v2', p4: 'v4' }, 'r2')
-    expect('r1').to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
-    expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
+      rt1.add({ p2: 'v2', p3: 'v3' }, 'r1')
+      rt1.add({ p2: 'v2', p4: 'v4' }, 'r2')
+      expect('r1').to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
+      expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
 
-    rt1.remove({ p2: 'v2', p3: 'v3' })
-    expect(null).to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
-    expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
-
-    done()
-  })
+      rt1.remove({ p2: 'v2', p3: 'v3' })
+      expect(null).to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
+      expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
+    })
 
   function listtest(mode) {
-    return function(done) {
-      var rt1 = patrun()
+    return async () => {
+      var rt1 = Patrun()
 
       if ('subvals' === mode) {
         rt1.add({ a: '1' }, 'x')
@@ -233,16 +252,14 @@ describe('patrun', function() {
         { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
         { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined }
       ])
-
-      done()
     }
   }
 
   it('list.topvals', listtest('topvals'))
   it('list.subvals', listtest('subvals'))
 
-  it('null-undef-nan', function(done) {
-    var rt1 = patrun()
+  it('null-undef-nan', async () => {
+    var rt1 = Patrun()
 
     rt1.add({ p1: null }, 'r1')
     expect('{"d":"r1"}').to.equal(rt1.toJSON())
@@ -254,12 +271,10 @@ describe('patrun', function() {
     expect('{"d":"r2","k":"p99","sk":"0~p99","v":{"v99":{"d":"r99"}}}').equal(
       rt1.toJSON()
     )
-
-    done()
   })
 
-  it('multi-star', function(done) {
-    var p = patrun()
+  it('multi-star', async () => {
+    var p = Patrun()
 
     p.add({ a: 1 }, 'A')
     p.add({ a: 1, b: 2 }, 'B')
@@ -274,11 +289,10 @@ describe('patrun', function() {
     expect(p.find({ c: 3 })).to.equal('C')
     expect(p.find({ c: 3, a: 0 })).to.equal('C')
     expect(p.find({ c: 3, a: 0, b: 0 })).to.equal('C')
-    done()
   })
 
-  it('star-backtrack', function(done) {
-    var p = patrun()
+  it('star-backtrack', async () => {
+    var p = Patrun()
 
     p.add({ a: 1, b: 2 }, 'X')
     p.add({ c: 3 }, 'Y')
@@ -302,11 +316,10 @@ describe('patrun', function() {
     expect('' + p).to.equal(
       'a=1, b=2 -> <X>\na=1, b=2, d=4 -> <XX>\nc=3 -> <Y>\nc=3, d=4 -> <YY>'
     )
-    done()
   })
 
-  it('remove-intermediate', function(done) {
-    var p = patrun()
+  it('remove-intermediate', async () => {
+    var p = Patrun()
 
     p.add({ a: 1, b: 2, d: 4 }, 'XX')
     p.add({ c: 3, d: 4 }, 'YY')
@@ -326,21 +339,19 @@ describe('patrun', function() {
     expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
     expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
     expect(p.find({ a: 1, b: 2 })).to.not.exist()
-    done()
   })
 
-  it('exact', function(done) {
-    var p = patrun()
+  it('exact', async () => {
+    var p = Patrun()
 
     p.add({ a: 1 }, 'X')
 
     expect(p.findexact({ a: 1 })).to.equal('X')
     expect(p.findexact({ a: 1, b: 2 })).to.not.exist()
-    done()
   })
 
-  it('all', function(done) {
-    var p = patrun()
+  it('all', async () => {
+    var p = Patrun()
 
     p.add({ a: 1 }, 'X')
     p.add({ b: 2 }, 'Y')
@@ -348,11 +359,10 @@ describe('patrun', function() {
     expect(JSON.stringify(p.list())).to.equal(
       '[{"match":{"a":"1"},"data":"X"},{"match":{"b":"2"},"data":"Y"}]'
     )
-    done()
   })
 
-  it('custom-happy', function(done) {
-    var p1 = patrun(function(pat) {
+  it('custom-happy', async () => {
+    var p1 = Patrun(function(pat) {
       pat.q = 9
     })
 
@@ -360,11 +370,10 @@ describe('patrun', function() {
 
     expect(p1.find({ a: 1 })).to.not.exist()
     expect(p1.find({ a: 1, q: 9 })).to.equal('Q')
-    done()
   })
 
-  it('custom-many', function(done) {
-    var p1 = patrun(function(pat, data) {
+  it('custom-many', async () => {
+    var p1 = Patrun(function(pat, data) {
       var items = this.find(pat, true) || []
       items.push(data)
 
@@ -402,17 +411,17 @@ describe('patrun', function() {
     expect(p1.list().length).to.equal(0)
     expect(p1.find({ b: 1 })).to.not.exist()
     expect(p1.find({ a: 1 })).to.not.exist()
-    done()
   })
 
-  it('custom-gex', function(done) {
+  it('custom-gex', async () => {
     // this custom function matches glob expressions
-    var p2 = patrun(function(pat, data) {
+    var p2 = Patrun(function(pat, data) {
       var gexers = {}
-      _.each(pat, function(v, k) {
-        if (_.isString(v) && ~v.indexOf('*')) {
+      Object.keys(pat).forEach(function(k) {
+        var v = pat[k]
+        if ('string' === typeof v && ~v.indexOf('*')) {
           delete pat[k]
-          gexers[k] = gex(v)
+          gexers[k] = Gex(v)
         }
       })
 
@@ -423,7 +432,8 @@ describe('patrun', function() {
 
       return function(args, data) {
         var out = data
-        _.each(gexers, function(g, k) {
+        Object.keys(gexers).forEach(function(k) {
+          var g = gexers[k]
           var v = null == args[k] ? '' : args[k]
           if (null == g.on(v)) {
             out = null
@@ -457,11 +467,10 @@ describe('patrun', function() {
     expect(p2.find({ w: 1 })).to.equal('W')
     expect(p2.find({ w: 1, q: 'x' })).to.equal('Q')
     expect(p2.find({ w: 1, q: 'y' })).to.equal('W')
-    done()
   })
 
-  it('find-exact', function(done) {
-    var p1 = patrun()
+  it('find-exact', async () => {
+    var p1 = Patrun()
     p1.add({ a: 1 }, 'A')
     p1.add({ a: 1, b: 2 }, 'B')
     p1.add({ a: 1, b: 2, c: 3 }, 'C')
@@ -482,12 +491,10 @@ describe('patrun', function() {
     expect(p1.find({ a: 1, b: 2, c: 3 }, true)).to.equal('C')
     expect(p1.find({ a: 1, b: 2, c: 3, d: 7 })).to.equal('C')
     expect(p1.find({ a: 1, b: 2, c: 3, d: 7 }, true)).to.equal(null)
-
-    done()
   })
 
-  it('list-any', function(done) {
-    var p1 = patrun()
+  it('list-any', async () => {
+    var p1 = Patrun()
     p1.add({ a: 1 }, 'A')
     p1.add({ a: 1, b: 2 }, 'B')
     p1.add({ a: 1, b: 2, c: 3 }, 'C')
@@ -575,11 +582,10 @@ describe('patrun', function() {
     expect(JSON.stringify(p1.list({ a: 1, c: '*' }, true))).to.equal(
       '[' + [mCC] + ']'
     )
-    done()
   })
 
-  it('top-custom', function(done) {
-    var p1 = patrun(function(pat, data) {
+  it('top-custom', async () => {
+    var p1 = Patrun(function(pat, data) {
       return function(args, data) {
         data += '!'
         return data
@@ -595,12 +601,10 @@ describe('patrun', function() {
     expect(p1.find({ a: 1 })).to.equal('A!')
     expect(p1.find({ a: 1, b: 2 })).to.equal('B!')
     expect(p1.find({ a: 1, b: 2, c: 3 })).to.equal('C!')
-
-    done()
   })
 
-  it('mixed-values', function(done) {
-    var p1 = patrun()
+  it('mixed-values', async () => {
+    var p1 = Patrun()
 
     p1.add({ a: 1 }, 'A')
     p1.add({ a: true }, 'AA')
@@ -620,11 +624,10 @@ describe('patrun', function() {
 
     p1.add({}, 'Q')
     expect(p1.find({})).to.equal('Q')
-    done()
   })
 
-  it('no-props', function(done) {
-    var p1 = patrun()
+  it('no-props', async () => {
+    var p1 = Patrun()
     p1.add({}, 'Z')
     expect(p1.find({})).to.equal('Z')
 
@@ -636,18 +639,16 @@ describe('patrun', function() {
 
     p1.remove({ b: 2 })
     expect(p1.find({})).to.equal('Z')
-    done()
   })
 
-  it('zero', function(done) {
-    var p1 = patrun()
+  it('zero', async () => {
+    var p1 = Patrun()
     p1.add({ a: 0 }, 'X')
     expect(p1.find({ a: 0 })).to.equal('X')
-    done()
   })
 
-  it('multi-match', function(done) {
-    var p1 = patrun()
+  it('multi-match', async () => {
+    var p1 = Patrun()
     p1.add({ a: 0 }, 'P')
     p1.add({ b: 1 }, 'Q')
     p1.add({ c: 2 }, 'R')
@@ -679,15 +680,13 @@ describe('patrun', function() {
     expect(p1.find({ c: 2, d: 3 })).to.equal('V')
     expect(p1.find({ a: 0, b: 1 })).to.equal('S')
     expect(p1.find({ a: 0, b: 1, c: 2, d: 3 })).to.equal('S')
-    done()
   })
 
-
-  it('partial-match', function(done) {
-    var p1 = patrun()
+  it('partial-match', async () => {
+    var p1 = Patrun()
     p1.add({ a: 0 }, 'P')
-    p1.add({ a:0, b: 1, c: 2 }, 'Q')
-    
+    p1.add({ a: 0, b: 1, c: 2 }, 'Q')
+
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
     expect(p1.find({ a: 0, b: 1 })).to.equal('P')
     expect(p1.find({ a: 0 })).to.equal('P')
@@ -698,7 +697,7 @@ describe('patrun', function() {
     expect(p1.find({ a: 0 })).to.equal('P')
     expect(p1.find({ a: 0, d: 3 })).to.equal('S')
 
-    p1.add({ a:0, b: 1, c: 2, e: 4, f: 5 }, 'T')
+    p1.add({ a: 0, b: 1, c: 2, e: 4, f: 5 }, 'T')
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
     expect(p1.find({ a: 0, b: 1 })).to.equal('P')
     expect(p1.find({ a: 0 })).to.equal('P')
@@ -706,7 +705,7 @@ describe('patrun', function() {
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
 
-    p1.add({ a:0, b: 1 }, 'M')
+    p1.add({ a: 0, b: 1 }, 'M')
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
     expect(p1.find({ a: 0, b: 1 })).to.equal('M')
     expect(p1.find({ a: 0 })).to.equal('P')
@@ -721,16 +720,13 @@ describe('patrun', function() {
     expect(p1.find({ a: 0, d: 3 })).to.equal('S')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('N')
-
-    done()
   })
 
-
-    it('partial-match-remove', function(done) {
-    var p1 = patrun()
+  it('partial-match-remove', async () => {
+    var p1 = Patrun()
     p1.add({ a: 0 }, 'P')
-    p1.add({ a:0, b: 1, c: 2 }, 'Q')
-    
+    p1.add({ a: 0, b: 1, c: 2 }, 'Q')
+
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
     expect(p1.find({ a: 0, b: 1 })).to.equal('P')
     expect(p1.find({ a: 0 })).to.equal('P')
@@ -741,7 +737,7 @@ describe('patrun', function() {
     expect(p1.find({ a: 0 })).to.equal('P')
     expect(p1.find({ a: 0, d: 3 })).to.equal('S')
 
-    p1.add({ a:0, b: 1, c: 2, e: 4, f: 5 }, 'T')
+    p1.add({ a: 0, b: 1, c: 2, e: 4, f: 5 }, 'T')
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
     expect(p1.find({ a: 0, b: 1 })).to.equal('P')
     expect(p1.find({ a: 0 })).to.equal('P')
@@ -749,7 +745,7 @@ describe('patrun', function() {
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
 
-    p1.remove({a: 0})
+    p1.remove({ a: 0 })
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
     expect(p1.find({ a: 0, b: 1 })).to.equal(null)
     expect(p1.find({ a: 0 })).to.equal(null)
@@ -757,28 +753,24 @@ describe('patrun', function() {
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
 
-    p1.remove({ a:0, b: 1, c: 2 })
+    p1.remove({ a: 0, b: 1, c: 2 })
     expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal(null)
     expect(p1.find({ a: 0, b: 1 })).to.equal(null)
     expect(p1.find({ a: 0 })).to.equal(null)
     expect(p1.find({ a: 0, d: 3 })).to.equal('S')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal(null)
-      
-    done()
   })
 
-  
-  it('noConflict', function(done) {
-    var r = patrun().noConflict()
+  it('noConflict', async () => {
+    var r = Patrun().noConflict()
     r.add({}, 'R')
     expect(r.toString(true)).to.equal(' <R>')
     expect(r.toString(false)).to.equal(' -> <R>')
-    done()
   })
 
-  it('add-gex', function(done) {
-    var p1 = patrun({ gex: true })
+  it('add-gex', async () => {
+    var p1 = Patrun({ gex: true })
 
     p1.add({ a: 'A' }, 'XA')
     expect(p1.find({ a: 'A' })).to.equal('XA')
@@ -821,11 +813,10 @@ describe('patrun', function() {
     expect(p1.find({ b: 'A' })).to.equal('XB')
     expect(p1.find({ b: 0 })).to.equal('XB0')
     expect(p1.find({ b: 'B' })).to.equal('XBB')
-    done()
   })
 
-  it('add-mixed-gex', function(done) {
-    var p1 = patrun({ gex: true })
+  it('add-mixed-gex', async () => {
+    var p1 = Patrun({ gex: true })
 
     p1.add({ a: '*' }, 'XAS')
     p1.add({ a: 'A' }, 'XA')
@@ -857,11 +848,10 @@ describe('patrun', function() {
     expect(p1.find({ a: 'Q' })).to.equal('XAS')
     expect(p1.find({ b: 'A' })).to.equal('XB')
     expect(p1.find({ b: 'Q' })).to.equal('XBS')
-    done()
   })
 
-  it('add-order-gex', function(done) {
-    var p1 = patrun({ gex: true })
+  it('add-order-gex', async () => {
+    var p1 = Patrun({ gex: true })
 
     p1.add({ c: 'A' }, 'XC')
     p1.add({ c: '*' }, 'XCS')
@@ -882,11 +872,10 @@ describe('patrun', function() {
     expect(p1.find({ c: 'Q' })).to.equal('XCS')
     expect(p1.find({ b: 'Q' })).to.equal('XBS')
     expect(p1.find({ a: 'Q' })).to.equal('XAS')
-    done()
   })
 
-  it('multi-gex', function(done) {
-    var p1 = patrun({ gex: true })
+  it('multi-gex', async () => {
+    var p1 = Patrun({ gex: true })
 
     p1.add({ a: 1, b: 2 }, 'Xa1b2')
     p1.add({ a: 1, b: '*' }, 'Xa1b*')
@@ -907,12 +896,10 @@ describe('patrun', function() {
     expect(p1.find({ a: 1, b: 0, c: 5 })).to.equal('Xa1b*c5')
     expect(p1.find({ a: 1, b: 4, c: 0 })).to.equal('Xa1b4c*')
     expect(p1.find({ a: 1, b: 0, c: 0 })).to.equal('Xa1b*c*')
-
-    done()
   })
 
-  it('remove-gex', function(done) {
-    var p1 = patrun({ gex: true })
+  it('remove-gex', async () => {
+    var p1 = Patrun({ gex: true })
 
     p1.add({ a: 'A' }, 'XA')
     expect(p1.find({ a: 'A' })).to.equal('XA')
@@ -929,6 +916,5 @@ describe('patrun', function() {
     expect(p1.find({ b: 'B' })).to.not.exist()
     expect(p1.find({})).to.not.exist()
     expect(p1.find({ a: 'A' })).to.equal('XA')
-    done()
   })
 })
