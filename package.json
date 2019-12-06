@@ -1,6 +1,6 @@
 {
   "name": "patrun",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "A fast pattern matcher on JavaScript object properties.",
   "homepage": "https://github.com/rjrodger/patrun",
   "keywords": [
