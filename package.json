@@ -21,6 +21,7 @@
     "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
     "prettier": "prettier --write --no-semi --single-quote patrun.js lib/*.js test/*.js",
     "clean": "rm -rf node_modules yarn.lock package-lock.json",
+    "reset": "npm run clean && npm i && npm test",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
     "repo-publish": "npm run prettier && npm test && npm run repo-tag && npm publish --registry http://registry.npmjs.org "
   },
@@ -36,14 +37,14 @@
     "Adrien Becchis (https://github.com/AdrieanKhisbe)"
   ],
   "dependencies": {
-    "gex": "^0.3.0"
+    "gex": "^1.0.0"
   },
   "devDependencies": {
-    "@hapi/code": "^6.0.0",
-    "@hapi/lab": "^20.2.2",
+    "@hapi/code": "^7.0.0",
+    "@hapi/lab": "^21.0.0",
     "benchmark": "^2.1.4",
-    "coveralls": "^3.0.6",
-    "prettier": "^1.18.2",
-    "serve": "^11.1.0"
+    "coveralls": "^3.0.9",
+    "prettier": "^1.19.1",
+    "serve": "^11.2.0"
   }
 }
