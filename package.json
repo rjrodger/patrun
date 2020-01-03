@@ -37,7 +37,8 @@
     "Adrien Becchis (https://github.com/AdrieanKhisbe)"
   ],
   "dependencies": {
-    "gex": "^1.0.0"
+    "gex": "^1.0.0",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@hapi/code": "^7.0.0",
