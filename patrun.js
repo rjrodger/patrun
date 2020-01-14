@@ -7,9 +7,9 @@
   var previous_patrun = root.patrun
   var has_require = typeof require !== 'undefined'
 
-  var _ = root._ || (has_require && require('lodash'))
-  if (!_)
-    throw new Error('patrun requires underscore, see http://underscorejs.org')
+  //var _ = root._ || (has_require && require('lodash'))
+  //if (!_)
+  //  throw new Error('patrun requires underscore, see http://underscorejs.org')
 
   var gex = root.gex || (has_require && require('gex'))
   if (!gex)
@@ -141,9 +141,9 @@
       return self.find(pat, true)
     }
 
-    self.find = function(pat, exact) {
+    self.find = function(pat, exact, collect) {
       if (null == pat) return null
-
+      
       var keymap = top
       var data = void 0 === top.d ? null : top.d
       var finalfind = top.f
@@ -151,7 +151,12 @@
       var stars = []
       var foundkeys = {}
       var patlen = Object.keys(pat).length
+      var collection = []
 
+      if(void 0 !== top.d) {
+        collection.push(top.d)
+      }
+      
       do {
         key = keymap.k
 
@@ -171,21 +176,38 @@
 
           if (nextkeymap) {
             foundkeys[key] = true
+            
+            // follow separate trail without keys seen so far
+            if(collect && !exact) {
+              var remainkeys = Object.keys(pat).filter(k=>!foundkeys[k])
+              var remainpat = {}
+              remainkeys.forEach(rk=>remainpat[rk]=pat[rk])
+              var remaincollection = self.find(remainpat,false,true)
 
+              // omit first entry if top defined to avoid top duplicates
+              collection =
+                collection.concat(void 0 !== top.d ?
+                                  remaincollection.slice(1) :
+                                  remaincollection)
+            }
+            
             if (keymap.s) {
               stars.push(keymap.s)
             }
 
             data =
               void 0 === nextkeymap.d ? (exact ? null : data) : nextkeymap.d
-            //data = void 0 === nextkeymap.d ? null : nextkeymap.d
 
+            if(collect && void 0 !== nextkeymap.d) {
+              collection.push(nextkeymap.d)
+            }
+            
             finalfind = nextkeymap.f
             keymap = nextkeymap
-          } else {
-            // last data
-            // data = (exact || void 0 === keymap.d) ? data : keymap.d
+          }
 
+          // no match found for this value, follow star trail
+          else {
             keymap = keymap.s
           }
         } else {
@@ -212,7 +234,7 @@
         data = finalfind.call(self, pat, data)
       }
 
-      return data
+      return collect ? collection : data
     }
 
     self.remove = function(pat) {
@@ -251,6 +273,8 @@
 
     // values can be verbatim, glob, or array of globs
     self.list = function(pat, exact) {
+      pat = pat || {}
+      
       function descend(keymap, match, missing, acc) {
         if (keymap.v) {
           var key = keymap.k
@@ -262,7 +286,11 @@
           var nextkeymap
 
           for (var val in keymap.v) {
-            if (gexval.on(val)) {
+            // console.log('KEY', key, 'VAL', val, 'PKV', pat[key])
+            if (val === pat[key] ||
+                (!exact && null == pat[key]) ||
+                gexval.on(val))
+            {
               var valitermatch = { ...itermatch }
               valitermatch[key] = val
 
@@ -283,7 +311,7 @@
                 })
               }
 
-              if (nextkeymap && nextkeymap.v) {
+              if (nextkeymap && null != nextkeymap.v) {
                 descend(
                   nextkeymap,
                   { ...valitermatch },

@@ -328,7 +328,7 @@ Register a pattern, and the object that will be returned if an input
 matches.  Both keys and values are considered to be strings. Other
 types are converted to strings.
 
-## .find( {...subject...}, exact )
+## .find( {...subject...}, exact, collect )
 
 Return the unique match for this subject, or null if not found. The
 properties of the subject are matched against the patterns previously
@@ -337,8 +337,17 @@ subject are ignored. You can optionally provide a second boolean
 parameter, _exact_. If true, then all properties of the subject must
 match.
 
+If the optional third boolean parameter _collect_ is true, then `find`
+returns an array of all sub matches (i.e run `find` on each element of
+the power set of the subject pattern elements, and collate in breadth
+first order). Thus `{a:1,b:2}` will generate
+`{a:1}`,`{b:2}`,`{a:1,b:2}` searches. If _exact_ is true, only
+increasing sub patterns in lexicographical order are chosen. Thus
+`{a:1,b:2}` will generate `{a:1}`,`{a:1,b:2}`, omitting `{b:2}`. (You
+probably want to set _exact_ to false!).
 
-## .list( {...pattern-partial...}, exact )
+
+## .list( {...pattern-partial...}, exact)
 
 Return the list of registered patterns that contain this partial
 pattern. You can use wildcards for property values.  Omitted values

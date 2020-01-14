@@ -17,7 +17,7 @@
   },
   "main": "patrun.js",
   "scripts": {
-    "test": "lab -v -P test -t 90",
+    "test": "lab -v -P test -t 90 -r console -o stdout -r html -o test/coverage.html",
     "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
     "prettier": "prettier --write --no-semi --single-quote patrun.js lib/*.js test/*.js",
     "clean": "rm -rf node_modules yarn.lock package-lock.json",
