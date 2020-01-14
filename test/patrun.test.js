@@ -190,7 +190,6 @@ describe('patrun', function() {
     expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
   })
 
-  
   it('falsy-values', async () => {
     var rt1 = Patrun()
 
@@ -203,24 +202,24 @@ describe('patrun', function() {
     expect('r2').to.equal(rt1.find({ p1: 0, p2: '' }))
     expect('r3').to.equal(rt1.find({ p1: 0, p2: '', p3: false }))
 
-    expect(rt1.list().map(x=>x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({}).map(x=>x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({},true).map(x=>x.data)).equal([])
+    expect(rt1.list().map(x => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({}).map(x => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({}, true).map(x => x.data)).equal([])
 
-    expect(rt1.list({p1:0}).map(x=>x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({p2:''}).map(x=>x.data)).equal(['r2', 'r3'])
-    expect(rt1.list({p3:false}).map(x=>x.data)).equal(['r3'])
+    expect(rt1.list({ p1: 0 }).map(x => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({ p2: '' }).map(x => x.data)).equal(['r2', 'r3'])
+    expect(rt1.list({ p3: false }).map(x => x.data)).equal(['r3'])
 
-    expect(rt1.list({p1:0},true).map(x=>x.data)).equal(['r1'])
-    expect(rt1.list({p1:0,p2:''},true).map(x=>x.data)).equal(['r2'])
-    expect(rt1.list({p1:0,p2:'',p3:false},true).map(x=>x.data)).equal(['r3'])
+    expect(rt1.list({ p1: 0 }, true).map(x => x.data)).equal(['r1'])
+    expect(rt1.list({ p1: 0, p2: '' }, true).map(x => x.data)).equal(['r2'])
+    expect(
+      rt1.list({ p1: 0, p2: '', p3: false }, true).map(x => x.data)
+    ).equal(['r3'])
 
-    expect(rt1.list({p2:''},true).map(x=>x.data)).equal([])
-    expect(rt1.list({p2:'',p3:false},true).map(x=>x.data)).equal([])
-    expect(rt1.list({p3:false},true).map(x=>x.data)).equal([])
-
+    expect(rt1.list({ p2: '' }, true).map(x => x.data)).equal([])
+    expect(rt1.list({ p2: '', p3: false }, true).map(x => x.data)).equal([])
+    expect(rt1.list({ p3: false }, true).map(x => x.data)).equal([])
   })
-
 
   it('find-exact-collect', async () => {
     var rt1 = Patrun()
@@ -235,88 +234,106 @@ describe('patrun', function() {
     rt1.add({ q1: 'w1', q3: 'w3' }, 's3')
     rt1.add({ q2: 'w2' }, 's4')
 
-    
-    expect('r1').to.equal(rt1.find({ p1: 'v1'}, true)) // exact
-    expect('r1').to.equal(rt1.find({ p1: 'v1'}, false)) // not exact
+    expect('r1').to.equal(rt1.find({ p1: 'v1' }, true)) // exact
+    expect('r1').to.equal(rt1.find({ p1: 'v1' }, false)) // not exact
     expect(null).to.equal(rt1.find({ p1: 'v1', p2: 'x' }, true)) // exact
     expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }, false)) // not exact
     expect('r2').to.equal(rt1.find({ p1: 'v1', p2: 'v2' }, false)) // not exact
     expect('r2').to.equal(rt1.find({ p1: 'v1', p2: 'v2' }, true)) // exact
 
-    expect(rt1.find({ p1: 'x'}, false, true)).equal([])
-    expect(rt1.find({ p1: 'v1'}, false, true)).equal(['r1'])
-    expect(rt1.find({ p1: 'x'}, true, true)).equal([])
-    expect(rt1.find({ p1: 'v1'}, true, true)).equal(['r1'])
+    expect(rt1.find({ p1: 'x' }, false, true)).equal([])
+    expect(rt1.find({ p1: 'v1' }, false, true)).equal(['r1'])
+    expect(rt1.find({ p1: 'x' }, true, true)).equal([])
+    expect(rt1.find({ p1: 'v1' }, true, true)).equal(['r1'])
 
     // there only is a matching trail
-    expect(rt1.find({ p1: 'v1', p2: 'v2'}, false, true)).equal(['r1','r2'])
-    expect(rt1.find({ p1: 'v1', p3: 'v3'}, false, true)).equal(['r1','r3'])
+    expect(rt1.find({ p1: 'v1', p2: 'v2' }, false, true)).equal(['r1', 'r2'])
+    expect(rt1.find({ p1: 'v1', p3: 'v3' }, false, true)).equal(['r1', 'r3'])
 
     // just follows matching trail
-    expect(rt1.find({ p1: 'v1', p2: 'v2'}, true, true)).equal(['r1','r2'])
-    expect(rt1.find({ p1: 'v1', p3: 'v3'}, true, true)).equal(['r1','r3'])
+    expect(rt1.find({ p1: 'v1', p2: 'v2' }, true, true)).equal(['r1', 'r2'])
+    expect(rt1.find({ p1: 'v1', p3: 'v3' }, true, true)).equal(['r1', 'r3'])
 
+    expect(rt1.find({ q1: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['s1'])
+    expect(rt1.find({ q1: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['s1'])
 
-    expect(rt1.find({ q1: 'x'}, false, true)).equal([])
-    expect(rt1.find({ q1: 'w1'}, false, true)).equal(['s1'])
-    expect(rt1.find({ q1: 'x'}, true, true)).equal([])
-    expect(rt1.find({ q1: 'w1'}, true, true)).equal(['s1'])
+    expect(rt1.find({ q2: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, false, true)).equal(['s4'])
+    expect(rt1.find({ q2: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
 
-    expect(rt1.find({ q2: 'x'}, false, true)).equal([])
-    expect(rt1.find({ q2: 'w2'}, false, true)).equal(['s4'])
-    expect(rt1.find({ q2: 'x'}, true, true)).equal([])
-    expect(rt1.find({ q2: 'w2'}, true, true)).equal(['s4'])
-
-    
     // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2'}, false, true)).equal(['s4','s1','s2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3'}, false, true)).equal(['s1','s3'])
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true)).equal([
+      's4',
+      's1',
+      's2'
+    ])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal(['s1', 's3'])
 
     // but exact does not follow remainders
-    expect(rt1.find({ q1: 'w1', q2: 'w2'}, true, true)).equal(['s1','s2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3'}, true, true)).equal(['s1','s3'])
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, true, true)).equal(['s1', 's3'])
 
     // add another remainder trail
     rt1.add({ q3: 'w3' }, 's5')
 
     // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2'}, false, true)).equal(['s4','s1','s2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3'}, false, true)).equal(['s5','s1','s3'])
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true)).equal([
+      's4',
+      's1',
+      's2'
+    ])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal([
+      's5',
+      's1',
+      's3'
+    ])
 
     // but exact does not follow remainders
-    expect(rt1.find({ q1: 'w1', q2: 'w2'}, true, true)).equal(['s1','s2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3'}, true, true)).equal(['s1','s3'])
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, true, true)).equal(['s1', 's3'])
 
-    expect(rt1.find({ q1: 'x'}, false, true)).equal([])
-    expect(rt1.find({ q1: 'w1'}, false, true)).equal(['s1'])
-    expect(rt1.find({ q1: 'x'}, true, true)).equal([])
-    expect(rt1.find({ q1: 'w1'}, true, true)).equal(['s1'])
+    expect(rt1.find({ q1: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['s1'])
+    expect(rt1.find({ q1: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['s1'])
 
-    expect(rt1.find({ q2: 'x'}, false, true)).equal([])
-    expect(rt1.find({ q2: 'w2'}, false, true)).equal(['s4'])
-    expect(rt1.find({ q2: 'x'}, true, true)).equal([])
-    expect(rt1.find({ q2: 'w2'}, true, true)).equal(['s4'])
+    expect(rt1.find({ q2: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, false, true)).equal(['s4'])
+    expect(rt1.find({ q2: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
 
-    expect(rt1.find({ q3: 'x'}, false, true)).equal([])
-    expect(rt1.find({ q3: 'w3'}, false, true)).equal(['s5'])
-    expect(rt1.find({ q3: 'x'}, true, true)).equal([])
-    expect(rt1.find({ q3: 'w3'}, true, true)).equal(['s5'])
-    
+    expect(rt1.find({ q3: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q3: 'w3' }, false, true)).equal(['s5'])
+    expect(rt1.find({ q3: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q3: 'w3' }, true, true)).equal(['s5'])
+
     // add a top
     rt1.add({}, 't')
     expect(rt1.find({}, false, true)).equal(['t'])
 
-    expect(rt1.find({ q1: 'x'}, false, true)).equal(['t'])
-    expect(rt1.find({ q1: 'w1'}, false, true)).equal(['t','s1'])
-    expect(rt1.find({ q1: 'x'}, true, true)).equal(['t'])
-    expect(rt1.find({ q1: 'w1'}, true, true)).equal(['t','s1'])
+    expect(rt1.find({ q1: 'x' }, false, true)).equal(['t'])
+    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['t', 's1'])
+    expect(rt1.find({ q1: 'x' }, true, true)).equal(['t'])
+    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['t', 's1'])
 
     // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2'}, false, true)).equal(['t','s4','s1','s2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3'}, false, true)).equal(['t','s5','s1','s3'])
-
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true)).equal([
+      't',
+      's4',
+      's1',
+      's2'
+    ])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal([
+      't',
+      's5',
+      's1',
+      's3'
+    ])
   })
-  
+
   it('remove', async () => {
     var rt1 = Patrun()
     rt1.remove({ p1: 'v1' })

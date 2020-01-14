@@ -132,7 +132,7 @@
 
     self.find = function(pat, exact, collect) {
       if (null == pat) return null
-      
+
       var keymap = top
       var data = void 0 === top.d ? null : top.d
       var finalfind = top.f
@@ -142,10 +142,10 @@
       var patlen = Object.keys(pat).length
       var collection = []
 
-      if(void 0 !== top.d) {
+      if (void 0 !== top.d) {
         collection.push(top.d)
       }
-      
+
       do {
         key = keymap.k
 
@@ -165,21 +165,20 @@
 
           if (nextkeymap) {
             foundkeys[key] = true
-            
+
             // follow separate trail without keys seen so far
-            if(collect && !exact) {
-              var remainkeys = Object.keys(pat).filter(k=>!foundkeys[k])
+            if (collect && !exact) {
+              var remainkeys = Object.keys(pat).filter(k => !foundkeys[k])
               var remainpat = {}
-              remainkeys.forEach(rk=>remainpat[rk]=pat[rk])
-              var remaincollection = self.find(remainpat,false,true)
+              remainkeys.forEach(rk => (remainpat[rk] = pat[rk]))
+              var remaincollection = self.find(remainpat, false, true)
 
               // omit first entry if top defined to avoid top duplicates
-              collection =
-                collection.concat(void 0 !== top.d ?
-                                  remaincollection.slice(1) :
-                                  remaincollection)
+              collection = collection.concat(
+                void 0 !== top.d ? remaincollection.slice(1) : remaincollection
+              )
             }
-            
+
             if (keymap.s) {
               stars.push(keymap.s)
             }
@@ -187,10 +186,10 @@
             data =
               void 0 === nextkeymap.d ? (exact ? null : data) : nextkeymap.d
 
-            if(collect && void 0 !== nextkeymap.d) {
+            if (collect && void 0 !== nextkeymap.d) {
               collection.push(nextkeymap.d)
             }
-            
+
             finalfind = nextkeymap.f
             keymap = nextkeymap
           }
@@ -263,7 +262,7 @@
     // values can be verbatim, glob, or array of globs
     self.list = function(pat, exact) {
       pat = pat || {}
-      
+
       function descend(keymap, match, missing, acc) {
         if (keymap.v) {
           var key = keymap.k
@@ -275,10 +274,11 @@
           var nextkeymap
 
           for (var val in keymap.v) {
-            if (val === pat[key] ||
-                (!exact && null == pat[key]) ||
-                gexval.on(val))
-            {
+            if (
+              val === pat[key] ||
+              (!exact && null == pat[key]) ||
+              gexval.on(val)
+            ) {
               var valitermatch = { ...itermatch }
               valitermatch[key] = val
 
