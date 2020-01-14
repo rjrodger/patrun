@@ -188,28 +188,6 @@ describe('patrun', function() {
 
     expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }))
     expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
-  }),
-  it('culdesac', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ p1: 'v1' }, 'r1')
-    rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
-    rt1.add({ p1: 'v1', p3: 'v3' }, 'r3')
-
-    expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }))
-    expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
-  })
-
-
-  it('culdesac', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ p1: 'v1' }, 'r1')
-    rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
-    rt1.add({ p1: 'v1', p3: 'v3' }, 'r3')
-
-    expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }))
-    expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
   })
 
   

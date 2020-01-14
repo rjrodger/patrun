@@ -17,7 +17,7 @@
   },
   "main": "patrun.js",
   "scripts": {
-    "test": "lab -v -P test -t 90 -r console -o stdout -r html -o test/coverage.html",
+    "test": "lab -v -L -P test -t 90 -r console -o stdout -r html -o test/coverage.html",
     "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
     "prettier": "prettier --write --no-semi --single-quote patrun.js lib/*.js test/*.js",
     "clean": "rm -rf node_modules yarn.lock package-lock.json",
@@ -40,11 +40,11 @@
     "gex": "^1.0.0"
   },
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
+    "@hapi/code": "^8.0.1",
     "@hapi/lab": "^21.0.0",
     "benchmark": "^2.1.4",
     "coveralls": "^3.0.9",
     "prettier": "^1.19.1",
-    "serve": "^11.2.0"
+    "serve": "^11.3.0"
   }
 }

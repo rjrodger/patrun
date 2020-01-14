@@ -1,7 +1,6 @@
-/* Copyright (c) 2013-2019 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+/* Copyright (c) 2013-2020 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
 ;(function() {
-  /* jshint node:true, asi:true, eqnull:true */
   'use strict'
   var root = this
   var previous_patrun = root.patrun
@@ -34,8 +33,6 @@
     self.add = function(pat, data) {
       pat = { ...pat }
 
-      var PS = JSON.stringify(pat).replace(/ /g, '')
-
       var customizer =
         'function' === typeof custom ? custom.call(self, pat, data) : null
 
@@ -49,7 +46,7 @@
 
         val = String(val)
         pat[key] = val
-        ;(custom.gex && val.match(/[\*\?]/) ? gexers : plains).push(key)
+        ;(custom.gex && val.match(/[*?]/) ? gexers : plains).push(key)
       })
 
       plains = plains.sort()
@@ -61,13 +58,12 @@
       var valmap
 
       // Partial matches return next wider match - see partial-match test
-      //var last_data
 
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i]
         var val = pat[key]
 
-        var gexer = custom.gex && val.match(/[\*\?]/) ? gex(val) : null
+        var gexer = custom.gex && val.match(/[*?]/) ? gex(val) : null
         if (gexer) gexer.val$ = val
 
         var sort_prefix = (gexer ? '1' : '0') + '~'
@@ -76,21 +72,15 @@
         valmap = keymap.v
 
         if (valmap && sort_key == keymap.sk) {
-          // console.log('ADD A', PS, sort_key, keymap.d)
-          //last_data = null == keymap.d ? last_data : keymap.d
           add_gexer(keymap, key, gexer)
           keymap = valmap[val] || (valmap[val] = {})
         } else if (!keymap.k) {
-          // console.log('ADD B', PS, sort_key, keymap.d)
-          //last_data = null == keymap.d ? last_data : keymap.d
           add_gexer(keymap, key, gexer)
           keymap.k = key
           keymap.sk = sort_key
           keymap.v = {}
-          // keymap.d = null == keymap.d ? last_data : keymap.d
           keymap = keymap.v[val] = {}
         } else if (sort_key < keymap.sk) {
-          // console.log('ADD C', PS, sort_key, keymap.d)
           var s = keymap.s,
             g = keymap.g
           keymap.s = { k: keymap.k, sk: keymap.sk, v: keymap.v }
@@ -106,7 +96,6 @@
 
           keymap = keymap.v[val] = {}
         } else {
-          // console.log('ADD D', PS, sort_key, keymap.d)
           valmap = keymap.v
           keymap = keymap.s || (keymap.s = {})
           i--
@@ -286,7 +275,6 @@
           var nextkeymap
 
           for (var val in keymap.v) {
-            // console.log('KEY', key, 'VAL', val, 'PKV', pat[key])
             if (val === pat[key] ||
                 (!exact && null == pat[key]) ||
                 gexval.on(val))
@@ -380,10 +368,10 @@
           d++
           var pa = Object.keys(n.v)
           var pal = pa.filter(function(x) {
-            return !x.match(/[\*\?]/)
+            return !x.match(/[*?]/)
           })
           var pas = pa.filter(function(x) {
-            return x.match(/[\*\?]/)
+            return x.match(/[*?]/)
           })
           pal.sort()
           pas.sort()
