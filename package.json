@@ -41,10 +41,10 @@
   },
   "devDependencies": {
     "@hapi/code": "^8.0.1",
-    "@hapi/lab": "^21.0.0",
+    "@hapi/lab": "^22.0.4",
     "benchmark": "^2.1.4",
-    "coveralls": "^3.0.9",
-    "prettier": "^1.19.1",
-    "serve": "^11.3.0"
+    "coveralls": "^3.1.0",
+    "prettier": "^2.0.5",
+    "serve": "^11.3.2"
   }
 }
