@@ -1,8 +1,6 @@
 var patrun = require('..')
 
-var pm = patrun()
-  .add({ a: 1 }, 'A')
-  .add({ b: 2 }, 'B')
+var pm = patrun().add({ a: 1 }, 'A').add({ b: 2 }, 'B')
 
 // prints A
 console.log(pm.find({ a: 1 }))
@@ -22,7 +20,7 @@ console.log(pm.find({ b: 2, c: 3 }))
 // an identity function
 // also record the rate for custom printing later
 function I(val) {
-  var rate = function() {
+  var rate = function () {
     return val
   }
   rate.val = val
@@ -89,14 +87,12 @@ console.log(
 
 // print out decision tree
 console.log(
-  salestax.toString(function(f) {
+  salestax.toString(function (f) {
     return f.name + ':' + f.val
   })
 )
 
-pm = patrun()
-  .add({ a: 1, b: 1 }, 'B1')
-  .add({ a: 1, b: 2 }, 'B2')
+pm = patrun().add({ a: 1, b: 1 }, 'B1').add({ a: 1, b: 2 }, 'B2')
 
 // finds:
 // [ { match: { a: '1', b: '1' }, data: 'B1' },
@@ -111,7 +107,7 @@ console.log(pm.list({ a: 1, b: '*' }))
 // finds nothing: []
 console.log(pm.list({ a: 1, c: 1 }))
 
-var alwaysAddFoo = patrun(function(pat) {
+var alwaysAddFoo = patrun(function (pat) {
   pat.foo = true
 })
 
@@ -120,8 +116,8 @@ alwaysAddFoo.add({ a: 1 }, 'bar')
 console.log(alwaysAddFoo.find({ a: 1 })) // null!
 console.log(alwaysAddFoo.find({ a: 1, foo: true })) // == "bar"
 
-var upperify = patrun(function(pat) {
-  return function(args, data) {
+var upperify = patrun(function (pat) {
+  return function (args, data) {
     return ('' + data).toUpperCase()
   }
 })
@@ -130,18 +126,18 @@ upperify.add({ a: 1 }, 'bar')
 
 console.log(upperify.find({ a: 1 })) // BAR
 
-var many = patrun(function(pat, data) {
+var many = patrun(function (pat, data) {
   var items = this.find(pat, true) || []
   items.push(data)
 
   return {
-    find: function(args, data) {
+    find: function (args, data) {
       return 0 < items.length ? items : null
     },
-    remove: function(args, data) {
+    remove: function (args, data) {
       items.pop()
       return 0 == items.length
-    }
+    },
   }
 })
 

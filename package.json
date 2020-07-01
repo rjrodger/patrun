@@ -1,6 +1,6 @@
 {
   "name": "patrun",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "A fast pattern matcher on JavaScript object properties.",
   "homepage": "https://github.com/rjrodger/patrun",
   "keywords": [
@@ -19,11 +19,12 @@
   "scripts": {
     "test": "lab -v -L -P test -t 90 -r console -o stdout -r html -o test/coverage.html",
     "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
-    "prettier": "prettier --write --no-semi --single-quote patrun.js lib/*.js test/*.js",
+    "prettier": "prettier --write --no-semi --single-quote patrun.js *.js test/*.js",
     "clean": "rm -rf node_modules yarn.lock package-lock.json",
     "reset": "npm run clean && npm i && npm test",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
-    "repo-publish": "npm run prettier && npm run reset && npm run repo-tag && npm publish --registry http://registry.npmjs.org "
+    "repo-publish": "npm run clean && npm -i && npm run repo-publish-quick",
+    "repo-publish-quick": "npm run prettier && npm run reset && npm run repo-tag && npm publish --registry http://registry.npmjs.org "
   },
   "license": "MIT",
   "files": [

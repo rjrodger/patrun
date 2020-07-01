@@ -13,41 +13,38 @@ var Patrun = require('..')
 var Gex = require('gex')
 
 function rs(x) {
-  return x
-    .toString(true)
-    .replace(/\s+/g, '')
-    .replace(/\n+/g, '')
+  return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')
 }
 
-describe('patrun', function() {
+describe('patrun', function () {
   it('toString', async () => {
     var r = Patrun()
     r.add({}, 'R')
     expect(r.toString(true)).to.equal(' <R>')
     expect(r.toString(false)).to.equal(' -> <R>')
-    expect(r.toString(d => 'D:' + d)).to.equal(' -> D:R')
-    expect(r.toString(d => 'D:' + d, true)).to.equal(' D:R')
-    expect(r.toString(d => 'D:' + d, false)).to.equal(' -> D:R')
+    expect(r.toString((d) => 'D:' + d)).to.equal(' -> D:R')
+    expect(r.toString((d) => 'D:' + d, true)).to.equal(' D:R')
+    expect(r.toString((d) => 'D:' + d, false)).to.equal(' -> D:R')
 
     r.add({ a: 1 }, 'S')
     expect(r.toString(true)).to.equal(' <R>\na:\n 1 -> <S>')
     expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>')
-    expect(r.toString(d => 'D:' + d)).to.equal(' -> D:R\na=1 -> D:S')
-    expect(r.toString(d => 'D:' + d, true)).to.equal(' D:R\na:\n 1 -> D:S')
-    expect(r.toString(d => 'D:' + d, false)).to.equal(' -> D:R\na=1 -> D:S')
+    expect(r.toString((d) => 'D:' + d)).to.equal(' -> D:R\na=1 -> D:S')
+    expect(r.toString((d) => 'D:' + d, true)).to.equal(' D:R\na:\n 1 -> D:S')
+    expect(r.toString((d) => 'D:' + d, false)).to.equal(' -> D:R\na=1 -> D:S')
 
     r.add({ a: 1, b: 2 }, function foo() {})
     expect(r.toString(true)).to.equal(
       ' <R>\na:\n 1 -> <S>\n  b:\n   2 -> <foo>'
     )
     expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>\na=1, b=2 -> <foo>')
-    expect(r.toString(d => 'D:' + d)).to.equal(
+    expect(r.toString((d) => 'D:' + d)).to.equal(
       ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
     )
-    expect(r.toString(d => 'D:' + d, true)).to.equal(
+    expect(r.toString((d) => 'D:' + d, true)).to.equal(
       ' D:R\na:\n 1 -> D:S\n  b:\n   2 -> D:function foo() {}'
     )
-    expect(r.toString(d => 'D:' + d, false)).to.equal(
+    expect(r.toString((d) => 'D:' + d, false)).to.equal(
       ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
     )
   })
@@ -202,23 +199,23 @@ describe('patrun', function() {
     expect('r2').to.equal(rt1.find({ p1: 0, p2: '' }))
     expect('r3').to.equal(rt1.find({ p1: 0, p2: '', p3: false }))
 
-    expect(rt1.list().map(x => x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({}).map(x => x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({}, true).map(x => x.data)).equal([])
+    expect(rt1.list().map((x) => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({}).map((x) => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({}, true).map((x) => x.data)).equal([])
 
-    expect(rt1.list({ p1: 0 }).map(x => x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({ p2: '' }).map(x => x.data)).equal(['r2', 'r3'])
-    expect(rt1.list({ p3: false }).map(x => x.data)).equal(['r3'])
+    expect(rt1.list({ p1: 0 }).map((x) => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({ p2: '' }).map((x) => x.data)).equal(['r2', 'r3'])
+    expect(rt1.list({ p3: false }).map((x) => x.data)).equal(['r3'])
 
-    expect(rt1.list({ p1: 0 }, true).map(x => x.data)).equal(['r1'])
-    expect(rt1.list({ p1: 0, p2: '' }, true).map(x => x.data)).equal(['r2'])
+    expect(rt1.list({ p1: 0 }, true).map((x) => x.data)).equal(['r1'])
+    expect(rt1.list({ p1: 0, p2: '' }, true).map((x) => x.data)).equal(['r2'])
     expect(
-      rt1.list({ p1: 0, p2: '', p3: false }, true).map(x => x.data)
+      rt1.list({ p1: 0, p2: '', p3: false }, true).map((x) => x.data)
     ).equal(['r3'])
 
-    expect(rt1.list({ p2: '' }, true).map(x => x.data)).equal([])
-    expect(rt1.list({ p2: '', p3: false }, true).map(x => x.data)).equal([])
-    expect(rt1.list({ p3: false }, true).map(x => x.data)).equal([])
+    expect(rt1.list({ p2: '' }, true).map((x) => x.data)).equal([])
+    expect(rt1.list({ p2: '', p3: false }, true).map((x) => x.data)).equal([])
+    expect(rt1.list({ p3: false }, true).map((x) => x.data)).equal([])
   })
 
   it('find-exact-collect', async () => {
@@ -237,7 +234,6 @@ describe('patrun', function() {
     //console.log(''+rt1)
     //console.log(rt1.toString(true))
 
-    
     expect('r1').to.equal(rt1.find({ p1: 'v1' }, true)) // exact
     expect('r1').to.equal(rt1.find({ p1: 'v1' }, false)) // not exact
     expect(null).to.equal(rt1.find({ p1: 'v1', p2: 'x' }, true)) // exact
@@ -269,11 +265,9 @@ describe('patrun', function() {
     expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
 
     // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal([
-      's4',
-      's1',
-      's2'
-    ].sort())
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
+      ['s4', 's1', 's2'].sort()
+    )
     expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal(['s1', 's3'])
 
     // but exact does not follow remainders
@@ -284,16 +278,12 @@ describe('patrun', function() {
     rt1.add({ q3: 'w3' }, 's5')
 
     // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal([
-      's4',
-      's1',
-      's2'
-    ].sort())
-    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true).sort()).equal([
-      's5',
-      's1',
-      's3'
-    ].sort())
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
+      ['s4', 's1', 's2'].sort()
+    )
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true).sort()).equal(
+      ['s5', 's1', 's3'].sort()
+    )
 
     // but exact does not follow remainders
     expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
@@ -328,13 +318,13 @@ describe('patrun', function() {
       't',
       's1',
       's2',
-      's4'
+      's4',
     ])
     expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal([
       't',
       's1',
       's3',
-      's5'
+      's5',
     ])
   })
 
@@ -375,13 +365,13 @@ describe('patrun', function() {
       expect(found).equal([
         { match: { p1: 'v1' }, data: 'r0', find: undefined },
         { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
-        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined }
+        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
       ])
 
       found = rt1.list({ p1: 'v1', p2: '*' })
       expect(found).equal([
         { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
-        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined }
+        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
       ])
 
       rt1.add({ p1: 'v1', p2: 'v2c', p3: 'v3a' }, 'r3a')
@@ -391,15 +381,15 @@ describe('patrun', function() {
         {
           match: { p1: 'v1', p2: 'v2c', p3: 'v3a' },
           data: 'r3a',
-          find: undefined
-        }
+          find: undefined,
+        },
       ])
 
       // gex can accept a list of globs
       found = rt1.list({ p1: 'v1', p2: ['v2a', 'v2b', 'not-a-value'] })
       expect(found).equal([
         { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
-        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined }
+        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
       ])
     }
   }
@@ -511,7 +501,7 @@ describe('patrun', function() {
   })
 
   it('custom-happy', async () => {
-    var p1 = Patrun(function(pat) {
+    var p1 = Patrun(function (pat) {
       pat.q = 9
     })
 
@@ -522,18 +512,18 @@ describe('patrun', function() {
   })
 
   it('custom-many', async () => {
-    var p1 = Patrun(function(pat, data) {
+    var p1 = Patrun(function (pat, data) {
       var items = this.find(pat, true) || []
       items.push(data)
 
       return {
-        find: function(args, data) {
+        find: function (args, data) {
           return 0 < items.length ? items : null
         },
-        remove: function(args, data) {
+        remove: function (args, data) {
           items.pop()
           return 0 == items.length
-        }
+        },
       }
     })
 
@@ -564,9 +554,9 @@ describe('patrun', function() {
 
   it('custom-gex', async () => {
     // this custom function matches glob expressions
-    var p2 = Patrun(function(pat, data) {
+    var p2 = Patrun(function (pat, data) {
       var gexers = {}
-      Object.keys(pat).forEach(function(k) {
+      Object.keys(pat).forEach(function (k) {
         var v = pat[k]
         if ('string' === typeof v && ~v.indexOf('*')) {
           delete pat[k]
@@ -579,9 +569,9 @@ describe('patrun', function() {
       var prevfind = prev[0] && prev[0].find
       var prevdata = prev[0] && this.findexact(prev[0].match)
 
-      return function(args, data) {
+      return function (args, data) {
         var out = data
-        Object.keys(gexers).forEach(function(k) {
+        Object.keys(gexers).forEach(function (k) {
           var g = gexers[k]
           var v = null == args[k] ? '' : args[k]
           if (null == g.on(v)) {
@@ -734,8 +724,8 @@ describe('patrun', function() {
   })
 
   it('top-custom', async () => {
-    var p1 = Patrun(function(pat, data) {
-      return function(args, data) {
+    var p1 = Patrun(function (pat, data) {
+      return function (args, data) {
         data += '!'
         return data
       }
@@ -1069,52 +1059,67 @@ describe('patrun', function() {
 
   it('collect-once', async () => {
     var p1 = Patrun({ gex: true })
-    p1.add({ d:1,b:1,a:1 }, 'A')
-    p1.add({ d:1 }, 'B')
-    expect(p1.find({d:1,b:1},false,true)).equal(['B'])
+    p1.add({ d: 1, b: 1, a: 1 }, 'A')
+    p1.add({ d: 1 }, 'B')
+    expect(p1.find({ d: 1, b: 1 }, false, true)).equal(['B'])
 
     var p2 = Patrun({ gex: true })
-    p2.add({ d:1,b:1,c:1 }, 'A')
-    p2.add({ d:1 }, 'B')
-    expect(p2.find({d:1,b:1},false,true)).equal(['B'])
+    p2.add({ d: 1, b: 1, c: 1 }, 'A')
+    p2.add({ d: 1 }, 'B')
+    expect(p2.find({ d: 1, b: 1 }, false, true)).equal(['B'])
 
     var p3 = Patrun({ gex: true })
-    p3.add({ d:1,b:1,e:1 }, 'A')
-    p3.add({ d:1 }, 'B')
-    expect(p3.find({d:1,b:1},false,true)).equal(['B'])
+    p3.add({ d: 1, b: 1, e: 1 }, 'A')
+    p3.add({ d: 1 }, 'B')
+    expect(p3.find({ d: 1, b: 1 }, false, true)).equal(['B'])
   })
 
   it('collect-powerset', async () => {
     var p1 = Patrun({ gex: true })
 
-    p1.add({ a:1,b:2 }, 'AB')
-    p1.add({ a:1,c:3 }, 'AC')
-    p1.add({ b:2,c:3 }, 'BC')
-    p1.add({ a:1,d:4 }, 'AD')
+    p1.add({ a: 1, b: 2 }, 'AB')
+    p1.add({ a: 1, c: 3 }, 'AC')
+    p1.add({ b: 2, c: 3 }, 'BC')
+    p1.add({ a: 1, d: 4 }, 'AD')
 
     //console.log(''+p1)
     //console.log(p1.toString(true))
 
-    expect(p1.find({a:1,b:2,x:1},false,true)).equal(['AB'])
-    expect(p1.find({a:1,c:3,x:1},false,true)).equal(['AC'])
-    expect(p1.find({b:2,c:3,x:1},false,true)).equal(['BC'])
-    expect(p1.find({a:1,d:4,x:1},false,true)).equal(['AD'])
+    expect(p1.find({ a: 1, b: 2, x: 1 }, false, true)).equal(['AB'])
+    expect(p1.find({ a: 1, c: 3, x: 1 }, false, true)).equal(['AC'])
+    expect(p1.find({ b: 2, c: 3, x: 1 }, false, true)).equal(['BC'])
+    expect(p1.find({ a: 1, d: 4, x: 1 }, false, true)).equal(['AD'])
 
-    expect(p1.find({a:1,b:2,c:3},false)).equal('AB')
-    expect(p1.find({a:1,b:2,c:3},true)).equal(null)
-    expect(p1.find({a:1,b:2,c:3,x:2},false,true)).equal(['AB', 'AC', 'BC'])
+    expect(p1.find({ a: 1, b: 2, c: 3 }, false)).equal('AB')
+    expect(p1.find({ a: 1, b: 2, c: 3 }, true)).equal(null)
+    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
+      'AB',
+      'AC',
+      'BC',
+    ])
 
-    
-    p1.add({ b:1,e:5 }, 'BE')
-    expect(p1.find({a:1,b:2,c:3,x:2},false,true)).equal(['AB', 'AC', 'BC'])
+    p1.add({ b: 1, e: 5 }, 'BE')
+    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
+      'AB',
+      'AC',
+      'BC',
+    ])
 
-    p1.add({ a:1,b:2,c:3 }, 'ABC')
-    expect(p1.find({a:1,b:2,c:3,x:2},false,true)).equal(['AB', 'ABC', 'AC', 'BC'])
+    p1.add({ a: 1, b: 2, c: 3 }, 'ABC')
+    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
+      'AB',
+      'ABC',
+      'AC',
+      'BC',
+    ])
 
-    expect(p1.find({a:1,b:2,d:4,x:2},false,true)).equal(['AB','AD'])
-    expect(p1.find({a:1,b:2,c:3,d:4,x:2},false,true))
-      .equal(['AB', 'ABC', 'AC', 'AD', 'BC'])
-
+    expect(p1.find({ a: 1, b: 2, d: 4, x: 2 }, false, true)).equal(['AB', 'AD'])
+    expect(p1.find({ a: 1, b: 2, c: 3, d: 4, x: 2 }, false, true)).equal([
+      'AB',
+      'ABC',
+      'AC',
+      'AD',
+      'BC',
+    ])
   })
-  
 })

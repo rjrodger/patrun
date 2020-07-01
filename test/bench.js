@@ -72,7 +72,7 @@ function run0() {
   var s0 = new Benchmark.Suite()
 
   for (var i = 0; i < 100; i++) {
-    s0.add('top-find:' + i, function() {
+    s0.add('top-find:' + i, function () {
       for (var j = 0; j < i; j++) {
         var p = {}
         p[k0[i]] = k0[i]
@@ -81,7 +81,7 @@ function run0() {
     })
   }
 
-  s0.on('cycle', function(event) {
+  s0.on('cycle', function (event) {
     console.log(
       event.target.toString() + ':' + util.inspect(process.memoryUsage())
     )
@@ -93,7 +93,7 @@ function run1() {
 
   var i = 0
 
-  s1.add('top-find', function() {
+  s1.add('top-find', function () {
     var p = {}
     p[k0[i]] = k0[i]
     p0.find(p)
@@ -101,7 +101,7 @@ function run1() {
     i %= 100
   })
 
-  s1.on('cycle', function(event) {
+  s1.on('cycle', function (event) {
     console.log(
       event.target.toString() + ':' + util.inspect(process.memoryUsage())
     )
@@ -123,8 +123,8 @@ function run2() {
 
       s2.add(
         'd2-find ' + ijmax[w][0] + ',' + ijmax[w][1],
-        (function(w, imax, jmax) {
-          return function() {
+        (function (w, imax, jmax) {
+          return function () {
             var p = {},
               i = ij[w][0],
               j = ij[w][1]
@@ -145,7 +145,7 @@ function run2() {
     }
   }
 
-  s2.on('cycle', function(event) {
+  s2.on('cycle', function (event) {
     console.log(
       event.target.toString() + ':' + util.inspect(process.memoryUsage())
     )

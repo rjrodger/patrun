@@ -1,6 +1,6 @@
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
-;(function() {
+;(function () {
   'use strict'
   var root = this
   var previous_patrun = root.patrun
@@ -10,23 +10,23 @@
   if (!gex)
     throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
 
-  var patrun = (root.patrun = function(custom) {
+  var patrun = (root.patrun = function (custom) {
     custom = custom || {}
 
     var self = {}
     var top = {}
 
     // Provide internal search order structure
-    self.top = function() {
+    self.top = function () {
       return top
     }
 
-    self.noConflict = function() {
+    self.noConflict = function () {
       root.patrun = previous_patrun
       return self
     }
 
-    self.add = function(pat, data) {
+    self.add = function (pat, data) {
       pat = { ...pat }
 
       var customizer =
@@ -36,7 +36,7 @@
       var plains = []
       var gexers = []
 
-      keys.forEach(function(key) {
+      keys.forEach(function (key) {
         var val = pat[key]
         if (null == val) return
 
@@ -117,17 +117,16 @@
       var g = (keymap.g = keymap.g || {})
       var ga = (g[key] = g[key] || [])
       ga.push(gexer)
-      ga.sort(function(a, b) {
+      ga.sort(function (a, b) {
         return a.val$ < b.val$
       })
     }
 
-    self.findexact = function(pat) {
+    self.findexact = function (pat) {
       return self.find(pat, true)
     }
 
-    self.find = function(pat, exact, collect, depth) {
-      depth = depth || 0
+    self.find = function (pat, exact, collect) {
       if (null == pat) return null
 
       var keymap = top
@@ -162,7 +161,7 @@
 
           if (nextkeymap) {
             foundkeys[key] = true
-            
+
             if (keymap.s) {
               stars.push(keymap.s)
             }
@@ -186,10 +185,11 @@
           keymap = null
         }
 
-        if (null == keymap &&
-            0 < stars.length &&
-            (null == data || (collect && !exact))
-           ) {
+        if (
+          null == keymap &&
+          0 < stars.length &&
+          (null == data || (collect && !exact))
+        ) {
           keymap = stars.pop()
         }
       } while (keymap)
@@ -212,7 +212,7 @@
       return collect ? collection : data
     }
 
-    self.remove = function(pat) {
+    self.remove = function (pat) {
       var keymap = top
       var data = null
       var key
@@ -247,7 +247,7 @@
     }
 
     // values can be verbatim, glob, or array of globs
-    self.list = function(pat, exact) {
+    self.list = function (pat, exact) {
       pat = pat || {}
 
       function descend(keymap, match, missing, acc) {
@@ -282,7 +282,7 @@
                 acc.push({
                   match: valitermatch,
                   data: nextkeymap.d,
-                  find: nextkeymap.f
+                  find: nextkeymap.f,
                 })
               }
 
@@ -310,7 +310,7 @@
         acc.push({
           match: {},
           data: top.d,
-          find: top.f
+          find: top.f,
         })
       }
 
@@ -318,13 +318,13 @@
       return acc
     }
 
-    self.toString = function(first, second) {
+    self.toString = function (first, second) {
       var tree = true === first ? true : !!second
 
       var dstr =
         'function' === typeof first
           ? first
-          : function(d) {
+          : function (d) {
               return 'function' === typeof d
                 ? '<' + d.name + '>'
                 : '<' + d + '>'
@@ -354,10 +354,10 @@
         if (n.v) {
           d++
           var pa = Object.keys(n.v)
-          var pal = pa.filter(function(x) {
+          var pal = pa.filter(function (x) {
             return !x.match(/[*?]/)
           })
-          var pas = pa.filter(function(x) {
+          var pas = pa.filter(function (x) {
             return x.match(/[*?]/)
           })
           pal.sort()
@@ -394,10 +394,10 @@
 
     self.inspect = self.toString
 
-    self.toJSON = function(indent) {
+    self.toJSON = function (indent) {
       return JSON.stringify(
         top,
-        function(key, val) {
+        function (key, val) {
           if ('function' === typeof val) return '[Function]'
           return val
         },
