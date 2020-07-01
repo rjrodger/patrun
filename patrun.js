@@ -6,10 +6,6 @@
   var previous_patrun = root.patrun
   var has_require = typeof require !== 'undefined'
 
-  //var _ = root._ || (has_require && require('lodash'))
-  //if (!_)
-  //  throw new Error('patrun requires underscore, see http://underscorejs.org')
-
   var gex = root.gex || (has_require && require('gex'))
   if (!gex)
     throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
@@ -130,7 +126,8 @@
       return self.find(pat, true)
     }
 
-    self.find = function(pat, exact, collect) {
+    self.find = function(pat, exact, collect, depth) {
+      depth = depth || 0
       if (null == pat) return null
 
       var keymap = top
@@ -165,20 +162,7 @@
 
           if (nextkeymap) {
             foundkeys[key] = true
-
-            // follow separate trail without keys seen so far
-            if (collect && !exact) {
-              var remainkeys = Object.keys(pat).filter(k => !foundkeys[k])
-              var remainpat = {}
-              remainkeys.forEach(rk => (remainpat[rk] = pat[rk]))
-              var remaincollection = self.find(remainpat, false, true)
-
-              // omit first entry if top defined to avoid top duplicates
-              collection = collection.concat(
-                void 0 !== top.d ? remaincollection.slice(1) : remaincollection
-              )
-            }
-
+            
             if (keymap.s) {
               stars.push(keymap.s)
             }
@@ -202,7 +186,10 @@
           keymap = null
         }
 
-        if (null == keymap && null == data && 0 < stars.length) {
+        if (null == keymap &&
+            0 < stars.length &&
+            (null == data || (collect && !exact))
+           ) {
           keymap = stars.pop()
         }
       } while (keymap)
