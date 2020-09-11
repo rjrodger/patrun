@@ -908,7 +908,7 @@ describe('patrun', function () {
     r.add({}, 'R')
     expect(r.top()).equals({ d: 'R' })
   })
-  
+
   it('add-gex', async () => {
     var p1 = Patrun({ gex: true })
 

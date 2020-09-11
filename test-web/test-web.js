@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Patrun = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (global){
-!function(n){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=n();else if("function"==typeof define&&define.amd)define([],n);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Patrun=n()}}((function(){var n={exports:{}};(function(){"use strict";var e=this,r=e.gex;function t(n){var t=this;function o(n){return null==n||null==n||Number.isNaN(n)}function u(n){var e=""+n;return o(n)&&(e=""),e}function i(n){n=""+n;for(var e=!1,r=Object.keys(l),t=0;t<r.length&&!e;t++)e=!!l[r[t]].exec(n);return e}t.noConflict=function(){return e.gex=r,t},t.on=function(n){var e=typeof n;if("string"===e||"number"===e||"boolean"===e||n instanceof Date||n instanceof RegExp)return i(n)?n:null;if(Array.isArray(n)){for(var r=[],t=0;t<n.length;t++)!o(n[t])&&i(n[t])&&r.push(n[t]);return r}if("object"===e){var u={};for(var f in n)Object.prototype.hasOwnProperty.call(n,f)&&i(f)&&(u[f]=n[f]);return u}return null},t.esc=function(n){var e=u(n);return(e=e.replace(/\*/g,"**")).replace(/\?/g,"*?")},t.re=function(n){if(""===n||n)return n="^"+(n=(n=(n=(n=(n=t.escregexp(n)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(n);var e=Object.keys(l);return 1==e.length?l[e[0]]:{...l}},t.escregexp=function(n){return n?(""+n).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""},t.toString=function(){return f||(f="gex["+Object.keys(l)+"]")},t.inspect=function(){return t.toString()};var f,s=Array.isArray(n)?n:[n],l={};s.forEach((function(n){n=u(n);var e=t.re(n);l[n]=e}))}function o(n){return new t(n)}o.Gex=t,void 0!==n.exports?(n.exports&&(n.exports=n.exports=o),n.exports.gex=o):e.gex=o}).call(this),n=n.exports;var e={exports:{}};return function(){"use strict";var r=this,t=r.patrun,o=r.gex||n;if(!o)throw new Error("patrun requires gex, see https://github.com/rjrodger/gex");var u=r.patrun=function(n){n=n||{};var e={},u={};function i(n,e,r){if(r){var t=n.g=n.g||{},o=t[e]=t[e]||[];o.push(r),o.sort((function(n,e){return n.val$<e.val$}))}}return e.top=function(){return u},e.noConflict=function(){return r.patrun=t,e},e.add=function(r,t){r={...r};var f="function"==typeof n?n.call(e,r,t):null,s=Object.keys(r),l=[],a=[];s.forEach((function(e){var t=r[e];null!=t&&(t=String(t),r[e]=t,(n.gex&&t.match(/[*?]/)?a:l).push(e))})),l=l.sort(),a=a.sort(),s=l.concat(a);for(var c,v=u,p=0;p<s.length;p++){var d=s[p],g=r[d],h=n.gex&&g.match(/[*?]/)?o(g):null;h&&(h.val$=g);var x=(h?"1":"0")+"~"+d;if((c=v.v)&&x==v.sk)i(v,d,h),v=c[g]||(c[g]={});else if(v.k)if(x<v.sk){var k=v.s,y=v.g;v.s={k:v.k,sk:v.sk,v:v.v},k&&(v.s.s=k),y&&(v.s.g=y),v.g&&(v.g={}),i(v,d,h),v.k=d,v.sk=x,v.v={},v=v.v[g]={}}else c=v.v,v=v.s||(v.s={}),p--;else i(v,d,h),v.k=d,v.sk=x,v.v={},v=v.v[g]={}}return void 0!==t&&v&&(v.d=t,f&&(v.f="function"==typeof f?f:f.find,v.r="function"==typeof f.remove?f.remove:void 0)),e},e.findexact=function(n){return e.find(n,!0)},e.find=function(r,t,o){if(null==r)return null;var i=u,f=void 0===u.d?null:u.d,s=u.f,l=null,a=[],c={},v=Object.keys(r).length,p=[];void 0!==u.d&&p.push(u.d);do{if(l=i.k,i.v){var d=r[l],g=i.v[d];if(!g&&n.gex&&i.g&&i.g[l])for(var h=i.g[l],x=0;x<h.length;x++)if(null!=h[x].on(d)){g=i.v[h[x].val$];break}g?(c[l]=!0,i.s&&a.push(i.s),f=void 0===g.d?t?null:f:g.d,o&&void 0!==g.d&&p.push(g.d),s=g.f,i=g):i=i.s}else i=null;null==i&&0<a.length&&(null==f||o&&!t)&&(i=a.pop())}while(i);return t?Object.keys(c).length!==v&&(f=null):null==f&&void 0!==u.d&&(f=u.d),s&&(f=s.call(e,r,f)),o?p:f},e.remove=function(n){var e,r=u,t=null,o=[];do{if(e=r.k,r.v){var i=r.v[n[e]];i?(o.push({km:r,v:n[e]}),t=i.d,r=i):r=r.s}else r=null}while(r);if(void 0!==t){var f=o[o.length-1];if(f&&f.km&&f.km.v){var s=f.km.v[f.v];s.r&&!s.r(n,s.d)||delete s.d}}},e.list=function(n,e){n=n||{};var r=[];return u.d&&r.push({match:{},data:u.d,find:u.f}),function r(t,u,i,f){if(t.v){var s,l=t.k,a=o(n?null==n[l]?e?null:"*":n[l]:"*"),c={...u},v={...i};for(var p in t.v)if(p===n[l]||!e&&null==n[l]||a.on(p)){var d={...c};d[l]=p;var g={...v};delete g[l],s=t.v[p],0===Object.keys(g).length&&s&&s.d&&f.push({match:d,data:s.d,find:s.f}),s&&null!=s.v&&r(s,{...d},{...g},f)}(s=t.s)&&r(s,{...c},{...v},f)}}(u,{},{...n},r),r},e.toString=function(n,e){var r=!0===n||!!e,t="function"==typeof n?n:function(n){return"function"==typeof n?"<"+n.name+">":"<"+n+">"};function o(n,e){for(var r=0;r<e;r++)n.push(" ")}var i=[],f=[];return function n(e,r,u,f){var s;if(void 0!==e.d&&(r.push(" "+t(e.d)),i.push(f.join(", ")+" -> "+t(e.d))),e.k&&(r.push("\n"),o(r,u),r.push(e.k+":")),e.v){u++;var l=Object.keys(e.v),a=l.filter((function(n){return!n.match(/[*?]/)})),c=l.filter((function(n){return n.match(/[*?]/)}));a.sort(),c.sort(),l=a.concat(c);for(var v=0;v<l.length;v++){var p=l[v];r.push("\n"),o(r,u),r.push(p+" ->"),(s=f.slice()).push(e.k+"="+p),n(e.v[p],r,u+1,s)}e.s&&(r.push("\n"),o(r,u),r.push("|"),s=f.slice(),n(e.s,r,u+1,s))}}(u,f,0,[]),r?f.join(""):i.join("\n")},e.inspect=e.toString,e.toJSON=function(n){return JSON.stringify(u,(function(n,e){return"function"==typeof e?"[Function]":e}),n)},e};void 0!==e.exports?(e.exports&&(e.exports=e.exports=u),e.exports.patrun=u):r.patrun=u}.call(this),e=e.exports}));
+!function(n){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=n();else if("function"==typeof define&&define.amd)define([],n);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Patrun=n()}}((function(){var n={exports:{}};function e(e){e=e||{};var t={},r={};function o(n,e,t){if(t){var r=n.g=n.g||{},o=r[e]=r[e]||[];o.push(t),o.sort((function(n,e){return n.val$<e.val$}))}}return t.top=function(){return r},t.add=function(u,i){u={...u};var f="function"==typeof e?e.call(t,u,i):null,l=Object.keys(u),s=[],c=[];l.forEach((function(n){var t=u[n];null!=t&&(t=String(t),u[n]=t,(e.gex&&t.match(/[*?]/)?c:s).push(n))})),s=s.sort(),c=c.sort(),l=s.concat(c);for(var a,v=r,d=0;d<l.length;d++){var p=l[d],g=u[p],h=e.gex&&g.match(/[*?]/)?n(g):null;h&&(h.val$=g);var y=(h?"1":"0")+"~"+p;if((a=v.v)&&y==v.sk)o(v,p,h),v=a[g]||(a[g]={});else if(v.k)if(y<v.sk){var k=v.s,b=v.g;v.s={k:v.k,sk:v.sk,v:v.v},k&&(v.s.s=k),b&&(v.s.g=b),v.g&&(v.g={}),o(v,p,h),v.k=p,v.sk=y,v.v={},v=v.v[g]={}}else a=v.v,v=v.s||(v.s={}),d--;else o(v,p,h),v.k=p,v.sk=y,v.v={},v=v.v[g]={}}return void 0!==i&&v&&(v.d=i,f&&(v.f="function"==typeof f?f:f.find,v.r="function"==typeof f.remove?f.remove:void 0)),t},t.findexact=function(n){return t.find(n,!0)},t.find=function(n,o,u){if(null==n)return null;var i=r,f=void 0===r.d?null:r.d,l=r.f,s=null,c=[],a={},v=Object.keys(n).length,d=[];void 0!==r.d&&d.push(r.d);do{if(s=i.k,i.v){var p=n[s],g=i.v[p];if(!g&&e.gex&&i.g&&i.g[s])for(var h=i.g[s],y=0;y<h.length;y++)if(null!=h[y].on(p)){g=i.v[h[y].val$];break}g?(a[s]=!0,i.s&&c.push(i.s),f=void 0===g.d?o?null:f:g.d,u&&void 0!==g.d&&d.push(g.d),l=g.f,i=g):i=i.s}else i=null;null==i&&0<c.length&&(null==f||u&&!o)&&(i=c.pop())}while(i);return o?Object.keys(a).length!==v&&(f=null):null==f&&void 0!==r.d&&(f=r.d),l&&(f=l.call(t,n,f)),u?d:f},t.remove=function(n){var e,t=r,o=null,u=[];do{if(e=t.k,t.v){var i=t.v[n[e]];i?(u.push({km:t,v:n[e]}),o=i.d,t=i):t=t.s}else t=null}while(t);if(void 0!==o){var f=u[u.length-1];if(f&&f.km&&f.km.v){var l=f.km.v[f.v];l.r&&!l.r(n,l.d)||delete l.d}}},t.list=function(e,t){e=e||{};var o=[];return r.d&&o.push({match:{},data:r.d,find:r.f}),function r(o,u,i,f){if(o.v){var l,s=o.k,c=n(e?null==e[s]?t?null:"*":e[s]:"*"),a={...u},v={...i};for(var d in o.v)if(d===e[s]||!t&&null==e[s]||c.on(d)){var p={...a};p[s]=d;var g={...v};delete g[s],l=o.v[d],0===Object.keys(g).length&&l&&l.d&&f.push({match:p,data:l.d,find:l.f}),l&&null!=l.v&&r(l,{...p},{...g},f)}(l=o.s)&&r(l,{...a},{...v},f)}}(r,{},{...e},o),o},t.toString=function(n,e){var t=!0===n||!!e,o="function"==typeof n?n:function(n){return"function"==typeof n?"<"+n.name+">":"<"+n+">"};function u(n,e){for(var t=0;t<e;t++)n.push(" ")}var i=[],f=[];return function n(e,t,r,f){var l;if(void 0!==e.d&&(t.push(" "+o(e.d)),i.push(f.join(", ")+" -> "+o(e.d))),e.k&&(t.push("\n"),u(t,r),t.push(e.k+":")),e.v){r++;var s=Object.keys(e.v),c=s.filter((function(n){return!n.match(/[*?]/)})),a=s.filter((function(n){return n.match(/[*?]/)}));c.sort(),a.sort(),s=c.concat(a);for(var v=0;v<s.length;v++){var d=s[v];t.push("\n"),u(t,r),t.push(d+" ->"),(l=f.slice()).push(e.k+"="+d),n(e.v[d],t,r+1,l)}e.s&&(t.push("\n"),u(t,r),t.push("|"),l=f.slice(),n(e.s,t,r+1,l))}}(r,f,0,[]),t?f.join(""):i.join("\n")},t.inspect=t.toString,t.toJSON=function(n){return JSON.stringify(r,(function(n,e){return"function"==typeof e?"[Function]":e}),n)},t}(function(e){!function(t){"object"==typeof n.exports?n.exports=t():("undefined"!=typeof window?window:void 0!==e?e:"undefined"!=typeof self?self:this).Gex=t()}((function(){var n;function e(n){return new t(n)}function t(n){var e=this;function t(n){return null==n||Number.isNaN(n)}function r(n){var e=""+n;return t(n)&&(e=""),e}function o(n){n=""+n;for(var e=!1,t=Object.keys(f),r=0;r<t.length&&!e;r++)e=!!f[t[r]].exec(n);return e}e.on=function(n){if(null==n)return null;var e=typeof n;if("string"===e||"number"===e||"boolean"===e||n instanceof Date||n instanceof RegExp)return o(n)?n:null;if(Array.isArray(n)){for(var r=[],u=0;u<n.length;u++)!t(n[u])&&o(n[u])&&r.push(n[u]);return r}var i={};for(var f in n)Object.prototype.hasOwnProperty.call(n,f)&&o(f)&&(i[f]=n[f]);return i},e.esc=function(n){var e=r(n);return(e=e.replace(/\*/g,"**")).replace(/\?/g,"*?")},e.re=function(n){if(""===n||n)return n="^"+(n=(n=(n=(n=(n=e.escregexp(n)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(n);var t=Object.keys(f);return 1==t.length?f[t[0]]:{...f}},e.escregexp=function(n){return n?(""+n).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""},e.toString=function(){return null!=u?u:u="gex["+Object.keys(f)+"]"},e.inspect=function(){return e.toString()};var u,i=Array.isArray(n)?n:[n],f={};i.forEach((function(n){n=r(n);var t=e.re(n);f[n]=t}))}return n=e,e.Gex=t,n}))}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{}),n=n.exports;return function(n){return new e(n)}}));
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],2:[function(require,module,exports){
 (function (Buffer,__dirname){
@@ -48,10 +48,10 @@ exports.incomplete = function () {
 };
 
 
-internals.atNamedRx = /^\s*at [^(/]*\(?(.+)\:(\d+)\:(\d+)\)?$/;
+internals.atNamedRx = /^\s*at (?:async )?[^(/]*\(?(.+)\:(\d+)\:(\d+)\)?$/;
 
 
-internals.atUnnamedRx = /^\s*at (.+)\:(\d+)\:(\d+)\)?$/;
+internals.atUnnamedRx = /^\s*at (?:async )?(.+)\:(\d+)\:(\d+)\)?$/;
 
 
 exports.thrownAt = function (error) {
@@ -730,7 +730,7 @@ const internals = {};
 
 module.exports = function () {
 
-    return new Promise(Ignore);         // $lab:coverage:ignore$
+    return new Promise(Ignore);
 };
 
 },{"./ignore":16}],7:[function(require,module,exports){
@@ -1345,8 +1345,8 @@ internals.hasOwnEnumerableProperty = function (obj, key) {
 
 internals.isSetSimpleEqual = function (obj, ref) {
 
-    for (const entry of obj) {
-        if (!ref.has(entry)) {
+    for (const entry of Set.prototype.values.call(obj)) {
+        if (!Set.prototype.has.call(ref, entry)) {
             return false;
         }
     }
@@ -1396,8 +1396,8 @@ internals.isDeepEqualObj = function (instanceType, obj, ref, options, seen) {
 
             // Check for deep equality
 
-            const ref2 = new Set(ref);
-            for (const objEntry of obj) {
+            const ref2 = new Set(Set.prototype.values.call(ref));
+            for (const objEntry of Set.prototype.values.call(obj)) {
                 if (ref2.delete(objEntry)) {
                     continue;
                 }
@@ -1422,12 +1422,12 @@ internals.isDeepEqualObj = function (instanceType, obj, ref, options, seen) {
             return false;
         }
 
-        for (const [key, value] of obj) {
-            if (value === undefined && !ref.has(key)) {
+        for (const [key, value] of Map.prototype.entries.call(obj)) {
+            if (value === undefined && !Map.prototype.has.call(ref, key)) {
                 return false;
             }
 
-            if (!isDeepEqual(value, ref.get(key), options, seen)) {
+            if (!isDeepEqual(value, Map.prototype.get.call(ref, key), options, seen)) {
                 return false;
             }
         }
@@ -2144,153 +2144,19 @@ exports.keys = function (obj, options = {}) {
 const internals = {};
 
 
-module.exports = function (timeout) {
+module.exports = function (timeout, returnValue) {
 
-    return new Promise((resolve) => setTimeout(resolve, timeout));
+    if (typeof timeout !== 'number' && timeout !== undefined) {
+        throw new TypeError('Timeout must be a number');
+    }
+
+    return new Promise((resolve) => setTimeout(resolve, timeout, returnValue));
 };
 
 },{}],28:[function(require,module,exports){
-/* Copyright (c) 2011-2019 Richard Rodger, MIT License */
-
-// eslint-disable-next-line
-;(function() {
-  'use strict'
-  var root = this
-  var previous_gex = root.gex
-
-  function Gex(gexspec) {
-    var self = this
-
-    function dodgy(obj) {
-      return null == obj || void 0 == obj || Number.isNaN(obj)
-    }
-
-    function clean(gexexp) {
-      var gexstr = '' + gexexp
-      if (dodgy(gexexp)) {
-        gexstr = ''
-      }
-      return gexstr
-    }
-
-    function match(str) {
-      str = '' + str
-      var hasmatch = false
-      var gexstrs = Object.keys(gexmap)
-
-      for (var i = 0; i < gexstrs.length && !hasmatch; i++) {
-        hasmatch = !!gexmap[gexstrs[i]].exec(str)
-      }
-      return hasmatch
-    }
-
-    self.noConflict = function() {
-      root.gex = previous_gex
-      return self
-    }
-
-    self.on = function(obj) {
-      var typeof_obj = typeof obj
-      if (
-        'string' === typeof_obj ||
-        'number' === typeof_obj ||
-        'boolean' === typeof_obj ||
-        obj instanceof Date ||
-        obj instanceof RegExp
-      ) {
-        return match(obj) ? obj : null
-      } else if (Array.isArray(obj)) {
-        var out = []
-        for (var i = 0; i < obj.length; i++) {
-          if (!dodgy(obj[i]) && match(obj[i])) {
-            out.push(obj[i])
-          }
-        }
-        return out
-      } else if ('object' === typeof_obj) {
-        var outobj = {}
-        for (var p in obj) {
-          if (Object.prototype.hasOwnProperty.call(obj, p)) {
-            if (match(p)) {
-              outobj[p] = obj[p]
-            }
-          }
-        }
-        return outobj
-      } else {
-        return null
-      }
-    }
-
-    self.esc = function(gexexp) {
-      var gexstr = clean(gexexp)
-      gexstr = gexstr.replace(/\*/g, '**')
-      gexstr = gexstr.replace(/\?/g, '*?')
-      return gexstr
-    }
-
-    self.re = function(gs) {
-      if ('' === gs || gs) {
-        gs = self.escregexp(gs)
-
-        // use [\s\S] instead of . to match newlines
-        gs = gs.replace(/\\\*/g, '[\\s\\S]*')
-        gs = gs.replace(/\\\?/g, '[\\s\\S]')
-
-        // escapes ** and *?
-        gs = gs.replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g, '\\*')
-        gs = gs.replace(/\[\\s\\S\]\*\[\\s\\S\]/g, '\\?')
-
-        gs = '^' + gs + '$'
-
-        return new RegExp(gs)
-      } else {
-        var gexstrs = Object.keys(gexmap)
-        return 1 == gexstrs.length ? gexmap[gexstrs[0]] : { ...gexmap }
-      }
-    }
-
-    self.escregexp = function(restr) {
-      return restr
-        ? ('' + restr).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-        : ''
-    }
-
-    self.toString = function() {
-      return desc ? desc : (desc = 'gex[' + Object.keys(gexmap) + ']')
-    }
-
-    self.inspect = function() {
-      return self.toString()
-    }
-
-    var gexstrs = Array.isArray(gexspec) ? gexspec : [gexspec]
-    var gexmap = {}
-    var desc
-
-    gexstrs.forEach(function(str) {
-      str = clean(str)
-      var re = self.re(str)
-      gexmap[str] = re
-    })
-  }
-
-  function gex(gexspec) {
-    var gexobj = new Gex(gexspec)
-    return gexobj
-  }
-  gex.Gex = Gex
-
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports = module.exports = gex
-    }
-    exports.gex = gex
-  } else {
-    root.gex = gex
-  }
-}.call(this))
-
+(function (global){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Gex=e()}}((function(){var e;function n(e){return new r(e)}function r(e){var n=this;function r(e){return null==e||Number.isNaN(e)}function t(e){var n=""+e;return r(e)&&(n=""),n}function o(e){e=""+e;for(var n=!1,r=Object.keys(i),t=0;t<r.length&&!n;t++)n=!!i[r[t]].exec(e);return n}n.on=function(e){if(null==e)return null;var n=typeof e;if("string"===n||"number"===n||"boolean"===n||e instanceof Date||e instanceof RegExp)return o(e)?e:null;if(Array.isArray(e)){for(var t=[],u=0;u<e.length;u++)!r(e[u])&&o(e[u])&&t.push(e[u]);return t}var f={};for(var i in e)Object.prototype.hasOwnProperty.call(e,i)&&o(i)&&(f[i]=e[i]);return f},n.esc=function(e){var n=t(e);return(n=n.replace(/\*/g,"**")).replace(/\?/g,"*?")},n.re=function(e){if(""===e||e)return e="^"+(e=(e=(e=(e=(e=n.escregexp(e)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(e);var r=Object.keys(i);return 1==r.length?i[r[0]]:{...i}},n.escregexp=function(e){return e?(""+e).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""},n.toString=function(){return null!=u?u:u="gex["+Object.keys(i)+"]"},n.inspect=function(){return n.toString()};var u,f=Array.isArray(e)?e:[e],i={};f.forEach((function(e){e=t(e);var r=n.re(e);i[e]=r}))}return e=n,n.Gex=r,e}));
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],29:[function(require,module,exports){
 /* Copyright (c) 2020 Richard Rodger, MIT License */
 'use strict'
@@ -3263,7 +3129,7 @@ describe('patrun', function () {
     r.add({}, 'R')
     expect(r.top()).equals({ d: 'R' })
   })
-  
+
   it('add-gex', async () => {
     var p1 = Patrun({ gex: true })
 
