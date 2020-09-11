@@ -41,15 +41,15 @@
     "Adrien Becchis (https://github.com/AdrieanKhisbe)"
   ],
   "dependencies": {
-    "gex": "^1.0.0"
+    "gex": "^2.1.0"
   },
   "devDependencies": {
-    "@hapi/code": "^8.0.1",
-    "@hapi/lab": "^22.0.4",
+    "@hapi/code": "^8.0.2",
+    "@hapi/lab": "^23.0.0",
     "benchmark": "^2.1.4",
     "coveralls": "^3.1.0",
     "hapi-lab-shim": "0.0.2",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.1",
     "serve": "^11.3.2",
     "tinyify": "^3.0.0"
   }
