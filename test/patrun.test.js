@@ -1,7 +1,9 @@
-/* Copyright (c) 2013-2019 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2013-2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
 var Lab = require('@hapi/lab')
+Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
+
 var Code = require('@hapi/code')
 
 var lab = (exports.lab = Lab.script())
@@ -901,13 +903,12 @@ describe('patrun', function () {
     expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal(null)
   })
 
-  it('noConflict', async () => {
-    var r = Patrun().noConflict()
+  it('top', async () => {
+    var r = Patrun()
     r.add({}, 'R')
-    expect(r.toString(true)).to.equal(' <R>')
-    expect(r.toString(false)).to.equal(' -> <R>')
+    expect(r.top()).equals({ d: 'R' })
   })
-
+  
   it('add-gex', async () => {
     var p1 = Patrun({ gex: true })
 

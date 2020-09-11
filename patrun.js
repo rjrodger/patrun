@@ -1,16 +1,12 @@
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
 
-;(function () {
-  'use strict'
-  var root = this
-  var previous_patrun = root.patrun
-  var has_require = typeof require !== 'undefined'
+const gex = require('gex')
 
-  var gex = root.gex || (has_require && require('gex'))
-  if (!gex)
-    throw new Error('patrun requires gex, see https://github.com/rjrodger/gex')
+module.exports = function(custom) {
+  return new Patrun(custom)
+}
 
-  var patrun = (root.patrun = function (custom) {
+function Patrun(custom) {
     custom = custom || {}
 
     var self = {}
@@ -19,11 +15,6 @@
     // Provide internal search order structure
     self.top = function () {
       return top
-    }
-
-    self.noConflict = function () {
-      root.patrun = previous_patrun
-      return self
     }
 
     self.add = function (pat, data) {
@@ -147,6 +138,10 @@
 
         if (keymap.v) {
           var val = pat[key]
+
+          // Matching operation is either string equality (by prop lookup)
+          // or gex match.
+
           var nextkeymap = keymap.v[val]
 
           if (!nextkeymap && custom.gex && keymap.g && keymap.g[key]) {
@@ -406,14 +401,4 @@
     }
 
     return self
-  })
-
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports = module.exports = patrun
-    }
-    exports.patrun = patrun
-  } else {
-    root.patrun = patrun
-  }
-}.call(this))
+}
