@@ -4,7 +4,9 @@
 [![Build Status][travis-badge]][travis-url]
 [![Coverage Status][coveralls-badge]][coveralls-url]
 [![Dependency Status][david-badge]][david-url]
-[![Gitter chat][gitter-badge]][gitter-url]
+[![DeepScan grade](https://deepscan.io/api/teams/5016/projects/13789/branches/241950/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=13789&bid=241950)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9d08de0c9c30f0197bcd/maintainability)](https://codeclimate.com/github/rjrodger/patrun/maintainability)
+
 
 ### A fast pattern matcher on JavaScript object properties.
 
@@ -413,5 +415,3 @@ sudo npm install phantomjs@1.9.1-0 uglify-js -g
 [coveralls-url]: https://coveralls.io/github/rjrodger/patrun?branch=master
 [david-badge]: https://david-dm.org/rjrodger/patrun.svg
 [david-url]: https://david-dm.org/rjrodger/patrun
-[gitter-badge]: https://badges.gitter.im/rjrodger/patrun.svg
-[gitter-url]: https://gitter.im/rjrodger/seneca
