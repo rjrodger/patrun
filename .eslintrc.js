@@ -5,12 +5,12 @@ module.exports = {
     es6: true,
     browser: true,
   },
-  "parserOptions": {
-    "ecmaVersion": 10
+  parserOptions: {
+    ecmaVersion: 10,
   },
   rules: {
     'no-console': 1,
-    'no-unused-vars': [2,{args:'none'}],
-    'no-extra-semi': 0
-  }
+    'no-unused-vars': [2, { args: 'none' }],
+    'no-extra-semi': 0,
+  },
 }

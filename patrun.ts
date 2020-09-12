@@ -4,7 +4,7 @@
 
 const gex = require('gex')
 
-module.exports = function(custom: any) {
+module.exports = function (custom: any) {
   return new (Patrun as any)(custom)
 }
 
@@ -15,11 +15,11 @@ function Patrun(custom: any) {
   var top: any = {}
 
   // Provide internal search order structure
-  self.top = function() {
+  self.top = function () {
     return top
   }
 
-  self.add = function(pat: any, data: any) {
+  self.add = function (pat: any, data: any) {
     pat = { ...pat }
 
     var customizer =
@@ -29,13 +29,13 @@ function Patrun(custom: any) {
     var plains: any[] = []
     var gexers: any[] = []
 
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       var val = pat[key]
       if (null == val) return
 
       val = String(val)
       pat[key] = val
-        ; (custom.gex && val.match(/[*?]/) ? gexers : plains).push(key)
+      ;(custom.gex && val.match(/[*?]/) ? gexers : plains).push(key)
     })
 
     plains = plains.sort()
@@ -110,16 +110,16 @@ function Patrun(custom: any) {
     var g = (keymap.g = keymap.g || {})
     var ga = (g[key] = g[key] || [])
     ga.push(gexer)
-    ga.sort(function(a: any, b: any) {
+    ga.sort(function (a: any, b: any) {
       return a.val$ < b.val$
     })
   }
 
-  self.findexact = function(pat: any) {
+  self.findexact = function (pat: any) {
     return self.find(pat, true)
   }
 
-  self.find = function(pat: any, exact: any, collect: any) {
+  self.find = function (pat: any, exact: any, collect: any) {
     if (null == pat) return null
 
     var keymap: any = top
@@ -208,7 +208,7 @@ function Patrun(custom: any) {
     return collect ? collection : data
   }
 
-  self.remove = function(pat: any) {
+  self.remove = function (pat: any) {
     var keymap = top
     var data = null
     var key
@@ -218,7 +218,6 @@ function Patrun(custom: any) {
       key = keymap.k
 
       if (keymap.v) {
-
         // TODO: equivalence match as per find
         var nextkeymap = keymap.v[pat[key]]
 
@@ -246,7 +245,7 @@ function Patrun(custom: any) {
   }
 
   // values can be verbatim, glob, or array of globs
-  self.list = function(pat: any, exact: boolean) {
+  self.list = function (pat: any, exact: boolean) {
     pat = pat || {}
 
     function descend(keymap: any, match: any, missing: any, acc: any) {
@@ -317,15 +316,15 @@ function Patrun(custom: any) {
     return acc
   }
 
-  self.toString = function(first: any, second: any) {
+  self.toString = function (first: any, second: any) {
     var tree = true === first ? true : !!second
 
     var dstr =
       'function' === typeof first
         ? first
-        : function(d: any) {
-          return 'function' === typeof d ? '<' + d.name + '>' : '<' + d + '>'
-        }
+        : function (d: any) {
+            return 'function' === typeof d ? '<' + d.name + '>' : '<' + d + '>'
+          }
 
     function indent(o: any, d: any) {
       for (var i = 0; i < d; i++) {
@@ -351,10 +350,10 @@ function Patrun(custom: any) {
       if (n.v) {
         d++
         var pa = Object.keys(n.v)
-        var pal = pa.filter(function(x) {
+        var pal = pa.filter(function (x) {
           return !x.match(/[*?]/)
         })
-        var pas = pa.filter(function(x) {
+        var pas = pa.filter(function (x) {
           return x.match(/[*?]/)
         })
         pal.sort()
@@ -391,10 +390,10 @@ function Patrun(custom: any) {
 
   self.inspect = self.toString
 
-  self.toJSON = function(indent: any) {
+  self.toJSON = function (indent: any) {
     return JSON.stringify(
       top,
-      function(key: any, val: any) {
+      function (key: any, val: any) {
         if ('function' === typeof val) return '[Function]'
         return val
       },
