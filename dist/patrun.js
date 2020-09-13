@@ -1,6 +1,10 @@
+"use strict";
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: expose walk as method for general purpose
+// TODO: convert gex to TS
 const gex = require('gex');
+const matchers_1 = require("./lib/matchers");
 module.exports = function (custom) {
     return new Patrun(custom);
 };
@@ -13,44 +17,40 @@ function Patrun(custom) {
         return top;
     };
     self.add = function (pat, data) {
-        pat = { ...pat };
+        pat = Object.assign({}, pat);
         var customizer = 'function' === typeof custom ? custom.call(self, pat, data) : null;
-        var keys = Object.keys(pat);
-        var plains = [];
-        var gexers = [];
+        // TODO: should accept options (rename custom)
+        let gexmatcher = new matchers_1.GexMatcher();
+        var keys = Object
+            .keys(pat)
+            .filter(key => null != pat[key])
+            .sort();
         keys.forEach(function (key) {
-            var val = pat[key];
-            if (null == val)
-                return;
-            val = String(val);
-            pat[key] = val;
-            (custom.gex && val.match(/[*?]/) ? gexers : plains).push(key);
+            pat[key] = String(pat[key]);
         });
-        plains = plains.sort();
-        gexers = gexers.sort();
-        keys = plains.concat(gexers);
         var keymap = top;
         var valmap;
         // Partial matches return next wider match - see partial-match test
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            var val = pat[key];
-            var gexer = custom.gex && val.match(/[*?]/) ? gex(val) : null;
+            var fix = pat[key];
+            //var gexer = custom.gex && val.match(/[*?]/) ? gex(val) : null
+            let gexer = gexmatcher.make(key, fix);
             if (gexer)
-                gexer.val$ = val;
+                gexer.val$ = fix;
             var sort_prefix = (gexer ? '1' : '0') + '~';
             var sort_key = sort_prefix + key;
             valmap = keymap.v;
             if (valmap && sort_key == keymap.sk) {
                 add_gexer(keymap, key, gexer);
-                keymap = valmap[val] || (valmap[val] = {});
+                keymap = valmap[fix] || (valmap[fix] = {});
             }
             else if (!keymap.k) {
                 add_gexer(keymap, key, gexer);
                 keymap.k = key;
                 keymap.sk = sort_key;
                 keymap.v = {};
-                keymap = keymap.v[val] = {};
+                keymap = keymap.v[fix] = {};
             }
             else if (sort_key < keymap.sk) {
                 var s = keymap.s, g = keymap.g;
@@ -65,7 +65,7 @@ function Patrun(custom) {
                 keymap.k = key;
                 keymap.sk = sort_key;
                 keymap.v = {};
-                keymap = keymap.v[val] = {};
+                keymap = keymap.v[fix] = {};
             }
             else {
                 valmap = keymap.v;
@@ -90,9 +90,12 @@ function Patrun(custom) {
         var g = (keymap.g = keymap.g || {});
         var ga = (g[key] = g[key] || []);
         ga.push(gexer);
-        ga.sort(function (a, b) {
-            return a.val$ < b.val$;
-        });
+        /*
+        ga.sort(function(a: any, b: any) {
+          return a.val$ < b.val$
+        })
+        */
+        // console.log('K', key, ga.length)
     }
     self.findexact = function (pat) {
         return self.find(pat, true);
@@ -121,7 +124,8 @@ function Patrun(custom) {
                 if (!nextkeymap && custom.gex && keymap.g && keymap.g[key]) {
                     var ga = keymap.g[key];
                     for (var gi = 0; gi < ga.length; gi++) {
-                        if (null != ga[gi].on(val)) {
+                        //if (null != ga[gi].on(val)) {
+                        if (ga[gi].match(val)) {
                             nextkeymap = keymap.v[ga[gi].val$];
                             break;
                         }
@@ -209,16 +213,16 @@ function Patrun(custom) {
             if (keymap.v) {
                 var key = keymap.k;
                 var gexval = gex(pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*');
-                var itermatch = { ...match };
-                var itermissing = { ...missing };
+                var itermatch = Object.assign({}, match);
+                var itermissing = Object.assign({}, missing);
                 var nextkeymap;
                 for (var val in keymap.v) {
                     if (val === pat[key] ||
                         (!exact && null == pat[key]) ||
                         gexval.on(val)) {
-                        var valitermatch = { ...itermatch };
+                        var valitermatch = Object.assign({}, itermatch);
                         valitermatch[key] = val;
-                        var valitermissing = { ...itermissing };
+                        var valitermissing = Object.assign({}, itermissing);
                         delete valitermissing[key];
                         nextkeymap = keymap.v[val];
                         if (0 === Object.keys(valitermissing).length &&
@@ -231,13 +235,13 @@ function Patrun(custom) {
                             });
                         }
                         if (nextkeymap && null != nextkeymap.v) {
-                            descend(nextkeymap, { ...valitermatch }, { ...valitermissing }, acc);
+                            descend(nextkeymap, Object.assign({}, valitermatch), Object.assign({}, valitermissing), acc);
                         }
                     }
                 }
                 nextkeymap = keymap.s;
                 if (nextkeymap) {
-                    descend(nextkeymap, { ...itermatch }, { ...itermissing }, acc);
+                    descend(nextkeymap, Object.assign({}, itermatch), Object.assign({}, itermissing), acc);
                 }
             }
         }
@@ -249,7 +253,7 @@ function Patrun(custom) {
                 find: top.f,
             });
         }
-        descend(top, {}, { ...pat }, acc);
+        descend(top, {}, Object.assign({}, pat), acc);
         return acc;
     };
     self.toString = function (first, second) {

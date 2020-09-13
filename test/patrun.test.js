@@ -590,7 +590,8 @@ describe('patrun', function () {
     })
 
     p2.add({ a: 1, b: '*' }, 'X')
-
+    // console.dir(p2.top(),{depth:null})
+    
     expect(p2.find({ a: 1 })).to.equal('X')
     expect(p2.find({ a: 1, b: 'x' })).to.equal('X')
 
@@ -941,7 +942,7 @@ describe('patrun', function () {
     p1.add({ e: '*' }, 'XE')
     p1.add({ d: '*' }, 'XD')
 
-    //console.log(require('util').inspect(p1.top,{depth:99}))
+    // console.dir(p1.top(),{depth:null})
 
     // alphanumeric ordering
     expect(p1.find({ d: 'A', e: 'A' })).to.equal('XD')
