@@ -5,7 +5,12 @@
 // TODO: convert gex to TS
 const gex = require('gex')
 
-import { MatchValue, GexMatcher } from './lib/matchers'
+import {
+  Matcher,
+  MatchValue,
+  GexMatcher,
+  IntervalMatcher,
+} from './lib/matchers'
 
 
 module.exports = function(custom: any) {
@@ -18,6 +23,17 @@ function Patrun(custom: any) {
   var self: any = {}
   var top: any = {}
 
+  let matchers: Matcher[] = []
+
+  if (custom.gex) {
+    matchers.push(new GexMatcher())
+  }
+
+  if (custom.interval) {
+    matchers.push(new IntervalMatcher())
+  }
+
+
   // Provide internal search order structure
   self.top = function() {
     return top
@@ -26,11 +42,10 @@ function Patrun(custom: any) {
   self.add = function(pat: any, data: any) {
     pat = { ...pat }
 
+    // console.log('ADD', pat, data)
+
     var customizer =
       'function' === typeof custom ? custom.call(self, pat, data) : null
-
-    // TODO: should accept options (rename custom)
-    let gexmatcher = new GexMatcher()
 
     var keys = Object
       .keys(pat)
@@ -47,23 +62,31 @@ function Patrun(custom: any) {
     // Partial matches return next wider match - see partial-match test
 
     for (var i = 0; i < keys.length; i++) {
+      // console.log('L', i, keys.length)
+
       var key = keys[i]
       var fix = pat[key]
 
-      //var gexer = custom.gex && val.match(/[*?]/) ? gex(val) : null
-      let gexer = gexmatcher.make(key, fix) as any
-      if (gexer) gexer.val$ = fix
+      let mv: MatchValue | undefined =
+        matchers.reduce((m, t) => m || t.make(key, fix), undefined)
 
-      var sort_prefix = (gexer ? '1' : '0') + '~'
+      let stack = null
+      try { throw new Error() } catch (e) { stack = e.stack }
+      // console.log('MVx', i, keys, key, fix, mv, stack)
+
+      //gexmatcher.make(key, fix) as any
+      if (mv) mv.val$ = fix
+
+      var sort_prefix = (mv ? '1' : '0') + '~'
       var sort_key = sort_prefix + key
 
       valmap = keymap.v
 
       if (valmap && sort_key == keymap.sk) {
-        add_gexer(keymap, key, gexer)
+        add_mv(keymap, key, mv)
         keymap = valmap[fix] || (valmap[fix] = {})
       } else if (!keymap.k) {
-        add_gexer(keymap, key, gexer)
+        add_mv(keymap, key, mv)
         keymap.k = key
         keymap.sk = sort_key
         keymap.v = {}
@@ -76,16 +99,21 @@ function Patrun(custom: any) {
         if (g) keymap.s.g = g
 
         if (keymap.g) keymap.g = {}
-        add_gexer(keymap, key, gexer)
+        add_mv(keymap, key, mv)
 
         keymap.k = key
         keymap.sk = sort_key
         keymap.v = {}
 
         keymap = keymap.v[fix] = {}
-      } else {
-        valmap = keymap.v
+      }
+
+      // Follow star path
+      else {
+        // valmap = keymap.v
         keymap = keymap.s || (keymap.s = {})
+
+        // NOTE: current key is still not inserted
         i--
       }
     }
@@ -103,20 +131,12 @@ function Patrun(custom: any) {
     return self
   }
 
-  function add_gexer(keymap: any, key: any, gexer: any) {
-    if (!gexer) return
+  function add_mv(keymap: any, key: any, mv?: MatchValue) {
+    if (null == mv) return
 
     var g = (keymap.g = keymap.g || {})
     var ga = (g[key] = g[key] || [])
-    ga.push(gexer)
-
-    /*
-    ga.sort(function(a: any, b: any) {
-      return a.val$ < b.val$
-    })
-    */
-
-    // console.log('K', key, ga.length)
+    ga.push(mv)
   }
 
   self.findexact = function(pat: any) {
@@ -150,7 +170,8 @@ function Patrun(custom: any) {
 
         var nextkeymap = keymap.v[val]
 
-        if (!nextkeymap && custom.gex && keymap.g && keymap.g[key]) {
+        //if (!nextkeymap && custom.gex && keymap.g && keymap.g[key]) {
+        if (!nextkeymap && keymap.g && keymap.g[key]) {
           var ga = keymap.g[key]
           for (var gi = 0; gi < ga.length; gi++) {
             //if (null != ga[gi].on(val)) {

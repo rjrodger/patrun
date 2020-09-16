@@ -20,16 +20,22 @@ class GexMatcher {
         if ('string' === typeof fix && fix.match(/[*?]/)) {
             let gex = Gex(fix);
             return {
-                match: (val) => null != gex.on(val)
+                kind: 'gex',
+                match: (val) => null != gex.on(val),
             };
         }
         else
-            return null;
+            return undefined;
     }
 }
 exports.GexMatcher = GexMatcher;
+// TODO: integers: <1, >1&<2, >2 is complete
+// TODO: ranges: 1..3 is >=1&&<=3, [1,2) is >=1,<2
+// TODO: any: * is -Inf>=&&<=+Inf
+// TODO: non-Number types: special case
 class IntervalMatcher {
     constructor() {
+        this.kind = 'interval';
         _and.set(this, (lhs, rhs) => function and(x) {
             return lhs(x) && rhs(x);
         });
@@ -46,7 +52,7 @@ class IntervalMatcher {
         if ('string' === typeof fix) {
             let m = fix.match(/^\s*([<>]=?)\s*([-+.0-9a-fA-FeEoOxX]+)(\s*(&+|\|+)\s*([<>]=?)\s*([-+.0-9a-fA-FeEoOxX]+))?\s*$/);
             if (null == m) {
-                return null;
+                return undefined;
             }
             let o0 = '<' === m[1] ? __classPrivateFieldGet(this, _mlt) :
                 '<=' === m[1] ? __classPrivateFieldGet(this, _mlte) :
@@ -62,17 +68,19 @@ class IntervalMatcher {
             // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
             let check = jo(o0(n0), o1(n1));
             return {
+                kind: 'interval',
                 match: (val) => {
+                    let res = false;
                     let n = parseFloat(val);
-                    if (isNaN(n)) {
-                        return false;
+                    if (!isNaN(n)) {
+                        res = check(n);
                     }
-                    return check(n);
+                    return res;
                 }
             };
         }
         else
-            return null;
+            return undefined;
     }
 }
 exports.IntervalMatcher = IntervalMatcher;

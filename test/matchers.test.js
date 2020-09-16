@@ -15,6 +15,17 @@ var Matchers = require('../lib/matchers')
 
 
 describe('matchers', function () {
+  it('gex', async () => {
+    var gm = new Matchers.GexMatcher()
+
+    var gm0 = gm.make('key','*a')
+    var gm0m = gm0.match
+    expect(gm0m('a')).true()
+    expect(gm0m('ab')).false()
+    expect(gm0m('ba')).true()
+    
+  })
+
   it('interval', async () => {
     var im = new Matchers.IntervalMatcher()
 

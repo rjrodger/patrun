@@ -1059,6 +1059,40 @@ describe('patrun', function () {
     expect(p1.find({ a: 'A' })).to.equal('XA')
   })
 
+
+  it('add-interval', async () => {
+    var p1 = Patrun({ interval: true })
+
+    p1.add({ a: 'A' }, 'XA')
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+    expect(p1.find({})).to.not.exist()
+    
+    p1.add({ b: '>10' }, 'XB')
+    //console.log(p1+'')
+    
+    expect(p1.find({ b: 11 })).to.equal('XB')
+    expect(p1.find({ b: 12.5 })).to.equal('XB')
+    expect(p1.find({ b: '11' })).to.equal('XB')
+    expect(p1.find({ b: '12.5' })).to.equal('XB')
+    expect(p1.find({ b: 1 })).to.not.exist()
+    expect(p1.find({ b: 0 })).to.not.exist()
+    expect(p1.find({ b: '' })).not.exist()
+    expect(p1.find({})).to.not.exist()
+  })
+
+
+  it('add-gex-interval', async () => {
+    var p1 = Patrun({ gex: true, interval: true })
+
+    p1.add({ a: 'A', b: '>10&<20',c: '*a' }, 'A0')
+    expect(p1.find({ a: 'A', b: 11, c: 'xa' })).to.equal('A0')
+    expect(p1.find({ a: 'B', b: 11, c: 'xa' })).to.not.exist()
+    expect(p1.find({ a: 'A', b: 9, c: 'xa' })).to.not.exist()
+    expect(p1.find({ a: 'A', b: 11, c: 'ax' })).to.not.exist()
+  })
+
+  
+  
   it('collect-once', async () => {
     var p1 = Patrun({ gex: true })
     p1.add({ d: 1, b: 1, a: 1 }, 'A')
