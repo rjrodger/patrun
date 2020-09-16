@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2020 Richard Rodger, MIT License, https://github.com/rjrodger/patrun */
+/* Copyright (c) 2013-2020 Richard Rodger, MIT License */
 
 // TODO: expose walk as method for general purpose
 
@@ -59,8 +59,8 @@ function Patrun(custom: any) {
     var keymap: any = top
     var valmap: any
 
-    // Partial matches return next wider match - see partial-match test
-
+    // Partial matches return next wider match - see partial-match test.
+    // Traverse the key path (keys are ordered), insert preserves order.
     for (var i = 0; i < keys.length; i++) {
       // console.log('L', i, keys.length)
 
@@ -70,39 +70,56 @@ function Patrun(custom: any) {
       let mv: MatchValue | undefined =
         matchers.reduce((m, t) => m || t.make(key, fix), undefined)
 
-      let stack = null
-      try { throw new Error() } catch (e) { stack = e.stack }
-      // console.log('MVx', i, keys, key, fix, mv, stack)
-
-      //gexmatcher.make(key, fix) as any
       if (mv) mv.val$ = fix
 
-      var sort_prefix = (mv ? '1' : '0') + '~'
-      var sort_key = sort_prefix + key
+      //var sort_prefix = (mv ? '1' : '0') + '~'
+      //var sort_key = sort_prefix + key
+      //var sort_key = key
 
       valmap = keymap.v
 
-      if (valmap && sort_key == keymap.sk) {
+      // console.log('S0',key,fix,keymap,valmap)
+
+      // An existing key
+      if (valmap && key == keymap.k) {
+        // console.log('S1-a')
         add_mv(keymap, key, mv)
         keymap = valmap[fix] || (valmap[fix] = {})
-      } else if (!keymap.k) {
+      }
+
+      // End of key path reached, so this is a new key, ordered last
+      else if (!keymap.k) {
+        // console.log('S1-b')
         add_mv(keymap, key, mv)
         keymap.k = key
-        keymap.sk = sort_key
+        //keymap.sk = sort_key
         keymap.v = {}
         keymap = keymap.v[fix] = {}
-      } else if (sort_key < keymap.sk) {
-        var s = keymap.s,
-          g = keymap.g
-        keymap.s = { k: keymap.k, sk: keymap.sk, v: keymap.v }
-        if (s) keymap.s.s = s
-        if (g) keymap.s.g = g
+      }
 
-        if (keymap.g) keymap.g = {}
+      // Insert key orders before next existing key in path, so insert
+      else if (key < keymap.k) {
+        // console.log('S1-c', key, keymap.k)
+        var s = keymap.s
+        var g = keymap.g
+
+        keymap.s = {
+          k: keymap.k,
+          // sk: keymap.sk,
+          v: keymap.v
+        }
+
+        if (s) { keymap.s.s = s }
+        if (g) { keymap.s.g = g }
+
+        if (keymap.g) {
+          keymap.g = {}
+        }
+
         add_mv(keymap, key, mv)
 
         keymap.k = key
-        keymap.sk = sort_key
+        // keymap.sk = sort_key
         keymap.v = {}
 
         keymap = keymap.v[fix] = {}
@@ -110,6 +127,7 @@ function Patrun(custom: any) {
 
       // Follow star path
       else {
+        // console.log('S1-d')
         // valmap = keymap.v
         keymap = keymap.s || (keymap.s = {})
 

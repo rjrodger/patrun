@@ -152,32 +152,45 @@ describe('patrun', function () {
     )
   })
 
+  
   it('basic', async () => {
     var rt1 = Patrun()
 
     rt1.add({ p1: 'v1' }, 'r1')
+    // console.log('---')
     expect('r1').to.equal(rt1.find({ p1: 'v1' }))
     expect(null).to.equal(rt1.find({ p2: 'v1' }))
 
     rt1.add({ p1: 'v1' }, 'r1x')
+    // console.log('---')
     expect('r1x').to.equal(rt1.find({ p1: 'v1' }))
     expect(null).to.equal(rt1.find({ p2: 'v1' }))
 
     rt1.add({ p1: 'v2' }, 'r2')
+    // console.log('---')
     expect('r2').to.equal(rt1.find({ p1: 'v2' }))
     expect(null).to.equal(rt1.find({ p2: 'v2' }))
 
     rt1.add({ p2: 'v3' }, 'r3')
+    // console.log('---')
     expect('r3').to.equal(rt1.find({ p2: 'v3' }))
     expect(null).to.equal(rt1.find({ p2: 'v2' }))
     expect(null).to.equal(rt1.find({ p2: 'v1' }))
 
     rt1.add({ p1: 'v1', p3: 'v4' }, 'r4')
+    // console.log('---')
     expect('r4').to.equal(rt1.find({ p1: 'v1', p3: 'v4' }))
     expect('r1x').to.equal(rt1.find({ p1: 'v1', p3: 'v5' }))
     expect(null).to.equal(rt1.find({ p2: 'v1' }))
+
+    rt1.add({ p1: 'v1', p2: 'v5' }, 'r5')
+    expect(rt1.find({p1:'v1',p2:'v5'})).equal('r5')
+    // console.log('---')
+    // console.log(rt1.toString(true))
   })
 
+
+  
   it('culdesac', async () => {
     var rt1 = Patrun()
 
@@ -409,9 +422,14 @@ describe('patrun', function () {
     expect('{"d":"r2"}').to.equal(rt1.toJSON())
 
     rt1.add({ p99: 'v99' }, 'r99')
-    expect('{"d":"r2","k":"p99","sk":"0~p99","v":{"v99":{"d":"r99"}}}').equal(
+    //expect('{"d":"r2","k":"p99","sk":"0~p99","v":{"v99":{"d":"r99"}}}').equal(
+    //  rt1.toJSON()
+    //)
+
+    expect('{"d":"r2","k":"p99","v":{"v99":{"d":"r99"}}}').equal(
       rt1.toJSON()
     )
+
   })
 
   it('multi-star', async () => {
