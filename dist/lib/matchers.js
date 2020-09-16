@@ -33,6 +33,7 @@ exports.GexMatcher = GexMatcher;
 // TODO: ranges: 1..3 is >=1&&<=3, [1,2) is >=1,<2
 // TODO: any: * is -Inf>=&&<=+Inf
 // TODO: non-Number types: special case
+// TODO: range against other values can close gap: 10..20, 21..30 => [10,21)[21,30]
 class IntervalMatcher {
     constructor() {
         this.kind = 'interval';

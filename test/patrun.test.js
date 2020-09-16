@@ -1102,11 +1102,24 @@ describe('patrun', function () {
   it('add-gex-interval', async () => {
     var p1 = Patrun({ gex: true, interval: true })
 
-    p1.add({ a: 'A', b: '>10&<20',c: '*a' }, 'A0')
-    expect(p1.find({ a: 'A', b: 11, c: 'xa' })).to.equal('A0')
-    expect(p1.find({ a: 'B', b: 11, c: 'xa' })).to.not.exist()
-    expect(p1.find({ a: 'A', b: 9, c: 'xa' })).to.not.exist()
-    expect(p1.find({ a: 'A', b: 11, c: 'ax' })).to.not.exist()
+    p1.add({ a: 'A', c: '>10&<20', e: '*a' }, 'A0')
+    expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
+    expect(p1.find({ a: 'B', c: 11, e: 'xa' })).to.not.exist()
+    expect(p1.find({ a: 'A', c: 9, e: 'xa' })).to.not.exist()
+    expect(p1.find({ a: 'A', c: 11, e: 'ax' })).to.not.exist()
+
+    // ensure key path ordering is preserved
+    p1.add({ a: 'A', b: 'B' }, 'AB0')
+    expect(p1.find({ a: 'A', b: 'B' })).to.equal('AB0')
+    expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
+
+    // uses vm arrays 
+    p1.add({ a: 'A', c: '<=10' }, 'AC0')
+    expect(p1.find({ a: 'A', b: 'B' })).to.equal('AB0')
+    expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
+    expect(p1.find({ a: 'A', c: 9 })).to.equal('AC0')
+    
+    //console.log(p1.toString(true))
   })
 
   

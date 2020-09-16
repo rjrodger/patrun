@@ -1,6 +1,8 @@
 "use strict";
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License */
 Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: remove use of val$ - attach keymap to matcher (union type?)
+// TODO: matchers should accept string[] of key names - only operate on these keys
 // TODO: expose walk as method for general purpose
 // TODO: convert gex to TS
 const gex = require('gex');

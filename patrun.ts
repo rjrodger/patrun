@@ -1,5 +1,9 @@
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License */
 
+// TODO: remove use of val$ - attach keymap to matcher (union type?)
+
+// TODO: matchers should accept string[] of key names - only operate on these keys
+
 // TODO: expose walk as method for general purpose
 
 // TODO: convert gex to TS
