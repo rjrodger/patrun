@@ -26,7 +26,7 @@ describe('matchers', function () {
     
   })
 
-  it('interval', async () => {
+  it('interval-basic', async () => {
     var im = new Matchers.IntervalMatcher()
 
     var im0 = im.make('key','>10')
@@ -61,7 +61,33 @@ describe('matchers', function () {
     expect(im3m(19)).false()
     expect(im3m(20)).true()
     expect(im3m(21)).true()
+  })
 
+  it('interval-completion', async () => {
+    var im = new Matchers.IntervalMatcher()
+
+    var is0 = ['>=10&<=20','>20','<10'].map(i=>im.make('k',i))
+    // console.log(is0)
+    expect(is0).exists()
     
+    var is0s = im.half_intervals(is0)
+    // console.log(is0s)
+    expect(is0s).exists()
+    
+    var is0c = im.complete(is0)
+    // console.dir(is0c,{depth:null})
+    expect(is0c).exists()
+
+    var is1 = ['>=10&<=15','>20','<10','<30'].map(i=>im.make('k',i))
+    // console.log(is1)
+    expect(is1).exists()
+    
+    var is1s = im.half_intervals(is1)
+    // console.log(is1s)
+    expect(is1s).exists()
+    
+    var is1c = im.complete(is1)
+    // console.dir(is1c,{depth:null})
+    expect(is1c).exists()
   })
 })
