@@ -37,9 +37,6 @@
     "dist",
     "LICENSE"
   ],
-  "engines": {
-    "node": ">=8"
-  },
   "contributors": [
     "Adrien Becchis (https://github.com/AdrieanKhisbe)"
   ],

@@ -6,7 +6,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     }
     return privateMap.get(receiver);
 };
-var _and, _or, _f, _mgt, _mgte, _mlt, _mlte;
+var _and, _or, _nil, _err, _mgt, _mgte, _mlt, _mlte, _meq;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntervalMatcher = exports.GexMatcher = void 0;
 // key : pattern element key name string
@@ -38,12 +38,26 @@ class GexMatcher {
     }
 }
 exports.GexMatcher = GexMatcher;
-// TODO: support = - exact values
 // TODO: integers: <1, >1&<2, >2 is complete
-// TODO: ranges: 1..3 is >=1&&<=3, [1,2) is >=1,<2
 // TODO: any: * is -Inf>=&&<=+Inf \ intervals - ie. gaps
 // TODO: non-Number types: special case
-// TODO: range against other values can close gap: 10..20, 21..30 => [10,21)[21,30]
+// NOTE: '/' == '\\'
+const IntervalRE = new RegExp([
+    '^/s*',
+    '(=*[<>/(/[]?=*)?' + // lenient operator symbol
+        '/s*' + // optional whitespace
+        '([-+0-9a-fA-FeEoOxX]+(x(y))?)' + // (/.([0-9a-fA-FeEoOxX]+))?)' + // number
+        '(' + // start optional second term
+        '/s*(,|&+|/|+|/./.)' + // join
+        '/s*' + // optional whitespace
+        '(=*[<>]?=*)' + // lenient operator symbol
+        '/s*' + // optional whitespace
+        '([-+.0-9a-fA-FeEoOxX]+)' + // number
+        '/s*' + // optional whitespace
+        '([/)/]]?)' + // lenient operator symbol
+        ')?' + // end optional second term
+        '/s*$',
+].join('').replace(/\//g, '\\'));
 class IntervalMatcher {
     constructor() {
         this.kind = 'interval';
@@ -53,49 +67,75 @@ class IntervalMatcher {
         _or.set(this, (lhs, rhs) => function or(x) {
             return lhs(x) || rhs(x);
         });
-        _f.set(this, (n) => function f(x) { return false; });
+        _nil.set(this, (n) => function nil(x) { return false; });
+        _err.set(this, (n) => function err(x) { return false; });
         _mgt.set(this, (n) => function gt(x) { return x > n; });
         _mgte.set(this, (n) => function gte(x) { return x >= n; });
         _mlt.set(this, (n) => function lt(x) { return x < n; });
         _mlte.set(this, (n) => function lte(x) { return x <= n; });
+        _meq.set(this, (n) => function eq(x) { return x === n; });
     }
     make(key, fix) {
         if ('string' === typeof fix) {
-            let m = fix.match(/^\s*([<>]=?)\s*([-+.0-9a-fA-FeEoOxX]+)(\s*(&+|\|+)\s*([<>]=?)\s*([-+.0-9a-fA-FeEoOxX]+))?\s*$/);
-            if (null == m) {
-                return undefined;
-            }
-            let o0 = '<' === m[1] ? __classPrivateFieldGet(this, _mlt) :
-                '<=' === m[1] ? __classPrivateFieldGet(this, _mlte) :
-                    '>' === m[1] ? __classPrivateFieldGet(this, _mgt) : __classPrivateFieldGet(this, _mgte);
-            let n0 = Number(m[2]);
-            let jo = null == m[4] ? __classPrivateFieldGet(this, _or) :
-                '&' === m[4].substring(0, 1) ? __classPrivateFieldGet(this, _and) : __classPrivateFieldGet(this, _or);
-            let o1 = null == m[5] ? __classPrivateFieldGet(this, _f) :
-                '<' === m[5] ? __classPrivateFieldGet(this, _mlt) :
-                    '<=' === m[5] ? __classPrivateFieldGet(this, _mlte) :
-                        '>' === m[5] ? __classPrivateFieldGet(this, _mgt) : __classPrivateFieldGet(this, _mgte);
-            let n1 = null == m[6] ? null : Number(m[6]);
-            // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
-            let o0f = o0(n0);
-            let o1f = o1(n1);
-            let check = jo(o0f, o1f);
-            return {
-                kind: 'interval',
-                fix: fix,
-                meta: { jo: check, o0: o0f.name, n0, o1: o1f.name, n1 },
-                match: (val) => {
+            let m = fix.match(IntervalRE);
+            let meta = { jo: 'and', o0: 'err', n0: NaN, o1: 'err', n1: NaN };
+            let match = (val) => false;
+            if (null != m) {
+                // standalone number
+                if (null == m[1] && !isNaN(Number(fix))) {
+                    m = [fix, '=', fix];
+                }
+                let os0 = IntervalMatcher.normop(m[1]);
+                //let os1 = IntervalMatcher.normop(m[5]) || IntervalMatcher.normop(m[7])
+                let os1 = IntervalMatcher.normop(m[7]) || IntervalMatcher.normop(m[9]);
+                let o0 = '=' === os0 ? __classPrivateFieldGet(this, _meq) :
+                    '<' === os0 ? __classPrivateFieldGet(this, _mlt) :
+                        '<=' === os0 ? __classPrivateFieldGet(this, _mlte) :
+                            '>' === os0 ? __classPrivateFieldGet(this, _mgt) :
+                                '(' === os0 ? __classPrivateFieldGet(this, _mgt) :
+                                    '>=' === os0 ? __classPrivateFieldGet(this, _mgte) :
+                                        '[' === os0 ? __classPrivateFieldGet(this, _mgte) : __classPrivateFieldGet(this, _err);
+                let n0 = Number(m[2]);
+                //let n1 = null == m[6] ? NaN : Number(m[6])
+                let n1 = null == m[8] ? NaN : Number(m[8]);
+                let jos = m[6];
+                let jo = null == jos ? __classPrivateFieldGet(this, _or) :
+                    '&' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _and) :
+                        ',' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _and) : __classPrivateFieldGet(this, _or);
+                if ('..' === jos) {
+                    jo = __classPrivateFieldGet(this, _and);
+                    o0 = __classPrivateFieldGet(this, _err) === o0 ? __classPrivateFieldGet(this, _mgte) : o0;
+                    os1 = null == os1 || '' === os1 ? '<=' : os1;
+                }
+                let o1 = null == os1 ? __classPrivateFieldGet(this, _nil) :
+                    '=' === os1 ? __classPrivateFieldGet(this, _mlt) :
+                        '<' === os1 ? __classPrivateFieldGet(this, _mlt) :
+                            ')' === os1 ? __classPrivateFieldGet(this, _mlt) :
+                                '<=' === os1 ? __classPrivateFieldGet(this, _mlte) :
+                                    ']' === os1 ? __classPrivateFieldGet(this, _mlte) :
+                                        '>' === os1 ? __classPrivateFieldGet(this, _mgt) :
+                                            '>=' === os1 ? __classPrivateFieldGet(this, _mgte) : __classPrivateFieldGet(this, _err);
+                // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
+                let o0f = o0(n0);
+                let o1f = o1(n1);
+                let check = jo(o0f, o1f);
+                meta = { jo: check.name, o0: o0f.name, n0, o1: o1f.name, n1 };
+                match = (val) => {
                     let res = false;
                     let n = parseFloat(val);
                     if (!isNaN(n)) {
                         res = check(n);
                     }
                     return res;
-                }
+                };
+            }
+            return {
+                kind: 'interval',
+                fix,
+                meta,
+                match
             };
         }
-        else
-            return undefined;
     }
     complete(mvs, opts) {
         let completion = {
@@ -170,9 +210,8 @@ class IntervalMatcher {
             return c;
         }, completion);
         let last = 0 < half_intervals.length && half_intervals[half_intervals.length - 1];
-        if (last &&
-            last.n !== top &&
-            !(last.op === 'lte' || last.op === 'eq')) {
+        // {n,+oo]
+        if (last && last.o !== 'gt' && last.o !== 'gte') {
             completion.gaps.push([
                 { n: last.n, o: (last.o === 'eq' || last.o === 'lte') ? 'gt' : 'gte', m: 6 },
                 { n: top, o: 'lte', m: 7 }
@@ -189,8 +228,8 @@ class IntervalMatcher {
         }
         return half_intervals
             .map(hh => [
-            null == hh[0].n ? null : hh[0],
-            null == hh[1].n ? null : hh[1]
+            (isNaN(hh[0].n) || null == hh[0].n) ? null : hh[0],
+            (isNaN(hh[1].n) || null == hh[1].n) ? null : hh[1]
         ]
             .filter(h => null != h))
             .sort((a, b) => a[0].n < b[0].n ? -1 : b[0].n < a[0].n ? 1 :
@@ -203,5 +242,8 @@ class IntervalMatcher {
     }
 }
 exports.IntervalMatcher = IntervalMatcher;
-_and = new WeakMap(), _or = new WeakMap(), _f = new WeakMap(), _mgt = new WeakMap(), _mgte = new WeakMap(), _mlt = new WeakMap(), _mlte = new WeakMap();
+_and = new WeakMap(), _or = new WeakMap(), _nil = new WeakMap(), _err = new WeakMap(), _mgt = new WeakMap(), _mgte = new WeakMap(), _mlt = new WeakMap(), _mlte = new WeakMap(), _meq = new WeakMap();
+// == sames as =, <= same as =<
+IntervalMatcher.normop = (op) => null == op ? null :
+    (((op.match(/([<>\(\)\[\]])/) || [])[1] || '') + ((op.match(/(=)/) || [])[1] || ''));
 //# sourceMappingURL=matchers.js.map

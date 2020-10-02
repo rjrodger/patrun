@@ -32,15 +32,16 @@ export declare class IntervalMatcher implements Matcher {
     #private;
     kind: string;
     constructor();
+    static normop: (op: string) => string | null;
     make(key: string, fix: any): {
         kind: string;
         fix: string;
         meta: {
-            jo: (x: number) => any;
+            jo: string;
             o0: string;
             n0: number;
             o1: string;
-            n1: number | null;
+            n1: number;
         };
         match: (val: any) => boolean;
     } | undefined;

@@ -57,17 +57,38 @@ export class GexMatcher implements Matcher {
 }
 
 
-// TODO: support = - exact values
 // TODO: integers: <1, >1&<2, >2 is complete
-// TODO: ranges: 1..3 is >=1&&<=3, [1,2) is >=1,<2
 // TODO: any: * is -Inf>=&&<=+Inf \ intervals - ie. gaps
 // TODO: non-Number types: special case
-// TODO: range against other values can close gap: 10..20, 21..30 => [10,21)[21,30]
+
+// NOTE: '/' == '\\'
+const IntervalRE = new RegExp([
+  '^/s*', // optional whitespace
+  '(=*[<>/(/[]?=*)?' + // lenient operator symbol
+  '/s*' + // optional whitespace
+  '([-+0-9a-fA-FeEoOxX]+(x(y))?)' + // (/.([0-9a-fA-FeEoOxX]+))?)' + // number
+  '(' + // start optional second term
+  '/s*(,|&+|/|+|/./.)' + // join
+  '/s*' + // optional whitespace
+  '(=*[<>]?=*)' + // lenient operator symbol
+  '/s*' + // optional whitespace
+  '([-+.0-9a-fA-FeEoOxX]+)' + // number
+  '/s*' + // optional whitespace
+  '([/)/]]?)' + // lenient operator symbol
+  ')?' + // end optional second term
+  '/s*$', // optional whitespace
+].join('').replace(/\//g, '\\'))
+
+
 export class IntervalMatcher implements Matcher {
   kind = 'interval'
 
   constructor() {
   }
+
+  // == sames as =, <= same as =<
+  static normop = (op: string) => null == op ? null :
+    (((op.match(/([<>\(\)\[\]])/) || [])[1] || '') + ((op.match(/(=)/) || [])[1] || ''))
 
 
   #and = (lhs: any, rhs?: any) => function and(x: number) {
@@ -76,48 +97,79 @@ export class IntervalMatcher implements Matcher {
   #or = (lhs: any, rhs?: any) => function or(x: number) {
     return lhs(x) || rhs(x)
   }
-  #f = (n: any) => function f(x: any) { return false }
+  #nil = (n: any) => function nil(x: any) { return false }
+  #err = (n: any) => function err(x: any) { return false }
   #mgt = (n: any) => function gt(x: any) { return x > n }
   #mgte = (n: any) => function gte(x: any) { return x >= n }
   #mlt = (n: any) => function lt(x: any) { return x < n }
   #mlte = (n: any) => function lte(x: any) { return x <= n }
+  #meq = (n: any) => function eq(x: any) { return x === n }
+
 
   make(key: string, fix: any) {
     if ('string' === typeof fix) {
-      let m = fix.match(/^\s*([<>]=?)\s*([-+.0-9a-fA-FeEoOxX]+)(\s*(&+|\|+)\s*([<>]=?)\s*([-+.0-9a-fA-FeEoOxX]+))?\s*$/)
+      let m = fix.match(IntervalRE)
+      let meta = { jo: 'and', o0: 'err', n0: NaN, o1: 'err', n1: NaN }
+      let match = (val: any) => false
 
-      if (null == m) {
-        return undefined
-      }
+      if (null != m) {
 
-      let o0 =
-        '<' === m[1] ? this.#mlt :
-          '<=' === m[1] ? this.#mlte :
-            '>' === m[1] ? this.#mgt :
-              this.#mgte
-      let n0 = Number(m[2])
+        // standalone number
+        if (null == m[1] && !isNaN(Number(fix))) {
+          m = [fix, '=', fix]
+        }
 
-      let jo = null == m[4] ? this.#or :
-        '&' === m[4].substring(0, 1) ? this.#and : this.#or
 
-      let o1 =
-        null == m[5] ? this.#f :
-          '<' === m[5] ? this.#mlt :
-            '<=' === m[5] ? this.#mlte :
-              '>' === m[5] ? this.#mgt :
-                this.#mgte
-      let n1 = null == m[6] ? null : Number(m[6])
+        let os0 = IntervalMatcher.normop(m[1])
+        //let os1 = IntervalMatcher.normop(m[5]) || IntervalMatcher.normop(m[7])
+        let os1 = IntervalMatcher.normop(m[7]) || IntervalMatcher.normop(m[9])
 
-      // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
-      let o0f = o0(n0)
-      let o1f = o1(n1)
-      let check = jo(o0f, o1f)
+        let o0 =
+          '=' === os0 ? this.#meq :
+            '<' === os0 ? this.#mlt :
+              '<=' === os0 ? this.#mlte :
+                '>' === os0 ? this.#mgt :
+                  '(' === os0 ? this.#mgt :
+                    '>=' === os0 ? this.#mgte :
+                      '[' === os0 ? this.#mgte :
+                        this.#err
 
-      return {
-        kind: 'interval',
-        fix: fix,
-        meta: { jo: check, o0: o0f.name, n0, o1: o1f.name, n1 },
-        match: (val: any) => {
+        let n0 = Number(m[2])
+        //let n1 = null == m[6] ? NaN : Number(m[6])
+        let n1 = null == m[8] ? NaN : Number(m[8])
+
+        let jos = m[6]
+
+        let jo = null == jos ? this.#or :
+          '&' === jos.substring(0, 1) ? this.#and :
+            ',' === jos.substring(0, 1) ? this.#and :
+              this.#or
+
+        if ('..' === jos) {
+          jo = this.#and
+          o0 = this.#err === o0 ? this.#mgte : o0
+          os1 = null == os1 || '' === os1 ? '<=' : os1
+        }
+
+        let o1 =
+          null == os1 ? this.#nil :
+            '=' === os1 ? this.#mlt :
+              '<' === os1 ? this.#mlt :
+                ')' === os1 ? this.#mlt :
+                  '<=' === os1 ? this.#mlte :
+                    ']' === os1 ? this.#mlte :
+                      '>' === os1 ? this.#mgt :
+                        '>=' === os1 ? this.#mgte :
+                          this.#err
+
+
+        // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
+        let o0f = o0(n0)
+        let o1f = o1(n1)
+        let check = jo(o0f, o1f)
+
+        meta = { jo: check.name, o0: o0f.name, n0, o1: o1f.name, n1 }
+        match = (val: any) => {
           let res = false
           let n = parseFloat(val)
 
@@ -128,8 +180,14 @@ export class IntervalMatcher implements Matcher {
           return res
         }
       }
+
+      return {
+        kind: 'interval',
+        fix,
+        meta,
+        match
+      }
     }
-    else return undefined
   }
 
   complete(mvs: MatchValue[], opts?: any) {
@@ -217,10 +275,8 @@ export class IntervalMatcher implements Matcher {
 
 
     let last = 0 < half_intervals.length && half_intervals[half_intervals.length - 1]
-    if (last &&
-      last.n !== top &&
-      !(last.op === 'lte' || last.op === 'eq')) {
-
+    // {n,+oo]
+    if (last && last.o !== 'gt' && last.o !== 'gte') {
       completion.gaps.push([
         { n: last.n, o: (last.o === 'eq' || last.o === 'lte') ? 'gt' : 'gte', m: 6 },
         { n: top, o: 'lte', m: 7 }
@@ -244,8 +300,8 @@ export class IntervalMatcher implements Matcher {
 
     return half_intervals
       .map(hh => [
-        null == hh[0].n ? null : hh[0],
-        null == hh[1].n ? null : hh[1]]
+        (isNaN(hh[0].n) || null == hh[0].n) ? null : hh[0],
+        (isNaN(hh[1].n) || null == hh[1].n) ? null : hh[1]]
         .filter(h => null != h))
 
       .sort((a, b) =>
