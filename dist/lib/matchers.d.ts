@@ -48,6 +48,7 @@ export declare class IntervalMatcher implements Matcher {
     complete(mvs: MatchValue[], opts?: any): {
         ok: boolean;
         gaps: any[];
+        overs: any[];
         lower: null;
         upper: null;
     };

@@ -164,6 +164,26 @@ export class IntervalMatcher implements Matcher {
 
 
         // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
+
+        // if one sided interval, add the other side out to infinity
+        if (this.#err !== o0) {
+          if (this.#nil === o1) {
+            if (this.#mlt === o0 || this.#mlte === o0) {
+              o1 = o0
+              n1 = n0
+              o0 = this.#mgte
+              n0 = Number.NEGATIVE_INFINITY
+              jo = this.#and
+            }
+            else if (this.#mgt === o0 || this.#mgte === o0) {
+              o1 = this.#mlte
+              n1 = Number.POSITIVE_INFINITY
+              jo = this.#and
+            }
+            // else this.meq ok as is
+          }
+        }
+
         let o0f = o0(n0)
         let o1f = o1(n1)
         let check = jo(o0f, o1f)
@@ -194,6 +214,7 @@ export class IntervalMatcher implements Matcher {
     let completion = {
       ok: false,
       gaps: [] as any[],
+      overs: [] as any[],
       lower: null,
       upper: null,
     }
@@ -202,9 +223,17 @@ export class IntervalMatcher implements Matcher {
     let top = Number.POSITIVE_INFINITY
 
     let half_intervals: any[] = this.half_intervals(mvs)
+    // console.log('H', half_intervals)
 
     half_intervals
       .reduce((c, h) => {
+        // c: accumulated state
+        // h: current half interval
+
+        // console.log('\n\nRED')
+        // console.dir(c, { depth: null })
+        // console.dir(h, { depth: null })
+
         let heq = 'eq' === h.o
         let hlt = 'lt' === h.o
         let hlte = 'lte' === h.o
@@ -219,13 +248,15 @@ export class IntervalMatcher implements Matcher {
           c.lower = b
           c.upper = h
 
-          if (hgt || hgte) {
-            // {-oo,hn}
-            c.gaps.push([b, { n: hn, o: hgt ? 'lte' : 'lt', m: 0 }])
-          }
-          else if (heq && bottom !== hn) {
-            // {-oo,hn)
-            c.gaps.push([b, { n: hn, o: 'lte', m: 1 }])
+          if (!(bottom == hn && hgte)) {
+            if (hgt || hgte) {
+              // {-oo,hn}
+              c.gaps.push([b, { n: hn, o: hgt ? 'lte' : 'lt', m: 0 }])
+            }
+            else if (heq) {
+              // {-oo,hn)
+              c.gaps.push([b, { n: hn, o: 'lte', m: 1 }])
+            }
           }
         }
         else {
@@ -250,16 +281,28 @@ export class IntervalMatcher implements Matcher {
                 { n: hn, o: (heq || hgte) ? 'lt' : 'lte', m: 3 }
               ])
             }
-            // TODO overlaps
+            else {
+              // TODO overlaps
+              // console.log('OL-a', c, h)
+            }
           }
 
           // hn > un by previous sorting
           else {
             if (hlt || hlte) {
+              // console.log('OL-b', c, h)
+
+              /*
+              // overlap matches boundaries of c.upper.n..h.n
+              c.overs.push([
+                { n: un, o: c.upper.o, m: 8 },
+                { n: hn, o: h.o, m: 9 }
+              ])
+              */
+
               c.upper = h
-              // TODO: overlaps
             }
-            else {
+            else if (ueq || ult || ulte) {
               // {un,hn}
               c.gaps.push([
                 { n: un, o: (ueq || ulte) ? 'gt' : 'gte', m: 4 },
@@ -276,7 +319,7 @@ export class IntervalMatcher implements Matcher {
 
     let last = 0 < half_intervals.length && half_intervals[half_intervals.length - 1]
     // {n,+oo]
-    if (last && last.o !== 'gt' && last.o !== 'gte') {
+    if (last && top !== last.n && last.o !== 'gt' && last.o !== 'gte') {
       completion.gaps.push([
         { n: last.n, o: (last.o === 'eq' || last.o === 'lte') ? 'gt' : 'gte', m: 6 },
         { n: top, o: 'lte', m: 7 }
