@@ -107,19 +107,18 @@ describe('matchers', function () {
     
     // fix below
 
-    /*
     expect(im.make('k','=<10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: -Infinity, o1: 'lte', n1: 10 })
     expect(im.make('k','=>10').meta)
-      .contains({ jo: 'or', o0: 'gte', n0: 10, o1: 'nil', n1: NaN })
+      .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
 
     expect(im.make('k','x10').meta)
       .contains({ jo: 'or', o0: 'err' })
 
     expect(im.make('k','[10').meta)
-      .contains({ jo: 'or', o0: 'gte', n0: 10, o1: 'nil', n1: NaN })
+      .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
     expect(im.make('k','(10').meta)
-      .contains({ jo: 'or', o0: 'gt', n0: 10, o1: 'nil', n1: NaN })
+      .contains({ jo: 'and', o0: 'gt', n0: 10, o1: 'lte', n1: Infinity })
 
     expect(im.make('k','[10,20]').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
@@ -134,8 +133,8 @@ describe('matchers', function () {
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
     expect(im.make('k','10x20').meta)
       .contains({ jo: 'or', o0: 'err', n0: NaN, o1: 'nil', n1: NaN })
-      */
   })
+
   
   it('interval-completion', async () => {
     var im = new Matchers.IntervalMatcher()
@@ -144,7 +143,6 @@ describe('matchers', function () {
     
     var is0 = ['>=10&<=20','>20','<10'].map(i=>im.make('k',i))
     // console.log(is0)
-/* FIX
     expect(is0.map(x=>({k:x.kind,m:x.meta}))).equals([
       {
         k: 'interval',
@@ -159,36 +157,36 @@ describe('matchers', function () {
       {
         k: 'interval',
         m: {
-          jo: 'or',
+          jo: 'and',
           n0: 20,
-          n1: NaN,
+          n1: Infinity,
           o0: 'gt',
-          o1: 'nil'
+          o1: 'lte'
         }
       },
       {
         k: 'interval',
         m: {
-          jo: 'or',
-          n0: 10,
-          n1: NaN,
-          o0: 'lt',
-          o1: 'nil'
+          jo: 'and',
+          n0: -Infinity,
+          n1: 10,
+          o0: 'gte',
+          o1: 'lt',
         }
       }
     ])
-*/
+
     
-    // var is0s = im.half_intervals(is0)
+    var is0s = im.half_intervals(is0)
     //console.log(is0s)
-    /* FIX
     expect(is0s).equals([
+      { n: -Infinity, o: 'gte' },
       { n: 10, o: 'lt' },
       { n: 10, o: 'gte' },
       { n: 20, o: 'lte' },
-      { n: 20, o: 'gt' }
+      { n: 20, o: 'gt' },
+      { n: Infinity, o: 'lte' },
     ])
-    */
     
     var is0c = im.complete(is0)
     //console.dir(is0c,{depth:null})
@@ -202,7 +200,6 @@ describe('matchers', function () {
     
     var is1 = ['>=10&<=15','>20','<10'].map(i=>im.make('k',i))
     // console.log(is1)
-    /*
     expect(is1.map(x=>({k:x.kind,m:x.meta}))).equals([
       {
         k: 'interval',
@@ -217,47 +214,35 @@ describe('matchers', function () {
       {
         k: 'interval',
         m: {
-          jo: 'or',
+          jo: 'and',
           n0: 20,
-          n1: NaN,
+          n1: Infinity,
           o0: 'gt',
-          o1: 'nil'
+          o1: 'lte'
         }
       },
       {
         k: 'interval',
         m: {
-          jo: 'or',
-          n0: 10,
-          n1: NaN,
-          o0: 'lt',
-          o1: 'nil'
+          jo: 'and',
+          n1: 10,
+          n0: -Infinity,
+          o1: 'lt',
+          o0: 'gte'
         }
       },
-      {
-        k: 'interval',
-        m: {
-          jo: 'or',
-          n0: 30,
-          n1: NaN,
-          o0: 'lt',
-          o1: 'nil'
-        }
-      }
     ])
-    */
     
-    //var is1s = im.half_intervals(is1)
+    var is1s = im.half_intervals(is1)
     //console.log(is1s)
-    /*
     expect(is1s).equals([
+      { n: -Infinity, o: 'gte' },
       { n: 10, o: 'lt' },
       { n: 10, o: 'gte' },
       { n: 15, o: 'lte' },
       { n: 20, o: 'gt' },
-      { n: 30, o: 'lt' }
+      { n: Infinity, o: 'lte' }
     ])
-    */
     
     var is1c = im.complete(is1)
     //console.dir(is1c,{depth:null})
@@ -276,14 +261,20 @@ describe('matchers', function () {
       gaps: [ [ { n: 10, o: 'gte', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ] ]
     })
 
+    expect(rc(['10)'])).contains({
+      ok: false,
+      gaps: [ [ { n: 10, o: 'gte', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ] ]
+    })
+
     expect(rc(['<=10'])).contains({
       ok: false,
       gaps: [ [ { n: 10, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ] ],
     })
 
-    //console.log('++++')
-    //console.dir(rc(['>=10']), {depth:null})
-    //console.log('====')
+    expect(rc(['10]'])).contains({
+      ok: false,
+      gaps: [ [ { n: 10, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ] ],
+    })
 
     
     expect(rc(['>=10'])).contains({
@@ -291,16 +282,63 @@ describe('matchers', function () {
       gaps: [ [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lt', m: 0 } ] ],
     })
 
+    expect(rc(['[10'])).contains({
+      ok: false,
+      gaps: [ [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lt', m: 0 } ] ],
+    })
+
+    
     expect(rc(['>10'])).contains({
       ok: false,
       gaps: [ [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 0 } ] ],
     })
 
+    expect(rc(['(10'])).contains({
+      ok: false,
+      gaps: [ [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 0 } ] ],
+    })
+
+    
     expect(rc(['=10'])).contains({
       ok: false,
       gaps: [
         [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 1 } ],
         [ { n: 10, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
+      ],
+    })
+
+    expect(rc(['10'])).contains({
+      ok: false,
+      gaps: [
+        [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 1 } ],
+        [ { n: 10, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
+      ],
+    })
+
+
+    //console.dir(rc(['10..20']),{depth:null})
+    expect(rc(['10..20'])).contains({
+      ok: false,
+      gaps: [
+        [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lt', m: 0 } ],
+        [ { n: 20, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
+      ],
+    })
+
+    expect(rc(['10.5..20.5'])).contains({
+      ok: false,
+      gaps: [
+        [ { n: -Infinity, o: 'gte' }, { n: 10.5, o: 'lt', m: 0 } ],
+        [ { n: 20.5, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
+      ],
+    })
+
+    // console.dir(rc(['[1.05e1,205e-1]']),{depth:null})
+    expect(rc(['[1.05e1,205e-1]'])).contains({
+      ok: false,
+      gaps: [
+        [ { n: -Infinity, o: 'gte' }, { n: 10.5, o: 'lt', m: 0 } ],
+        [ { n: 20.5, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
       ],
     })
 

@@ -44,17 +44,18 @@ exports.GexMatcher = GexMatcher;
 // NOTE: '/' == '\\'
 const IntervalRE = new RegExp([
     '^/s*',
-    '(=*[<>/(/[]?=*)?' + // lenient operator symbol
+    '(=*[<>/(/[]?=*)?' + // 1, lenient operator symbol
         '/s*' + // optional whitespace
-        '([-+0-9a-fA-FeEoOxX]+(x(y))?)' + // (/.([0-9a-fA-FeEoOxX]+))?)' + // number
-        '(' + // start optional second term
-        '/s*(,|&+|/|+|/./.)' + // join
+        '([-+0-9a-fA-FeEoOxX]+(/.([0-9a-fA-FeEoOxX]+))?)' + // 2,3,4 number
+        '([/)/]]?)' + // 5, optional interval operator symbol
+        '(' + // 6, start optional second term
+        '/s*(,|&+|/|+|/./.)' + // 7, join
         '/s*' + // optional whitespace
-        '(=*[<>]?=*)' + // lenient operator symbol
+        '(=*[<>]?=*)' + // 8, lenient operator symbol
         '/s*' + // optional whitespace
-        '([-+.0-9a-fA-FeEoOxX]+)' + // number
+        '([-+.0-9a-fA-FeEoOxX]+)' + // 9, number
         '/s*' + // optional whitespace
-        '([/)/]]?)' + // lenient operator symbol
+        '([/)/]]?)' + // 10, interval operator symbol
         ')?' + // end optional second term
         '/s*$',
 ].join('').replace(/\//g, '\\'));
@@ -85,20 +86,20 @@ class IntervalMatcher {
                 if (null == m[1] && !isNaN(Number(fix))) {
                     m = [fix, '=', fix];
                 }
-                let os0 = IntervalMatcher.normop(m[1]);
-                //let os1 = IntervalMatcher.normop(m[5]) || IntervalMatcher.normop(m[7])
-                let os1 = IntervalMatcher.normop(m[7]) || IntervalMatcher.normop(m[9]);
+                let os0 = IntervalMatcher.normop(m[1]) || IntervalMatcher.normop(m[5]);
+                let os1 = IntervalMatcher.normop(m[8]) || IntervalMatcher.normop(m[10]);
                 let o0 = '=' === os0 ? __classPrivateFieldGet(this, _meq) :
                     '<' === os0 ? __classPrivateFieldGet(this, _mlt) :
-                        '<=' === os0 ? __classPrivateFieldGet(this, _mlte) :
-                            '>' === os0 ? __classPrivateFieldGet(this, _mgt) :
-                                '(' === os0 ? __classPrivateFieldGet(this, _mgt) :
-                                    '>=' === os0 ? __classPrivateFieldGet(this, _mgte) :
-                                        '[' === os0 ? __classPrivateFieldGet(this, _mgte) : __classPrivateFieldGet(this, _err);
+                        ')' === os0 ? __classPrivateFieldGet(this, _mlt) :
+                            '<=' === os0 ? __classPrivateFieldGet(this, _mlte) :
+                                ']' === os0 ? __classPrivateFieldGet(this, _mlte) :
+                                    '>' === os0 ? __classPrivateFieldGet(this, _mgt) :
+                                        '(' === os0 ? __classPrivateFieldGet(this, _mgt) :
+                                            '>=' === os0 ? __classPrivateFieldGet(this, _mgte) :
+                                                '[' === os0 ? __classPrivateFieldGet(this, _mgte) : __classPrivateFieldGet(this, _err);
                 let n0 = Number(m[2]);
-                //let n1 = null == m[6] ? NaN : Number(m[6])
-                let n1 = null == m[8] ? NaN : Number(m[8]);
-                let jos = m[6];
+                let n1 = null == m[9] ? NaN : Number(m[9]);
+                let jos = m[7];
                 let jo = null == jos ? __classPrivateFieldGet(this, _or) :
                     '&' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _and) :
                         ',' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _and) : __classPrivateFieldGet(this, _or);
@@ -269,6 +270,7 @@ class IntervalMatcher {
             (isNaN(hh[1].n) || null == hh[1].n) ? null : hh[1]
         ]
             .filter(h => null != h))
+            // sorting on intervals, *not* half intervals
             .sort((a, b) => a[0].n < b[0].n ? -1 : b[0].n < a[0].n ? 1 :
             a[0].o.includes('l') && b[0].o.includes('g') ? -1 :
                 a[0].o.includes('g') && b[0].o.includes('l') ? 1 :

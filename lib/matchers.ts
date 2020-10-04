@@ -64,17 +64,18 @@ export class GexMatcher implements Matcher {
 // NOTE: '/' == '\\'
 const IntervalRE = new RegExp([
   '^/s*', // optional whitespace
-  '(=*[<>/(/[]?=*)?' + // lenient operator symbol
+  '(=*[<>/(/[]?=*)?' + // 1, lenient operator symbol
   '/s*' + // optional whitespace
-  '([-+0-9a-fA-FeEoOxX]+(x(y))?)' + // (/.([0-9a-fA-FeEoOxX]+))?)' + // number
-  '(' + // start optional second term
-  '/s*(,|&+|/|+|/./.)' + // join
+  '([-+0-9a-fA-FeEoOxX]+(/.([0-9a-fA-FeEoOxX]+))?)' + // 2,3,4 number
+  '([/)/]]?)' + // 5, optional interval operator symbol
+  '(' + // 6, start optional second term
+  '/s*(,|&+|/|+|/./.)' + // 7, join
   '/s*' + // optional whitespace
-  '(=*[<>]?=*)' + // lenient operator symbol
+  '(=*[<>]?=*)' + // 8, lenient operator symbol
   '/s*' + // optional whitespace
-  '([-+.0-9a-fA-FeEoOxX]+)' + // number
+  '([-+.0-9a-fA-FeEoOxX]+)' + // 9, number
   '/s*' + // optional whitespace
-  '([/)/]]?)' + // lenient operator symbol
+  '([/)/]]?)' + // 10, interval operator symbol
   ')?' + // end optional second term
   '/s*$', // optional whitespace
 ].join('').replace(/\//g, '\\'))
@@ -119,26 +120,25 @@ export class IntervalMatcher implements Matcher {
           m = [fix, '=', fix]
         }
 
-
-        let os0 = IntervalMatcher.normop(m[1])
-        //let os1 = IntervalMatcher.normop(m[5]) || IntervalMatcher.normop(m[7])
-        let os1 = IntervalMatcher.normop(m[7]) || IntervalMatcher.normop(m[9])
+        let os0 = IntervalMatcher.normop(m[1]) || IntervalMatcher.normop(m[5])
+        let os1 = IntervalMatcher.normop(m[8]) || IntervalMatcher.normop(m[10])
 
         let o0 =
           '=' === os0 ? this.#meq :
             '<' === os0 ? this.#mlt :
-              '<=' === os0 ? this.#mlte :
-                '>' === os0 ? this.#mgt :
-                  '(' === os0 ? this.#mgt :
-                    '>=' === os0 ? this.#mgte :
-                      '[' === os0 ? this.#mgte :
-                        this.#err
+              ')' === os0 ? this.#mlt :
+                '<=' === os0 ? this.#mlte :
+                  ']' === os0 ? this.#mlte :
+                    '>' === os0 ? this.#mgt :
+                      '(' === os0 ? this.#mgt :
+                        '>=' === os0 ? this.#mgte :
+                          '[' === os0 ? this.#mgte :
+                            this.#err
 
         let n0 = Number(m[2])
-        //let n1 = null == m[6] ? NaN : Number(m[6])
-        let n1 = null == m[8] ? NaN : Number(m[8])
+        let n1 = null == m[9] ? NaN : Number(m[9])
 
-        let jos = m[6]
+        let jos = m[7]
 
         let jo = null == jos ? this.#or :
           '&' === jos.substring(0, 1) ? this.#and :
@@ -347,6 +347,7 @@ export class IntervalMatcher implements Matcher {
         (isNaN(hh[1].n) || null == hh[1].n) ? null : hh[1]]
         .filter(h => null != h))
 
+      // sorting on intervals, *not* half intervals
       .sort((a, b) =>
         a[0].n < b[0].n ? -1 : b[0].n < a[0].n ? 1 :
           a[0].o.includes('l') && b[0].o.includes('g') ? -1 :
