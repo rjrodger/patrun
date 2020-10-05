@@ -1,6 +1,9 @@
 /* Copyright (c) 2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
+// TODO: interval - test <20&>10 === >10&<20
+
+
 var Lab = require('@hapi/lab')
 Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
 
@@ -133,6 +136,13 @@ describe('matchers', function () {
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
     expect(im.make('k','10x20').meta)
       .contains({ jo: 'or', o0: 'err', n0: NaN, o1: 'nil', n1: NaN })
+
+
+    expect(im.make('k','<20&>10').meta)
+      .contains({ jo: 'and', o0: 'gt', n0: 10, o1: 'lt', n1: 20 })
+    expect(im.make('k','20..10').meta)
+      .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
+
   })
 
   
@@ -345,64 +355,107 @@ describe('matchers', function () {
   })
 
 
-  /*
   it('interval-overlaps', async () => {
     var im = new Matchers.IntervalMatcher()
+    let rc = (x)=>im.complete(x.map(i=>im.make('k',i)))
 
     var is0 = ['<=10', '<20','>10', '>=20'].map(i=>im.make('k',i))
-    console.log(is0)
+    //console.log(is0)
 
-    var is0s = im.half_intervals(is0)
-    console.log(is0s)
+    //var is0s = im.half_intervals(is0)
+    //console.log(is0s)
     
     var is0c = im.complete(is0)
-    console.dir(is0c,{depth:null})
+    //console.dir(is0c,{depth:null})
 
     expect(is0c).contains({
       ok: true,
       gaps: [],
-      overs: [ [ { n: 10, o: 'gt', m: 8 }, { n: 20, o: 'lt', m: 9 } ] ],
+      overs: [
+        [ { n: -Infinity, o: 'gte', m: 10 }, { n: 10, o: 'lte', m: 11 } ],
+        [ { n: 10, o: 'gt', m: 10 }, { n: 20, o: 'lt', m: 11 } ],
+        [ { n: 20, o: 'gte', m: 10 }, { n: Infinity, o: 'lte', m: 11 } ]
+      ],
     })
 
-
+    
     // With gaps
 
     var is1 = ['<20','>10'].map(i=>im.make('k',i))
-    console.log(is1)
+    //console.log(is1)
 
-    var is1s = im.half_intervals(is1)
-    console.log(is1s)
+    //var is1s = im.half_intervals(is1)
+    //console.log(is1s)
     
     var is1c = im.complete(is1)
-    console.dir(is1c,{depth:null})
+    //console.dir(is1c,{depth:null})
 
     expect(is1c).contains({
       ok: true,
-      gaps: [
-        [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 0 } ],
-        [ { n: 20, o: 'gte', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
-      ],
-      overs: [ [ { n: 10, o: 'gt', m: 8 }, { n: 20, o: 'lt', m: 9 } ] ],
+      gaps: [],
+      overs: [ [ { n: 10, o: 'gt', m: 10 }, { n: 20, o: 'lt', m: 11 } ] ],
     })
 
+    
     // same direction
     
-    var is2 = ['<=10', '>20','>10'].map(i=>im.make('k',i))
-    console.log(is2)
+    var is2 = ['>20','>10'].map(i=>im.make('k',i))
+    //console.log(is2)
 
-    var is2s = im.half_intervals(is2)
-    console.log(is2s)
+    //var is2s = im.half_intervals(is2)
+    //console.log(is2s)
     
     var is2c = im.complete(is2)
-    console.dir(is2c,{depth:null})
+    //console.dir(is2c,{depth:null})
 
     expect(is2c).contains({
-      ok: true,
-      gaps: [],
-      overs: [],
+      ok: false,
+      gaps: [
+        [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 0 } ]
+      ],
+      overs: [
+        [ { n: 20, o: 'gt', m: 10 }, { n: Infinity, o: 'lte', m: 11 } ]
+      ],
+    })
+
+
+    var is3 = ['>10','>20','>30'].map(i=>im.make('k',i))
+    //console.log(is3)
+
+    //var is3s = im.half_intervals(is3)
+    //console.log(is3s)
+    
+    var is3c = im.complete(is3)
+    //console.dir(is3c,{depth:null})
+
+    expect(is3c).contains({
+      ok: false,
+      gaps: [
+        [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 0 } ]
+      ],
+      overs: [
+        [ { n: 20, o: 'gt', m: 10 }, { n: Infinity, o: 'lte', m: 11 } ],
+        [ { n: 30, o: 'gt', m: 10 }, { n: Infinity, o: 'lte', m: 11 } ],
+      ],
     })
     
-    
+    // console.dir(rc(['<10','<20','<30']),{depth:null})
+    expect(rc(['<10','<20','<30'])).contains({
+      ok: false,
+      gaps: [
+        [ { n: 30, o: 'gte', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
+      ],
+      overs: [
+        [ { n: -Infinity, o: 'gte', m: 10 }, { n: 10, o: 'lt', m: 11 },  ],
+        [ { n: -Infinity, o: 'gte', m: 10 }, { n: 20, o: 'lt', m: 11 },  ],
+      ],
+    })
+
+    // console.dir(rc(['<10','[10,20]','[15,25]', '>25']),{depth:null})
+    expect(rc(['<10','[10,20]','[15,25]', '>25'])).contains({
+      ok: true,
+      gaps: [],
+      overs: [ [ { n: 15, o: 'gte', m: 10 }, { n: 20, o: 'lte', m: 11 } ] ],
+    })
   })
-  */
 })

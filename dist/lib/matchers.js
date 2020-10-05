@@ -135,6 +135,18 @@ class IntervalMatcher {
                         // else this.meq ok as is
                     }
                 }
+                // lower bound is always first so that interval sorting will work
+                if (!isNaN(n1) && n1 < n0) {
+                    let to = o1;
+                    let tn = n1;
+                    n1 = n0;
+                    n0 = tn;
+                    // sensible heuristic: 20..10 means >=10&<=20
+                    if ('..' !== jos) {
+                        o1 = o0;
+                        o0 = to;
+                    }
+                }
                 let o0f = o0(n0);
                 let o1f = o1(n1);
                 let check = jo(o0f, o1f);
@@ -209,7 +221,7 @@ class IntervalMatcher {
                     // un)[hn} OR {un](hn
                     if ((ult && (hgte || heq)) ||
                         ((ulte || ueq) && hgt)) {
-                        c.upper = h;
+                        //c.upper = h
                     }
                     else if (ueq || ult || ulte) {
                         // {un,hn}
@@ -223,8 +235,7 @@ class IntervalMatcher {
                         // console.log('OL-a', c, h)
                     }
                 }
-                // hn > un by previous sorting
-                else {
+                else if (un < hn) {
                     if (hlt || hlte) {
                         // console.log('OL-b', c, h)
                         /*
@@ -234,7 +245,7 @@ class IntervalMatcher {
                           { n: hn, o: h.o, m: 9 }
                         ])
                         */
-                        c.upper = h;
+                        //c.upper = h
                     }
                     else if (ueq || ult || ulte) {
                         // {un,hn}
@@ -244,6 +255,15 @@ class IntervalMatcher {
                         ]);
                     }
                 }
+                // hn < un
+                else {
+                    // console.log('hn < un', hn, un)
+                    c.overs.push([
+                        { n: hn, o: (heq || hgte) ? 'gte' : 'gt', m: 10 },
+                        { n: un, o: (ueq || ulte) ? 'lte' : 'lt', m: 11 },
+                    ]);
+                }
+                c.upper = h;
             }
             return c;
         }, completion);
