@@ -7,14 +7,16 @@
 var Lab = require('@hapi/lab')
 Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
 
-var Code = require('@hapi/code')
+const Code = require('@hapi/code')
 
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
+const lab = (exports.lab = Lab.script())
+const describe = lab.describe
+const it = lab.it
+const expect = Code.expect
 
-var Matchers = require('../lib/matchers')
+const Jsonic = require('jsonic')
+
+const Matchers = require('../lib/matchers')
 
 
 describe('matchers', function () {
@@ -143,6 +145,148 @@ describe('matchers', function () {
     expect(im.make('k','20..10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
 
+  })
+
+
+  it('interval-half', async () => {
+    var im = new Matchers.IntervalMatcher()
+    let rc = (x)=>im.complete(x.map(i=>im.make('k',i)))
+    var hi = im.half_intervals
+
+    var jm = (s) => ({meta:Jsonic(s[0])})
+    var j = (s) => (Jsonic(s[0]))
+
+    expect(hi([])).equal([])
+    expect(hi([{meta:{}}])).equal([])
+
+    expect(hi([jm`n0:1,o0:eq`])).equal([j`n:1,o:eq`])
+    expect(hi([jm`n0:1,o0:lt`])).equal([j`n:1,o:lt`])
+    expect(hi([jm`n0:1,o0:lte`])).equal([j`n:1,o:lte`])
+    expect(hi([jm`n0:1,o0:gt`])).equal([j`n:1,o:gt`])
+    expect(hi([jm`n0:1,o0:gte`])).equal([j`n:1,o:gte`])
+
+    expect(hi([jm`n0:1,o0:gte,n1:2,o1:lt`])).equal([j`n:1,o:gte`,j`n:2,o:lt`])
+    expect(hi([jm`n0:1,o0:gt,n1:2,o1:lt`])).equal([j`n:1,o:gt`,j`n:2,o:lt`])
+
+    expect(hi([
+      jm`n0:2,o0:gt,n1:3,o1:lt`,
+      jm`n0:1,o0:gt,n1:3,o1:lt`,
+    ])).equal([
+      j`n:1,o:gt`,
+      j`n:3,o:lt`,
+      j`n:2,o:gt`,
+      j`n:3,o:lt`,
+    ])
+
+    expect(hi([
+      jm`n0:3,o0:gt,n1:4,o1:lt`,
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+      jm`n0:5,o0:gt,n1:6,o1:lt`,
+    ])).equal([
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+      j`n:3,o:gt`,
+      j`n:4,o:lt`,
+      j`n:5,o:gt`,
+      j`n:6,o:lt`,
+    ])
+
+    // lt < lte
+    expect(hi([
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+      jm`n0:1,o0:gt,n1:2,o1:lte`,
+      jm`n0:3,o0:gt,n1:4,o1:lte`,
+      jm`n0:3,o0:gt,n1:4,o1:lt`,
+    ])).equal([
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+      j`n:1,o:gt`,
+      j`n:2,o:lte`,
+      j`n:3,o:gt`,
+      j`n:4,o:lt`,
+      j`n:3,o:gt`,
+      j`n:4,o:lte`,
+    ])
+
+    var overs = [ [ { n: 1, o: 'gt', m: 10 }, { n: 2, o: 'lt', m: 11 } ] ]
+    expect(rc(['>1&<2','>1&<=2']).overs).equal(overs)
+    expect(rc(['>1&<=2','>1&<2']).overs).equal(overs)
+
+    // gte < gt
+    expect(hi([
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+      jm`n0:1,o0:gte,n1:2,o1:lt`,
+      jm`n0:3,o0:gte,n1:4,o1:lt`,
+      jm`n0:3,o0:gt,n1:4,o1:lt`,
+    ])).equal([
+      j`n:1,o:gte`,
+      j`n:2,o:lt`,
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+      j`n:3,o:gte`,
+      j`n:4,o:lt`,
+      j`n:3,o:gt`,
+      j`n:4,o:lt`,
+    ])
+
+    // sort numerically
+    expect(hi([
+      jm`n0:3,o0:gt,n1:4.5,o1:lt`,
+      jm`n0:3,o0:gt,n1:4,o1:lte`,
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+      jm`n0:1,o0:gt,n1:2,o1:lte`,
+      jm`n0:5,o0:gt,n1:6,o1:lt`,
+      jm`n0:7,o0:gte,n1:8,o1:lt`,
+      jm`n0:7,o0:gt,n1:8,o1:lt`,
+      jm`n0:5,o0:gte,n1:6,o1:lt`,
+    ])).equal([
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+      j`n:1,o:gt`,
+      j`n:2,o:lte`,
+      j`n:3,o:gt`,
+      j`n:4,o:lte`,
+      j`n:3,o:gt`,
+      j`n:4.5,o:lt`,
+      j`n:5,o:gte`,
+      j`n:6,o:lt`,
+      j`n:5,o:gt`,
+      j`n:6,o:lt`,
+      j`n:7,o:gte`,
+      j`n:8,o:lt`,
+      j`n:7,o:gt`,
+      j`n:8,o:lt`,
+    ])
+
+
+    // second term operationally
+    expect(hi([
+      jm`n0:1,o0:gt,n1:2,o1:lte`,
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+    ])).equal([
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+      j`n:1,o:gt`,
+      j`n:2,o:lte`,
+    ])
+
+
+    // actually equal
+    expect(hi([
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+      jm`n0:1,o0:gt,n1:2,o1:lt`,
+    ])).equal([
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+      j`n:1,o:gt`,
+      j`n:2,o:lt`,
+    ])
+
+    // two overs here!
+    expect(rc(['>1&<2','>1&<2','>1&<2']).overs).equal([
+      [ { n: 1, o: 'gt', m: 10 }, { n: 2, o: 'lt', m: 11 } ],
+      [ { n: 1, o: 'gt', m: 10 }, { n: 2, o: 'lt', m: 11 } ],
+    ])
   })
 
   
@@ -360,13 +504,13 @@ describe('matchers', function () {
     let rc = (x)=>im.complete(x.map(i=>im.make('k',i)))
 
     var is0 = ['<=10', '<20','>10', '>=20'].map(i=>im.make('k',i))
-    //console.log(is0)
+    // console.log(is0)
 
-    //var is0s = im.half_intervals(is0)
-    //console.log(is0s)
+    // var is0s = im.half_intervals(is0)
+    // console.log(is0s)
     
     var is0c = im.complete(is0)
-    //console.dir(is0c,{depth:null})
+    // console.dir(is0c,{depth:null})
 
     expect(is0c).contains({
       ok: true,
@@ -456,6 +600,13 @@ describe('matchers', function () {
       ok: true,
       gaps: [],
       overs: [ [ { n: 15, o: 'gte', m: 10 }, { n: 20, o: 'lte', m: 11 } ] ],
+    })
+
+    console.dir(rc(['<10&=10','=20&>20']),{depth:null})
+    expect(rc(['<10&=10','=20&>20'])).contains({
+      ok: true,
+      gaps: [],
+      overs: [ [ { n: 10, o: 'gt' }, { n: 20, o: 'lt' } ] ],
     })
   })
 })

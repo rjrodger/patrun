@@ -278,12 +278,15 @@ class IntervalMatcher {
         completion.ok = 0 === completion.gaps.length;
         return completion;
     }
+    // NOTE: assumes n0<=n1
     half_intervals(mvs) {
         let half_intervals = [];
         for (let mv of mvs) {
             half_intervals.push([{ n: mv.meta.n0, o: mv.meta.o0 },
                 { n: mv.meta.n1, o: mv.meta.o1 }]);
         }
+        // canonical ordering of operations
+        var os = ['lt', 'lte', 'eq', 'gte', 'gt'];
         return half_intervals
             .map(hh => [
             (isNaN(hh[0].n) || null == hh[0].n) ? null : hh[0],
@@ -291,12 +294,49 @@ class IntervalMatcher {
         ]
             .filter(h => null != h))
             // sorting on intervals, *not* half intervals
-            .sort((a, b) => a[0].n < b[0].n ? -1 : b[0].n < a[0].n ? 1 :
-            a[0].o.includes('l') && b[0].o.includes('g') ? -1 :
-                a[0].o.includes('g') && b[0].o.includes('l') ? 1 :
-                    a[0].o.includes('t') && !b[0].o.includes('t') ? -1 :
-                        !a[0].o.includes('t') && b[0].o.includes('t') ? 1 :
-                            0)
+            .sort((a, b) => {
+            // sort by first term numerically
+            if (a[0].n < b[0].n) {
+                return -1;
+            }
+            else if (b[0].n < a[0].n) {
+                return 1;
+            }
+            else {
+                // sort by first term operationally
+                var a0i = os.indexOf(a[0].o);
+                var b0i = os.indexOf(b[0].o);
+                if (a0i < b0i) {
+                    return -1;
+                }
+                else if (b0i < a0i) {
+                    return 1;
+                }
+                else {
+                    // sort by second term numerically
+                    if (a[1].n < b[1].n) {
+                        return -1;
+                    }
+                    else if (b[1].n < a[1].n) {
+                        return 1;
+                    }
+                    else {
+                        // sort by second term operationally
+                        var a1i = os.indexOf(a[1].o);
+                        var b1i = os.indexOf(b[1].o);
+                        return a1i < b1i ? -1 : b1i < a1i ? 1 : 0;
+                    }
+                }
+            }
+        }
+        /*
+        a[0].o.includes('l') && b[0].o.includes('g') ? -1 :  // l* < g*
+        a[0].o.includes('g') && b[0].o.includes('l') ? 1 : // l* < g*
+          a[0].o.includes('t') && !b[0].o.includes('t') ? -1 : // l*|g*
+            !a[0].o.includes('t') && b[0].o.includes('t') ? 1 :
+              0
+        */
+        )
             .reduce((hv, hh) => hv.concat(...hh), []);
     }
 }
