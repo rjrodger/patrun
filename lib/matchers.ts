@@ -114,6 +114,7 @@ export class IntervalMatcher implements Matcher {
       let match = (val: any) => false
 
       if (null != m) {
+        // console.log(m)
 
         // standalone number
         if (null == m[1] && !isNaN(Number(fix))) {
@@ -122,6 +123,7 @@ export class IntervalMatcher implements Matcher {
 
         let os0 = IntervalMatcher.normop(m[1]) || IntervalMatcher.normop(m[5])
         let os1 = IntervalMatcher.normop(m[8]) || IntervalMatcher.normop(m[10])
+        // console.log(os0, os1)
 
         let o0 =
           '=' === os0 ? this.#meq :
@@ -151,9 +153,11 @@ export class IntervalMatcher implements Matcher {
           os1 = null == os1 || '' === os1 ? '<=' : os1
         }
 
+        // console.log(o0(0).name, n0, n1, jos, os1)
+
         let o1 =
           null == os1 ? this.#nil :
-            '=' === os1 ? this.#mlt :
+            '=' === os1 ? this.#meq :
               '<' === os1 ? this.#mlt :
                 ')' === os1 ? this.#mlt :
                   '<=' === os1 ? this.#mlte :
@@ -161,6 +165,39 @@ export class IntervalMatcher implements Matcher {
                       '>' === os1 ? this.#mgt :
                         '>=' === os1 ? this.#mgte :
                           this.#err
+
+        // merge ops if same number
+        if (n0 === n1) {
+          if ('=' === os0 && null != os1) {
+            n1 = NaN
+            o1 = this.#nil
+            if (os1.includes('<')) {
+              o0 = this.#mlte
+            }
+            else if (os1.includes('>')) {
+              o0 = this.#mgte
+            }
+            else if (os1.includes('=')) {
+              o0 = this.#meq
+            }
+            else {
+              o0 = this.#err
+            }
+          }
+          else if ('=' === os1 && null != os0) {
+            n1 = NaN
+            o1 = this.#nil
+            if (os0.includes('<')) {
+              o0 = this.#mlte
+            }
+            else if (os0.includes('>')) {
+              o0 = this.#mgte
+            }
+            else {
+              o0 = this.#err
+            }
+          }
+        }
 
 
         // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
@@ -369,7 +406,7 @@ export class IntervalMatcher implements Matcher {
     // canonical ordering of operations
     var os = ['lt', 'lte', 'eq', 'gte', 'gt']
 
-    return half_intervals
+    var hi = half_intervals
       .map(hh => [
         (isNaN(hh[0].n) || null == hh[0].n) ? null : hh[0],
         (isNaN(hh[1].n) || null == hh[1].n) ? null : hh[1]]
@@ -414,17 +451,11 @@ export class IntervalMatcher implements Matcher {
             }
           }
         }
-
-      }
-        /*
-        a[0].o.includes('l') && b[0].o.includes('g') ? -1 :  // l* < g*
-        a[0].o.includes('g') && b[0].o.includes('l') ? 1 : // l* < g*
-          a[0].o.includes('t') && !b[0].o.includes('t') ? -1 : // l*|g*
-            !a[0].o.includes('t') && b[0].o.includes('t') ? 1 :
-              0
-        */
-      )
+      })
 
       .reduce((hv, hh) => hv.concat(...hh), [])
+
+    // console.log(hi)
+    return hi
   }
 }

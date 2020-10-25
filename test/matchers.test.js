@@ -145,6 +145,27 @@ describe('matchers', function () {
     expect(im.make('k','20..10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
 
+    expect(im.make('k','<10&=10').meta)
+      .contains({ jo: 'and', o0: 'gte', n0: -Infinity, o1: 'lte', n1: 10})
+    expect(im.make('k','>10&=10').meta)
+      .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
+    expect(im.make('k','=10&<10').meta)
+      .contains({ jo: 'and', o0: 'gte', n0: -Infinity, o1: 'lte', n1: 10})
+    expect(im.make('k','=10&>10').meta)
+      .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
+
+    expect(im.make('k','=10&=10').meta)
+      .contains({ jo: 'and', o0: 'eq', n0: 10, o1: 'nil', n1: NaN })
+    expect(im.make('k','[10&=10').meta)
+      .contains({ jo: 'and', o0: 'err', n0: 10, o1: 'nil', n1: NaN })
+    expect(im.make('k','=10&10]').meta)
+      .contains({ jo: 'and', o0: 'err', n0: 10, o1: 'nil', n1: NaN })
+
+    expect(im.make('k','<10&>10').meta)
+      .contains({ jo: 'and', o0: 'lt', n0: 10, o1: 'gt', n1: 10 })
+    expect(im.make('k','<=10&>=10').meta)
+      .contains({ jo: 'and', o0: 'lte', n0: 10, o1: 'gte', n1: 10 })
+
   })
 
 
@@ -496,6 +517,12 @@ describe('matchers', function () {
       ],
     })
 
+    // console.dir(rc(['<10&=10','=20&>20']),{depth:null})
+    expect(rc(['<10&=10','=20&>20'])).contains({
+      ok: false,
+      gaps: [ [ { n: 10, o: 'gt', m: 4 }, { n: 20, o: 'lt', m: 5 } ] ],
+      overs: [],
+    })
   })
 
 
@@ -602,11 +629,19 @@ describe('matchers', function () {
       overs: [ [ { n: 15, o: 'gte', m: 10 }, { n: 20, o: 'lte', m: 11 } ] ],
     })
 
-    console.dir(rc(['<10&=10','=20&>20']),{depth:null})
-    expect(rc(['<10&=10','=20&>20'])).contains({
+
+    // console.dir(rc(['<=20','>=10']),{depth:null})
+    expect(rc(['<=20','>=10'])).contains({
       ok: true,
       gaps: [],
-      overs: [ [ { n: 10, o: 'gt' }, { n: 20, o: 'lt' } ] ],
+      overs: [[ { n: 10, o: 'gte', m: 10 }, { n: 20, o: 'lte', m: 11 } ]],
+    })
+
+    // console.dir(rc(['<20&=20','=10&>10']),{depth:null})
+    expect(rc(['<20&=20','=10&>10'])).contains({
+      ok: true,
+      gaps: [],
+      overs: [ [ { n: 10, o: 'gte', m: 10 }, { n: 20, o: 'lte', m: 11 } ]],
     })
   })
 })
