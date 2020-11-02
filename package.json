@@ -20,7 +20,7 @@
   },
   "scripts": {
     "watch": "tsc -w -d",
-    "test": "lab -v -L -P test -t 80 --sourcemaps --transform node_modules/lab-transform-typescript -r console -o stdout -r html -o test/coverage.html",
+    "test": "lab -v -L -P test -t 70 --sourcemaps --transform node_modules/lab-transform-typescript -r console -o stdout -r html -o test/coverage.html",
     "test-web": "browserify -o test-web/test-web.js -e test/patrun.test.js -s Patrun -im -i assert -i @hapi/lab && open test-web/index.html",
     "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
     "prettier": "prettier --write --no-semi --single-quote *.ts test/*.js",

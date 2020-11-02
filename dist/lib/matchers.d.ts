@@ -9,10 +9,11 @@ export interface Completion {
 }
 export interface MatchValue {
     match(val: any): boolean;
+    same(mv: MatchValue | undefined): boolean;
     kind: string;
     fix: any;
     meta: any;
-    val$?: any;
+    keymap?: any;
 }
 export declare class GexMatcher implements Matcher {
     constructor();
@@ -21,6 +22,7 @@ export declare class GexMatcher implements Matcher {
         match: (val: any) => boolean;
         fix: string;
         meta: {};
+        same(mv: MatchValue): boolean;
     } | undefined;
     complete(mvs: MatchValue[], opts?: any): {
         ok: boolean;
@@ -44,6 +46,7 @@ export declare class IntervalMatcher implements Matcher {
             n1: number;
         };
         match: (val: any) => boolean;
+        same(mv: MatchValue): boolean;
     } | undefined;
     complete(mvs: MatchValue[], opts?: any): {
         ok: boolean;

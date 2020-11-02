@@ -74,11 +74,7 @@ function Patrun(custom: any) {
       let mv: MatchValue | undefined =
         matchers.reduce((m, t) => m || t.make(key, fix), undefined)
 
-      if (mv) mv.val$ = fix
-
-      //var sort_prefix = (mv ? '1' : '0') + '~'
-      //var sort_key = sort_prefix + key
-      //var sort_key = key
+      // if (mv) mv.val$ = fix
 
       valmap = keymap.v
 
@@ -87,18 +83,36 @@ function Patrun(custom: any) {
       // An existing key
       if (valmap && key == keymap.k) {
         // console.log('S1-a')
-        add_mv(keymap, key, mv)
-        keymap = valmap[fix] || (valmap[fix] = {})
+        // add_mv(keymap, key, mv)
+
+        if (mv) {
+          var g = (keymap.g = keymap.g || {})
+          var ga = (g[key] = g[key] || [])
+          mv = ((ga.find((gmv: MatchValue) => gmv.same(mv)) ||
+            (ga.push(mv), mv)) as MatchValue)
+          keymap = mv.keymap || (mv.keymap = {})
+        }
+        else {
+          keymap = valmap[fix] || (valmap[fix] = {})
+        }
       }
 
       // End of key path reached, so this is a new key, ordered last
       else if (!keymap.k) {
-        // console.log('S1-b')
-        add_mv(keymap, key, mv)
         keymap.k = key
-        //keymap.sk = sort_key
         keymap.v = {}
-        keymap = keymap.v[fix] = {}
+
+
+        if (mv) {
+          var g = (keymap.g = keymap.g || {})
+          var ga = (g[key] = g[key] || [])
+          mv = ((ga.find((gmv: MatchValue) => gmv.same(mv)) ||
+            (ga.push(mv), mv)) as MatchValue)
+          keymap = mv.keymap || (mv.keymap = {})
+        }
+        else {
+          keymap = keymap.v[fix] = {}
+        }
       }
 
       // Insert key orders before next existing key in path, so insert
@@ -120,19 +134,24 @@ function Patrun(custom: any) {
           keymap.g = {}
         }
 
-        add_mv(keymap, key, mv)
-
         keymap.k = key
-        // keymap.sk = sort_key
         keymap.v = {}
 
-        keymap = keymap.v[fix] = {}
+
+        if (mv) {
+          var g = (keymap.g = keymap.g || {})
+          var ga = (g[key] = g[key] || [])
+          mv = ((ga.find((gmv: MatchValue) => gmv.same(mv)) ||
+            (ga.push(mv), mv)) as MatchValue)
+          keymap = mv.keymap || (mv.keymap = {})
+        }
+        else {
+          keymap = keymap.v[fix] = {}
+        }
       }
 
       // Follow star path
       else {
-        // console.log('S1-d')
-        // valmap = keymap.v
         keymap = keymap.s || (keymap.s = {})
 
         // NOTE: current key is still not inserted
@@ -151,14 +170,6 @@ function Patrun(custom: any) {
     }
 
     return self
-  }
-
-  function add_mv(keymap: any, key: any, mv?: MatchValue) {
-    if (null == mv) return
-
-    var g = (keymap.g = keymap.g || {})
-    var ga = (g[key] = g[key] || [])
-    ga.push(mv)
   }
 
   self.findexact = function(pat: any) {
@@ -192,13 +203,11 @@ function Patrun(custom: any) {
 
         var nextkeymap = keymap.v[val]
 
-        //if (!nextkeymap && custom.gex && keymap.g && keymap.g[key]) {
         if (!nextkeymap && keymap.g && keymap.g[key]) {
           var ga = keymap.g[key]
           for (var gi = 0; gi < ga.length; gi++) {
-            //if (null != ga[gi].on(val)) {
             if (ga[gi].match(val)) {
-              nextkeymap = keymap.v[ga[gi].val$]
+              nextkeymap = ga[gi].keymap
               break
             }
           }
@@ -265,12 +274,30 @@ function Patrun(custom: any) {
     do {
       key = keymap.k
 
-      if (keymap.v) {
-        // TODO: equivalence match as per find
-        var nextkeymap = keymap.v[pat[key]]
+      // console.log('keymap v g', keymap.v, keymap.g)
+      if (keymap.v || keymap.g) {
+        if (keymap.v) {
+          var nextkeymap = keymap.v[pat[key]]
+
+          if (nextkeymap) {
+            path.push({ km: keymap, v: pat[key] })
+          }
+        }
+
+        if (null == nextkeymap && keymap.g) {
+          let mvs: MatchValue[] = (keymap.g[key] || [])
+          for (let mvi = 0; mvi < mvs.length; mvi++) {
+
+            // TODO: should parse!
+            if (mvs[mvi].fix === pat[key]) {
+              path.push({ km: keymap, v: pat[key], mv: mvs[mvi] })
+              nextkeymap = mvs[mvi].keymap
+              break;
+            }
+          }
+        }
 
         if (nextkeymap) {
-          path.push({ km: keymap, v: pat[key] })
           data = nextkeymap.d
           keymap = nextkeymap
         } else {
@@ -284,8 +311,8 @@ function Patrun(custom: any) {
     if (void 0 !== data) {
       var part = path[path.length - 1]
       if (part && part.km && part.km.v) {
-        var point = part.km.v[part.v]
-        if (!point.r || point.r(pat, point.d)) {
+        var point = part.km.v[part.v] || (part.mv && part.mv.keymap)
+        if (point && (!point.r || point.r(pat, point.d))) {
           delete point.d
         }
       }
@@ -390,23 +417,20 @@ function Patrun(custom: any) {
 
         str.push(vs.join(', ') + ' -> ' + dstr(n.d))
       }
+
       if (n.k) {
         o.push('\n')
         indent(o, d)
         o.push(n.k + ':')
       }
-      if (n.v) {
+
+      if (n.v || n.s || n.g) {
         d++
-        var pa = Object.keys(n.v)
-        var pal = pa.filter(function(x) {
-          return !x.match(/[*?]/)
-        })
-        var pas = pa.filter(function(x) {
-          return x.match(/[*?]/)
-        })
-        pal.sort()
-        pas.sort()
-        pa = pal.concat(pas)
+      }
+
+      if (n.v) {
+        // d++
+        var pa = Object.keys(n.v).sort()
 
         for (var pi = 0; pi < pa.length; pi++) {
           var p = pa[pi]
@@ -419,15 +443,36 @@ function Patrun(custom: any) {
 
           walk(n.v[p], o, d + 1, vsc)
         }
+      }
 
-        if (n.s) {
-          o.push('\n')
-          indent(o, d)
-          o.push('|')
+      if (n.g) {
+        var pa = Object.keys(n.g).sort()
 
-          vsc = vs.slice()
-          walk(n.s, o, d + 1, vsc)
+        for (var pi = 0; pi < pa.length; pi++) {
+          var mvs = n.g[pa[pi]]
+
+          for (var mvi = 0; mvi < mvs.length; mvi++) {
+            var mv = mvs[mvi]
+
+            o.push('\n')
+            indent(o, d)
+            o.push(mv.fix + ' ~>')
+
+            vsc = vs.slice()
+            vsc.push(n.k + '~' + mv.fix)
+
+            walk(mv.keymap, o, d + 1, vsc)
+          }
         }
+      }
+
+      if (n.s) {
+        o.push('\n')
+        indent(o, d)
+        o.push('|')
+
+        vsc = vs.slice()
+        walk(n.s, o, d + 1, vsc)
       }
     }
 

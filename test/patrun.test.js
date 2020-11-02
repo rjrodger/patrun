@@ -70,6 +70,57 @@ describe('patrun', function () {
     expect(r.find({ a: 1 })).to.equal('A')
   })
 
+  it('toString-matchers', async () => {
+    var s = (r)=>(''+r).replace(/\n/g,' ; ')
+    var t = (r)=>r.toString(true)+'\n'
+
+    var r = Patrun({gex:true})
+    r.add({a:'a'}, 'Aa')
+    r.add({a:'*'}, 'A*')
+
+    expect(s(r)).equal('a=a -> <Aa> ; a~* -> <A*>')
+    expect(t(r)).equal(`
+a:
+ a -> <Aa>
+ * ~> <A*>
+`)
+
+    
+    r.add({b:'b'}, 'Bb')
+    r.add({b:'*'}, 'B*')
+
+    expect(s(r)).equal('a=a -> <Aa> ; a~* -> <A*> ; b=b -> <Bb> ; b~* -> <B*>')
+    expect(t(r)).equal(`
+a:
+ a -> <Aa>
+ * ~> <A*>
+ |
+  b:
+   b -> <Bb>
+   * ~> <B*>
+`)
+    
+    r.add({a:'a', b:'b'}, 'AB')
+    r.add({a:'*', b:'*'}, 'AB*')
+    expect(s(r)).equal('a=a -> <Aa> ; a=a, b=b -> <AB> ;'+
+                       ' a~* -> <A*> ; a~*, b~* -> <AB*> ; b=b -> <Bb> ; b~* -> <B*>')
+    //console.log(r.toString(true))
+    expect(t(r)).equal(`
+a:
+ a -> <Aa>
+  b:
+   b -> <AB>
+ * ~> <A*>
+  b:
+   * ~> <AB*>
+ |
+  b:
+   b -> <Bb>
+   * ~> <B*>
+`)
+
+  })
+  
   it('root-data', async () => {
     var r = Patrun()
     r.add({}, 'R')
@@ -1045,7 +1096,7 @@ describe('patrun', function () {
     p1.add({ a: 1, b: 4, c: '*' }, 'Xa1b4c*')
     p1.add({ a: 1, b: '*', c: '*' }, 'Xa1b*c*')
 
-    //console.log(p1.toString(true))
+    // console.log(p1.toString(true))
 
     expect(p1.find({ a: 1, b: 2 })).to.equal('Xa1b2')
     expect(p1.find({ a: 1, b: 0 })).to.equal('Xa1b*')

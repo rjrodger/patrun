@@ -22,10 +22,11 @@ export interface Completion {
 
 export interface MatchValue {
   match(val: any): boolean
+  same(mv: MatchValue | undefined): boolean
   kind: string
   fix: any
   meta: any
-  val$?: any
+  keymap?: any
 }
 
 
@@ -41,11 +42,15 @@ export class GexMatcher implements Matcher {
         kind: 'gex',
         match: (val: any) => null != gex.on(val),
         fix: fix,
-        meta: {}
+        meta: {},
+        same(mv: MatchValue) {
+          return null != mv && mv.kind === this.kind && mv.fix === this.fix
+        }
       }
     }
     else return undefined
   }
+
 
   complete(mvs: MatchValue[], opts?: any) {
     return {
@@ -108,7 +113,11 @@ export class IntervalMatcher implements Matcher {
 
 
   make(key: string, fix: any) {
-    if ('string' === typeof fix) {
+    if ('string' === typeof fix &&
+      // At least one interval operator is required.
+      // Exact numbers must be specified as '=X'
+      fix.match(/[=<>.[()\]]/)) {
+
       let m = fix.match(IntervalRE)
       let meta = { jo: 'and', o0: 'err', n0: NaN, o1: 'err', n1: NaN }
       let match = (val: any) => false
@@ -250,13 +259,22 @@ export class IntervalMatcher implements Matcher {
 
           return res
         }
-      }
 
-      return {
-        kind: 'interval',
-        fix,
-        meta,
-        match
+        return {
+          kind: 'interval',
+          fix,
+          meta,
+          match,
+          same(mv: MatchValue) {
+            return null != mv &&
+              mv.kind === this.kind &&
+              mv.meta.jo === this.meta.jo &&
+              mv.meta.o0 === this.meta.o0 &&
+              mv.meta.n0 === this.meta.n0 &&
+              mv.meta.o1 === this.meta.o1 &&
+              mv.meta.n1 === this.meta.n1
+          }
+        }
       }
     }
   }

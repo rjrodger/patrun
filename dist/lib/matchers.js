@@ -23,7 +23,10 @@ class GexMatcher {
                 kind: 'gex',
                 match: (val) => null != gex.on(val),
                 fix: fix,
-                meta: {}
+                meta: {},
+                same(mv) {
+                    return null != mv && mv.kind === this.kind && mv.fix === this.fix;
+                }
             };
         }
         else
@@ -77,7 +80,10 @@ class IntervalMatcher {
         _meq.set(this, (n) => function eq(x) { return x === n; });
     }
     make(key, fix) {
-        if ('string' === typeof fix) {
+        if ('string' === typeof fix &&
+            // At least one interval operator is required.
+            // Exact numbers must be specified as '=X'
+            fix.match(/[=<>.[()\]]/)) {
             let m = fix.match(IntervalRE);
             let meta = { jo: 'and', o0: 'err', n0: NaN, o1: 'err', n1: NaN };
             let match = (val) => false;
@@ -194,13 +200,22 @@ class IntervalMatcher {
                     }
                     return res;
                 };
+                return {
+                    kind: 'interval',
+                    fix,
+                    meta,
+                    match,
+                    same(mv) {
+                        return null != mv &&
+                            mv.kind === this.kind &&
+                            mv.meta.jo === this.meta.jo &&
+                            mv.meta.o0 === this.meta.o0 &&
+                            mv.meta.n0 === this.meta.n0 &&
+                            mv.meta.o1 === this.meta.o1 &&
+                            mv.meta.n1 === this.meta.n1;
+                    }
+                };
             }
-            return {
-                kind: 'interval',
-                fix,
-                meta,
-                match
-            };
         }
     }
     complete(mvs, opts) {

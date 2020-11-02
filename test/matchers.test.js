@@ -20,20 +20,25 @@ const Matchers = require('../lib/matchers')
 
 
 describe('matchers', function () {
-  it('gex', async () => {
+  it('gex-basic', async () => {
     var gm = new Matchers.GexMatcher()
 
+    expect(gm.make('k',1)).undefined()
+    expect(gm.make('k','a')).undefined()
+    
     var gm0 = gm.make('key','*a')
     var gm0m = gm0.match
     expect(gm0m('a')).true()
     expect(gm0m('ab')).false()
-    expect(gm0m('ba')).true()
-    
+    expect(gm0m('ba')).true()    
   })
 
   it('interval-basic', async () => {
     var im = new Matchers.IntervalMatcher()
 
+    expect(im.make('k',1)).undefined()
+    expect(im.make('k','a')).undefined()
+    
     var im0 = im.make('key','>10')
     var im0m = im0.match
     expect(im0m(11)).true()
@@ -103,22 +108,20 @@ describe('matchers', function () {
     expect(im.make('k','>=10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
 
-    expect(im.make('k','10').meta)
+    expect(im.make('k','=10').meta)
       .contains({ jo: 'or', o0: 'eq', n0: 10, o1: 'nil', n1: NaN })
     expect(im.make('k','==10').meta)
       .contains({ jo: 'or', o0: 'eq', n0: 10, o1: 'nil', n1: NaN })
     expect(im.make('k','===10').meta)
       .contains({ jo: 'or', o0: 'eq', n0: 10, o1: 'nil', n1: NaN })
     
-    // fix below
-
     expect(im.make('k','=<10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: -Infinity, o1: 'lte', n1: 10 })
     expect(im.make('k','=>10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
 
-    expect(im.make('k','x10').meta)
-      .contains({ jo: 'or', o0: 'err' })
+    // no operators
+    expect(im.make('k','x10')).undefined()
 
     expect(im.make('k','[10').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: Infinity })
@@ -136,8 +139,10 @@ describe('matchers', function () {
 
     expect(im.make('k','10..20').meta)
       .contains({ jo: 'and', o0: 'gte', n0: 10, o1: 'lte', n1: 20 })
-    expect(im.make('k','10x20').meta)
-      .contains({ jo: 'or', o0: 'err', n0: NaN, o1: 'nil', n1: NaN })
+
+    // no operators
+    expect(im.make('k','10x20')).undefined()
+
 
 
     expect(im.make('k','<20&>10').meta)
@@ -475,14 +480,6 @@ describe('matchers', function () {
 
     
     expect(rc(['=10'])).contains({
-      ok: false,
-      gaps: [
-        [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 1 } ],
-        [ { n: 10, o: 'gt', m: 6 }, { n: Infinity, o: 'lte', m: 7 } ]
-      ],
-    })
-
-    expect(rc(['10'])).contains({
       ok: false,
       gaps: [
         [ { n: -Infinity, o: 'gte' }, { n: 10, o: 'lte', m: 1 } ],
