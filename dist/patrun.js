@@ -26,8 +26,7 @@ function Patrun(custom) {
         return top;
     };
     self.add = function (pat, data) {
-        pat = Object.assign({}, pat);
-        // console.log('ADD', pat, data)
+        pat = { ...pat };
         var customizer = 'function' === typeof custom ? custom.call(self, pat, data) : null;
         var keys = Object
             .keys(pat)
@@ -258,16 +257,16 @@ function Patrun(custom) {
             if (keymap.v) {
                 var key = keymap.k;
                 var gexval = gex(pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*');
-                var itermatch = Object.assign({}, match);
-                var itermissing = Object.assign({}, missing);
+                var itermatch = { ...match };
+                var itermissing = { ...missing };
                 var nextkeymap;
                 for (var val in keymap.v) {
                     if (val === pat[key] ||
                         (!exact && null == pat[key]) ||
                         gexval.on(val)) {
-                        var valitermatch = Object.assign({}, itermatch);
+                        var valitermatch = { ...itermatch };
                         valitermatch[key] = val;
-                        var valitermissing = Object.assign({}, itermissing);
+                        var valitermissing = { ...itermissing };
                         delete valitermissing[key];
                         nextkeymap = keymap.v[val];
                         if (0 === Object.keys(valitermissing).length &&
@@ -280,13 +279,13 @@ function Patrun(custom) {
                             });
                         }
                         if (nextkeymap && null != nextkeymap.v) {
-                            descend(nextkeymap, Object.assign({}, valitermatch), Object.assign({}, valitermissing), acc);
+                            descend(nextkeymap, { ...valitermatch }, { ...valitermissing }, acc);
                         }
                     }
                 }
                 nextkeymap = keymap.s;
                 if (nextkeymap) {
-                    descend(nextkeymap, Object.assign({}, itermatch), Object.assign({}, itermissing), acc);
+                    descend(nextkeymap, { ...itermatch }, { ...itermissing }, acc);
                 }
             }
         }
@@ -298,7 +297,7 @@ function Patrun(custom) {
                 find: top.f,
             });
         }
-        descend(top, {}, Object.assign({}, pat), acc);
+        descend(top, {}, { ...pat }, acc);
         return acc;
     };
     self.toString = function (first, second) {

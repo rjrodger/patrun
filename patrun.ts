@@ -46,8 +46,6 @@ function Patrun(custom: any) {
   self.add = function(pat: any, data: any) {
     pat = { ...pat }
 
-    // console.log('ADD', pat, data)
-
     var customizer =
       'function' === typeof custom ? custom.call(self, pat, data) : null
 

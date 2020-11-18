@@ -1,10 +1,12 @@
 export interface Matcher {
     make(key: string, fix: any): MatchValue | undefined;
-    complete(mvs: MatchValue[], opts?: any): Completion;
+    scan(mvs: MatchValue[], opts?: any): ScanResult;
 }
-export interface Completion {
-    ok: boolean;
+export interface ScanResult {
+    complete: boolean;
+    sound: boolean;
     gaps: any[];
+    overs: any[];
     why?: string;
 }
 export interface MatchValue {
@@ -24,11 +26,7 @@ export declare class GexMatcher implements Matcher {
         meta: {};
         same(mv: MatchValue): boolean;
     } | undefined;
-    complete(mvs: MatchValue[], opts?: any): {
-        ok: boolean;
-        gaps: never[];
-        why: string;
-    };
+    scan(mvs: MatchValue[], opts?: any): ScanResult;
 }
 export declare class IntervalMatcher implements Matcher {
     #private;
@@ -48,12 +46,6 @@ export declare class IntervalMatcher implements Matcher {
         match: (val: any) => boolean;
         same(mv: MatchValue): boolean;
     } | undefined;
-    complete(mvs: MatchValue[], opts?: any): {
-        ok: boolean;
-        gaps: any[];
-        overs: any[];
-        lower: null;
-        upper: null;
-    };
+    scan(mvs: MatchValue[], opts?: any): ScanResult;
     half_intervals(mvs: MatchValue[]): any[];
 }

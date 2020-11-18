@@ -1,5 +1,6 @@
 "use strict";
 /* Copyright (c) 2020 Richard Rodger, MIT License */
+/* $lab:coverage:off$ */
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
     if (!privateMap.has(receiver)) {
         throw new TypeError("attempted to get private field on non-instance");
@@ -9,9 +10,6 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _and, _or, _nil, _err, _mgt, _mgte, _mlt, _mlte, _meq;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntervalMatcher = exports.GexMatcher = void 0;
-// key : pattern element key name string
-// fix : pattern element match value
-// val : potential match value
 const Gex = require('gex');
 class GexMatcher {
     constructor() {
@@ -32,15 +30,21 @@ class GexMatcher {
         else
             return undefined;
     }
-    complete(mvs, opts) {
+    // TODO: pretty primitive, just looks for '*'
+    scan(mvs, opts) {
+        let has_match_any = mvs.filter(mv => '*' === mv.fix).length > 0;
         return {
-            ok: mvs.filter(mv => '*' === mv.fix).length > 0,
+            complete: has_match_any,
+            sound: has_match_any,
             gaps: [],
+            overs: [],
             why: 'no-star'
         };
     }
 }
 exports.GexMatcher = GexMatcher;
+// TODO: space joins with &
+// TODO: recongnize 'and' 'or'
 // TODO: integers: <1, >1&<2, >2 is complete
 // TODO: any: * is -Inf>=&&<=+Inf \ intervals - ie. gaps
 // TODO: non-Number types: special case
@@ -88,14 +92,8 @@ class IntervalMatcher {
             let meta = { jo: 'and', o0: 'err', n0: NaN, o1: 'err', n1: NaN };
             let match = (val) => false;
             if (null != m) {
-                // console.log(m)
-                // standalone number
-                if (null == m[1] && !isNaN(Number(fix))) {
-                    m = [fix, '=', fix];
-                }
                 let os0 = IntervalMatcher.normop(m[1]) || IntervalMatcher.normop(m[5]);
                 let os1 = IntervalMatcher.normop(m[8]) || IntervalMatcher.normop(m[10]);
-                // console.log(os0, os1)
                 let o0 = '=' === os0 ? __classPrivateFieldGet(this, _meq) :
                     '<' === os0 ? __classPrivateFieldGet(this, _mlt) :
                         ')' === os0 ? __classPrivateFieldGet(this, _mlt) :
@@ -114,9 +112,8 @@ class IntervalMatcher {
                 if ('..' === jos) {
                     jo = __classPrivateFieldGet(this, _and);
                     o0 = __classPrivateFieldGet(this, _err) === o0 ? __classPrivateFieldGet(this, _mgte) : o0;
-                    os1 = null == os1 || '' === os1 ? '<=' : os1;
+                    os1 = '' === os1 ? '<=' : os1;
                 }
-                // console.log(o0(0).name, n0, n1, jos, os1)
                 let o1 = null == os1 ? __classPrivateFieldGet(this, _nil) :
                     '=' === os1 ? __classPrivateFieldGet(this, _meq) :
                         '<' === os1 ? __classPrivateFieldGet(this, _mlt) :
@@ -218,9 +215,10 @@ class IntervalMatcher {
             }
         }
     }
-    complete(mvs, opts) {
-        let completion = {
-            ok: false,
+    scan(mvs, opts) {
+        let scanres = {
+            complete: false,
+            sound: false,
             gaps: [],
             overs: [],
             lower: null,
@@ -316,17 +314,18 @@ class IntervalMatcher {
                 c.upper = h;
             }
             return c;
-        }, completion);
+        }, scanres);
         let last = 0 < half_intervals.length && half_intervals[half_intervals.length - 1];
         // {n,+oo]
         if (last && top !== last.n && last.o !== 'gt' && last.o !== 'gte') {
-            completion.gaps.push([
+            scanres.gaps.push([
                 { n: last.n, o: (last.o === 'eq' || last.o === 'lte') ? 'gt' : 'gte', m: 6 },
                 { n: top, o: 'lte', m: 7 }
             ]);
         }
-        completion.ok = 0 === completion.gaps.length;
-        return completion;
+        scanres.complete = 0 === scanres.gaps.length;
+        scanres.sound = 0 === scanres.overs.length;
+        return scanres;
     }
     // NOTE: assumes n0<=n1
     half_intervals(mvs) {

@@ -1,21 +1,28 @@
 /* Copyright (c) 2020 Richard Rodger, MIT License */
+/* $lab:coverage:off$ */
+
+const Gex = require('gex')
+
+/* $lab:coverage:on$ */
 
 
+// NOTE: naming convention:
 // key : pattern element key name string
 // fix : pattern element match value
 // val : potential match value
 
-const Gex = require('gex')
 
 
 export interface Matcher {
   make(key: string, fix: any): MatchValue | undefined
-  complete(mvs: MatchValue[], opts?: any): Completion
+  scan(mvs: MatchValue[], opts?: any): ScanResult
 }
 
-export interface Completion {
-  ok: boolean,
+export interface ScanResult {
+  complete: boolean,
+  sound: boolean,
   gaps: any[],
+  overs: any[],
   why?: string
 }
 
@@ -52,16 +59,22 @@ export class GexMatcher implements Matcher {
   }
 
 
-  complete(mvs: MatchValue[], opts?: any) {
+  // TODO: pretty primitive, just looks for '*'
+  scan(mvs: MatchValue[], opts?: any): ScanResult {
+    let has_match_any = mvs.filter(mv => '*' === mv.fix).length > 0
     return {
-      ok: mvs.filter(mv => '*' === mv.fix).length > 0,
+      complete: has_match_any,
+      sound: has_match_any,
       gaps: [],
+      overs: [],
       why: 'no-star'
     }
   }
 }
 
 
+// TODO: space joins with &
+// TODO: recongnize 'and' 'or'
 // TODO: integers: <1, >1&<2, >2 is complete
 // TODO: any: * is -Inf>=&&<=+Inf \ intervals - ie. gaps
 // TODO: non-Number types: special case
@@ -123,16 +136,8 @@ export class IntervalMatcher implements Matcher {
       let match = (val: any) => false
 
       if (null != m) {
-        // console.log(m)
-
-        // standalone number
-        if (null == m[1] && !isNaN(Number(fix))) {
-          m = [fix, '=', fix]
-        }
-
         let os0 = IntervalMatcher.normop(m[1]) || IntervalMatcher.normop(m[5])
         let os1 = IntervalMatcher.normop(m[8]) || IntervalMatcher.normop(m[10])
-        // console.log(os0, os1)
 
         let o0 =
           '=' === os0 ? this.#meq :
@@ -159,10 +164,8 @@ export class IntervalMatcher implements Matcher {
         if ('..' === jos) {
           jo = this.#and
           o0 = this.#err === o0 ? this.#mgte : o0
-          os1 = null == os1 || '' === os1 ? '<=' : os1
+          os1 = '' === os1 ? '<=' : os1
         }
-
-        // console.log(o0(0).name, n0, n1, jos, os1)
 
         let o1 =
           null == os1 ? this.#nil :
@@ -279,9 +282,10 @@ export class IntervalMatcher implements Matcher {
     }
   }
 
-  complete(mvs: MatchValue[], opts?: any) {
-    let completion = {
-      ok: false,
+  scan(mvs: MatchValue[], opts?: any): ScanResult {
+    let scanres = {
+      complete: false,
+      sound: false,
       gaps: [] as any[],
       overs: [] as any[],
       lower: null,
@@ -392,22 +396,23 @@ export class IntervalMatcher implements Matcher {
         }
 
         return c
-      }, completion)
+      }, scanres)
 
 
 
     let last = 0 < half_intervals.length && half_intervals[half_intervals.length - 1]
     // {n,+oo]
     if (last && top !== last.n && last.o !== 'gt' && last.o !== 'gte') {
-      completion.gaps.push([
+      scanres.gaps.push([
         { n: last.n, o: (last.o === 'eq' || last.o === 'lte') ? 'gt' : 'gte', m: 6 },
         { n: top, o: 'lte', m: 7 }
       ])
     }
 
-    completion.ok = 0 === completion.gaps.length
+    scanres.complete = 0 === scanres.gaps.length
+    scanres.sound = 0 === scanres.overs.length
 
-    return completion
+    return scanres
   }
 
 
