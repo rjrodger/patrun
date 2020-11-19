@@ -1,13 +1,11 @@
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License */
 
-// TODO: remove use of val$ - attach keymap to matcher (union type?)
-
 // TODO: matchers should accept string[] of key names - only operate on these keys
 
 // TODO: expose walk as method for general purpose
 
-// TODO: convert gex to TS
-const gex = require('gex')
+import { Gex } from 'gex'
+
 
 import {
   Matcher,
@@ -324,7 +322,7 @@ function Patrun(custom: any) {
     function descend(keymap: any, match: any, missing: any, acc: any) {
       if (keymap.v) {
         var key = keymap.k
-        var gexval = gex(
+        var gexval = Gex(
           pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*'
         )
         var itermatch = { ...match }

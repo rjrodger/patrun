@@ -12,7 +12,8 @@ var it = lab.it
 var expect = Code.expect
 
 var Patrun = require('..')
-var Gex = require('gex')
+var { Gex } = require('gex')
+
 
 function rs(x) {
   return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')

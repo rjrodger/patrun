@@ -10,13 +10,13 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _and, _or, _nil, _err, _mgt, _mgte, _mlt, _mlte, _meq;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntervalMatcher = exports.GexMatcher = void 0;
-const Gex = require('gex');
+const gex_1 = require("gex");
 class GexMatcher {
     constructor() {
     }
     make(key, fix) {
         if ('string' === typeof fix && fix.match(/[*?]/)) {
-            let gex = Gex(fix);
+            let gex = gex_1.Gex(fix);
             return {
                 kind: 'gex',
                 match: (val) => null != gex.on(val),

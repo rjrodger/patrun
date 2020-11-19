@@ -1,11 +1,9 @@
 "use strict";
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License */
 Object.defineProperty(exports, "__esModule", { value: true });
-// TODO: remove use of val$ - attach keymap to matcher (union type?)
 // TODO: matchers should accept string[] of key names - only operate on these keys
 // TODO: expose walk as method for general purpose
-// TODO: convert gex to TS
-const gex = require('gex');
+const gex_1 = require("gex");
 const matchers_1 = require("./lib/matchers");
 module.exports = function (custom) {
     return new Patrun(custom);
@@ -256,7 +254,7 @@ function Patrun(custom) {
         function descend(keymap, match, missing, acc) {
             if (keymap.v) {
                 var key = keymap.k;
-                var gexval = gex(pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*');
+                var gexval = gex_1.Gex(pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*');
                 var itermatch = { ...match };
                 var itermissing = { ...missing };
                 var nextkeymap;

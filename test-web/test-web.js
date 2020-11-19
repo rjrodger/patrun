@@ -1,9 +1,9 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Patrun = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-(function (global){
-!function(n){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=n();else if("function"==typeof define&&define.amd)define([],n);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Patrun=n()}}((function(){var n={exports:{}};function e(e){e=e||{};var t={},r={};function o(n,e,t){if(t){var r=n.g=n.g||{},o=r[e]=r[e]||[];o.push(t),o.sort((function(n,e){return n.val$<e.val$}))}}return t.top=function(){return r},t.add=function(u,i){u={...u};var f="function"==typeof e?e.call(t,u,i):null,l=Object.keys(u),s=[],c=[];l.forEach((function(n){var t=u[n];null!=t&&(t=String(t),u[n]=t,(e.gex&&t.match(/[*?]/)?c:s).push(n))})),s=s.sort(),c=c.sort(),l=s.concat(c);for(var a,v=r,d=0;d<l.length;d++){var p=l[d],g=u[p],h=e.gex&&g.match(/[*?]/)?n(g):null;h&&(h.val$=g);var y=(h?"1":"0")+"~"+p;if((a=v.v)&&y==v.sk)o(v,p,h),v=a[g]||(a[g]={});else if(v.k)if(y<v.sk){var k=v.s,b=v.g;v.s={k:v.k,sk:v.sk,v:v.v},k&&(v.s.s=k),b&&(v.s.g=b),v.g&&(v.g={}),o(v,p,h),v.k=p,v.sk=y,v.v={},v=v.v[g]={}}else a=v.v,v=v.s||(v.s={}),d--;else o(v,p,h),v.k=p,v.sk=y,v.v={},v=v.v[g]={}}return void 0!==i&&v&&(v.d=i,f&&(v.f="function"==typeof f?f:f.find,v.r="function"==typeof f.remove?f.remove:void 0)),t},t.findexact=function(n){return t.find(n,!0)},t.find=function(n,o,u){if(null==n)return null;var i=r,f=void 0===r.d?null:r.d,l=r.f,s=null,c=[],a={},v=Object.keys(n).length,d=[];void 0!==r.d&&d.push(r.d);do{if(s=i.k,i.v){var p=n[s],g=i.v[p];if(!g&&e.gex&&i.g&&i.g[s])for(var h=i.g[s],y=0;y<h.length;y++)if(null!=h[y].on(p)){g=i.v[h[y].val$];break}g?(a[s]=!0,i.s&&c.push(i.s),f=void 0===g.d?o?null:f:g.d,u&&void 0!==g.d&&d.push(g.d),l=g.f,i=g):i=i.s}else i=null;null==i&&0<c.length&&(null==f||u&&!o)&&(i=c.pop())}while(i);return o?Object.keys(a).length!==v&&(f=null):null==f&&void 0!==r.d&&(f=r.d),l&&(f=l.call(t,n,f)),u?d:f},t.remove=function(n){var e,t=r,o=null,u=[];do{if(e=t.k,t.v){var i=t.v[n[e]];i?(u.push({km:t,v:n[e]}),o=i.d,t=i):t=t.s}else t=null}while(t);if(void 0!==o){var f=u[u.length-1];if(f&&f.km&&f.km.v){var l=f.km.v[f.v];l.r&&!l.r(n,l.d)||delete l.d}}},t.list=function(e,t){e=e||{};var o=[];return r.d&&o.push({match:{},data:r.d,find:r.f}),function r(o,u,i,f){if(o.v){var l,s=o.k,c=n(e?null==e[s]?t?null:"*":e[s]:"*"),a={...u},v={...i};for(var d in o.v)if(d===e[s]||!t&&null==e[s]||c.on(d)){var p={...a};p[s]=d;var g={...v};delete g[s],l=o.v[d],0===Object.keys(g).length&&l&&l.d&&f.push({match:p,data:l.d,find:l.f}),l&&null!=l.v&&r(l,{...p},{...g},f)}(l=o.s)&&r(l,{...a},{...v},f)}}(r,{},{...e},o),o},t.toString=function(n,e){var t=!0===n||!!e,o="function"==typeof n?n:function(n){return"function"==typeof n?"<"+n.name+">":"<"+n+">"};function u(n,e){for(var t=0;t<e;t++)n.push(" ")}var i=[],f=[];return function n(e,t,r,f){var l;if(void 0!==e.d&&(t.push(" "+o(e.d)),i.push(f.join(", ")+" -> "+o(e.d))),e.k&&(t.push("\n"),u(t,r),t.push(e.k+":")),e.v){r++;var s=Object.keys(e.v),c=s.filter((function(n){return!n.match(/[*?]/)})),a=s.filter((function(n){return n.match(/[*?]/)}));c.sort(),a.sort(),s=c.concat(a);for(var v=0;v<s.length;v++){var d=s[v];t.push("\n"),u(t,r),t.push(d+" ->"),(l=f.slice()).push(e.k+"="+d),n(e.v[d],t,r+1,l)}e.s&&(t.push("\n"),u(t,r),t.push("|"),l=f.slice(),n(e.s,t,r+1,l))}}(r,f,0,[]),t?f.join(""):i.join("\n")},t.inspect=t.toString,t.toJSON=function(n){return JSON.stringify(r,(function(n,e){return"function"==typeof e?"[Function]":e}),n)},t}(function(e){!function(t){"object"==typeof n.exports?n.exports=t():("undefined"!=typeof window?window:void 0!==e?e:"undefined"!=typeof self?self:this).Gex=t()}((function(){var n;function e(n){return new t(n)}function t(n){var e=this;function t(n){return null==n||Number.isNaN(n)}function r(n){var e=""+n;return t(n)&&(e=""),e}function o(n){n=""+n;for(var e=!1,t=Object.keys(f),r=0;r<t.length&&!e;r++)e=!!f[t[r]].exec(n);return e}e.on=function(n){if(null==n)return null;var e=typeof n;if("string"===e||"number"===e||"boolean"===e||n instanceof Date||n instanceof RegExp)return o(n)?n:null;if(Array.isArray(n)){for(var r=[],u=0;u<n.length;u++)!t(n[u])&&o(n[u])&&r.push(n[u]);return r}var i={};for(var f in n)Object.prototype.hasOwnProperty.call(n,f)&&o(f)&&(i[f]=n[f]);return i},e.esc=function(n){var e=r(n);return(e=e.replace(/\*/g,"**")).replace(/\?/g,"*?")},e.re=function(n){if(""===n||n)return n="^"+(n=(n=(n=(n=(n=e.escregexp(n)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(n);var t=Object.keys(f);return 1==t.length?f[t[0]]:{...f}},e.escregexp=function(n){return n?(""+n).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""},e.toString=function(){return null!=u?u:u="gex["+Object.keys(f)+"]"},e.inspect=function(){return e.toString()};var u,i=Array.isArray(n)?n:[n],f={};i.forEach((function(n){n=r(n);var t=e.re(n);f[n]=t}))}return n=e,e.Gex=t,n}))}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{}),n=n.exports;return function(n){return new e(n)}}));
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+(function (global){(function (){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Patrun=e()}}((function(){var e={exports:{}};(function(t){(function(){!function(n){"object"==typeof e.exports?e.exports=n():("undefined"!=typeof window?window:void 0!==t?t:"undefined"!=typeof self?self:this).Gex=n()}((function(){var e={};Object.defineProperty(e,"__esModule",{value:!0}),e.Gex=void 0;class t{constructor(e){this.desc="",this.gexmap={},(Array.isArray(e)?e:[e]).forEach(e=>{this.gexmap[e]=this.re(this.clean(e))})}dodgy(e){return null==e||Number.isNaN(e)}clean(e){let t=""+e;return this.dodgy(e)?"":t}match(e){e=""+e;let t=!1,n=Object.keys(this.gexmap);for(let r=0;r<n.length&&!t;r++)t=!!this.gexmap[n[r]].exec(e);return t}on(e){if(null==e)return null;let t=typeof e;if("string"===t||"number"===t||"boolean"===t||e instanceof Date||e instanceof RegExp)return this.match(e)?e:null;if(Array.isArray(e)){let t=[];for(let n=0;n<e.length;n++)!this.dodgy(e[n])&&this.match(e[n])&&t.push(e[n]);return t}{let t={};for(let n in e)Object.prototype.hasOwnProperty.call(e,n)&&this.match(n)&&(t[n]=e[n]);return t}}esc(e){let t=this.clean(e);return(t=t.replace(/\*/g,"**")).replace(/\?/g,"*?")}escregexp(e){return e?(""+e).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""}re(e){if(""===e||e)return e="^"+(e=(e=(e=(e=(e=this.escregexp(e)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(e);{let e=Object.keys(this.gexmap);return 1==e.length?this.gexmap[e[0]]:{...this.gexmap}}}toString(){let e=this.desc;return""!=e?e:this.desc="Gex["+Object.keys(this.gexmap)+"]"}inspect(){return this.toString()}}return e.Gex=function(e){return new t(e)},e}))}).call(this)}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{}),e=e.exports;var t,n,r,i,s,l,o,u,a,f={},h=this&&this.__classPrivateFieldGet||function(e,t){if(!t.has(e))throw new TypeError("attempted to get private field on non-instance");return t.get(e)};Object.defineProperty(f,"__esModule",{value:!0}),f.IntervalMatcher=f.GexMatcher=void 0,f.GexMatcher=class{constructor(){}make(t,n){if("string"==typeof n&&n.match(/[*?]/)){let t=e.Gex(n);return{kind:"gex",match:e=>null!=t.on(e),fix:n,meta:{},same(e){return null!=e&&e.kind===this.kind&&e.fix===this.fix}}}}scan(e,t){let n=e.filter(e=>"*"===e.fix).length>0;return{complete:n,sound:n,gaps:[],overs:[],why:"no-star"}}};const p=new RegExp(["^/s*","(=*[<>/(/[]?=*)?/s*([-+0-9a-fA-FeEoOxX]+(/.([0-9a-fA-FeEoOxX]+))?)([/)/]]?)(/s*(,|&+|/|+|/./.)/s*(=*[<>]?=*)/s*([-+.0-9a-fA-FeEoOxX]+)/s*([/)/]]?))?/s*$"].join("").replace(/\//g,"\\"));class c{constructor(){this.kind="interval",t.set(this,(e,t)=>function(n){return e(n)&&t(n)}),n.set(this,(e,t)=>function(n){return e(n)||t(n)}),r.set(this,e=>function(e){return!1}),i.set(this,e=>function(e){return!1}),s.set(this,e=>function(t){return t>e}),l.set(this,e=>function(t){return t>=e}),o.set(this,e=>function(t){return t<e}),u.set(this,e=>function(t){return t<=e}),a.set(this,e=>function(t){return t===e})}make(e,f){if("string"==typeof f&&f.match(/[=<>.[()\]]/)){let e=f.match(p),d={jo:"and",o0:"err",n0:NaN,o1:"err",n1:NaN},g=e=>!1;if(null!=e){let p=c.normop(e[1])||c.normop(e[5]),m=c.normop(e[8])||c.normop(e[10]),v=h(this,"="===p?a:"<"===p||")"===p?o:"<="===p||"]"===p?u:">"===p||"("===p?s:">="===p||"["===p?l:i),k=Number(e[2]),y=null==e[9]?NaN:Number(e[9]),x=e[7],N=null==x?h(this,n):"&"===x.substring(0,1)||","===x.substring(0,1)?h(this,t):h(this,n);".."===x&&(N=h(this,t),v=h(this,i)===v?h(this,l):v,m=""===m?"<=":m);let w=h(this,null==m?r:"="===m?a:"<"===m||")"===m?o:"<="===m||"]"===m?u:">"===m?s:">="===m?l:i);if(k===y&&("="===p&&null!=m?(y=NaN,w=h(this,r),v=m.includes("<")?h(this,u):m.includes(">")?h(this,l):m.includes("=")?h(this,a):h(this,i)):"="===m&&null!=p&&(y=NaN,w=h(this,r),v=p.includes("<")?h(this,u):p.includes(">")?h(this,l):h(this,i))),h(this,i)!==v&&h(this,r)===w&&(h(this,o)===v||h(this,u)===v?(w=v,y=k,v=h(this,l),k=Number.NEGATIVE_INFINITY,N=h(this,t)):h(this,s)!==v&&h(this,l)!==v||(w=h(this,u),y=Number.POSITIVE_INFINITY,N=h(this,t))),!isNaN(y)&&y<k){let e=w,t=y;y=k,k=t,".."!==x&&(w=v,v=e)}let b=v(k),O=w(y),j=N(b,O);return{kind:"interval",fix:f,meta:d={jo:j.name,o0:b.name,n0:k,o1:O.name,n1:y},match:g=e=>{let t=!1,n=parseFloat(e);return isNaN(n)||(t=j(n)),t},same(e){return null!=e&&e.kind===this.kind&&e.meta.jo===this.meta.jo&&e.meta.o0===this.meta.o0&&e.meta.n0===this.meta.n0&&e.meta.o1===this.meta.o1&&e.meta.n1===this.meta.n1}}}}}scan(e,t){let n={complete:!1,sound:!1,gaps:[],overs:[],lower:null,upper:null},r=Number.NEGATIVE_INFINITY,i=Number.POSITIVE_INFINITY,s=this.half_intervals(e);s.reduce((e,t)=>{let n="eq"===t.o,i="lt"===t.o,s="lte"===t.o,l="gt"===t.o,o="gte"===t.o,u=t.n;if(null==e.lower){let i={n:r,o:"gte"};e.lower=i,e.upper=t,r==u&&o||(l||o?e.gaps.push([i,{n:u,o:l?"lte":"lt",m:0}]):n&&e.gaps.push([i,{n:u,o:"lte",m:1}]))}else{let r="eq"===e.upper.o,a="lt"===e.upper.o,f="lte"===e.upper.o,h=(e.upper.o,e.upper.o,e.upper.n),p=e.upper;u===h?a&&(o||n)||(f||r)&&l||(r||a||f)&&e.gaps.push([{n:h,o:r||f?"gt":"gte",m:2,d:{u:p,h:t}},{n:u,o:n||o?"lt":"lte",m:3}]):h<u?i||s||(r||a||f)&&e.gaps.push([{n:h,o:r||f?"gt":"gte",m:4},{n:u,o:n||o?"lt":"lte",m:5}]):e.overs.push([{n:u,o:n||o?"gte":"gt",m:10},{n:h,o:r||f?"lte":"lt",m:11}]),e.upper=t}return e},n);let l=0<s.length&&s[s.length-1];return l&&i!==l.n&&"gt"!==l.o&&"gte"!==l.o&&n.gaps.push([{n:l.n,o:"eq"===l.o||"lte"===l.o?"gt":"gte",m:6},{n:i,o:"lte",m:7}]),n.complete=0===n.gaps.length,n.sound=0===n.overs.length,n}half_intervals(e){let t=[];for(let r of e)t.push([{n:r.meta.n0,o:r.meta.o0},{n:r.meta.n1,o:r.meta.o1}]);var n=["lt","lte","eq","gte","gt"];return t.map(e=>[isNaN(e[0].n)||null==e[0].n?null:e[0],isNaN(e[1].n)||null==e[1].n?null:e[1]].filter(e=>null!=e)).sort((e,t)=>{if(e[0].n<t[0].n)return-1;if(t[0].n<e[0].n)return 1;var r=n.indexOf(e[0].o),i=n.indexOf(t[0].o);if(r<i)return-1;if(i<r)return 1;if(e[1].n<t[1].n)return-1;if(t[1].n<e[1].n)return 1;var s=n.indexOf(e[1].o),l=n.indexOf(t[1].o);return s<l?-1:l<s?1:0}).reduce((e,t)=>e.concat(...t),[])}}f.IntervalMatcher=c,t=new WeakMap,n=new WeakMap,r=new WeakMap,i=new WeakMap,s=new WeakMap,l=new WeakMap,o=new WeakMap,u=new WeakMap,a=new WeakMap,c.normop=e=>null==e?null:((e.match(/([<>\(\)\[\]])/)||[])[1]||"")+((e.match(/(=)/)||[])[1]||"");var d={};function g(t){var n={},r={};let i=[];return(t=t||{}).gex&&i.push(new f.GexMatcher),t.interval&&i.push(new f.IntervalMatcher),n.top=function(){return r},n.add=function(e,s){e={...e};var l="function"==typeof t?t.call(n,e,s):null,o=Object.keys(e).filter(t=>null!=e[t]).sort();o.forEach((function(t){e[t]=String(e[t])}));for(var u,a=r,f=0;f<o.length;f++){var h=o[f],p=e[h];let t=i.reduce((e,t)=>e||t.make(h,p),void 0);if((u=a.v)&&h==a.k)if(t){var c=(g=a.g=a.g||{})[h]=g[h]||[];a=(t=c.find(e=>e.same(t))||(c.push(t),t)).keymap||(t.keymap={})}else a=u[p]||(u[p]={});else if(a.k)if(h<a.k){var d=a.s;g=a.g,a.s={k:a.k,v:a.v},d&&(a.s.s=d),g&&(a.s.g=g),a.g&&(a.g={}),a.k=h,a.v={},t?(c=(g=a.g=a.g||{})[h]=g[h]||[],a=(t=c.find(e=>e.same(t))||(c.push(t),t)).keymap||(t.keymap={})):a=a.v[p]={}}else a=a.s||(a.s={}),f--;else if(a.k=h,a.v={},t){var g;c=(g=a.g=a.g||{})[h]=g[h]||[];a=(t=c.find(e=>e.same(t))||(c.push(t),t)).keymap||(t.keymap={})}else a=a.v[p]={}}return void 0!==s&&a&&(a.d=s,l&&(a.f="function"==typeof l?l:l.find,a.r="function"==typeof l.remove?l.remove:void 0)),n},n.findexact=function(e){return n.find(e,!0)},n.find=function(e,t,i){if(null==e)return null;var s=r,l=void 0===r.d?null:r.d,o=r.f,u=null,a=[],f={},h=Object.keys(e).length,p=[];void 0!==r.d&&p.push(r.d);do{if(u=s.k,s.v){var c=e[u],d=s.v[c];if(!d&&s.g&&s.g[u])for(var g=s.g[u],m=0;m<g.length;m++)if(g[m].match(c)){d=g[m].keymap;break}d?(f[u]=!0,s.s&&a.push(s.s),l=void 0===d.d?t?null:l:d.d,i&&void 0!==d.d&&p.push(d.d),o=d.f,s=d):s=s.s}else s=null;null==s&&0<a.length&&(null==l||i&&!t)&&(s=a.pop())}while(s);return t?Object.keys(f).length!==h&&(l=null):null==l&&void 0!==r.d&&(l=r.d),o&&(l=o.call(n,e,l)),i?p:l},n.remove=function(e){var t,n=r,i=null,s=[];do{if(t=n.k,n.v||n.g){if(n.v){var l=n.v[e[t]];l&&s.push({km:n,v:e[t]})}if(null==l&&n.g){let r=n.g[t]||[];for(let i=0;i<r.length;i++)if(r[i].fix===e[t]){s.push({km:n,v:e[t],mv:r[i]}),l=r[i].keymap;break}}l?(i=l.d,n=l):n=n.s}else n=null}while(n);if(void 0!==i){var o=s[s.length-1];if(o&&o.km&&o.km.v){var u=o.km.v[o.v]||o.mv&&o.mv.keymap;!u||u.r&&!u.r(e,u.d)||delete u.d}}},n.list=function(t,n){t=t||{};var i=[];return r.d&&i.push({match:{},data:r.d,find:r.f}),function r(i,s,l,o){if(i.v){var u,a=i.k,f=e.Gex(t?null==t[a]?n?null:"*":t[a]:"*"),h={...s},p={...l};for(var c in i.v)if(c===t[a]||!n&&null==t[a]||f.on(c)){var d={...h};d[a]=c;var g={...p};delete g[a],u=i.v[c],0===Object.keys(g).length&&u&&u.d&&o.push({match:d,data:u.d,find:u.f}),u&&null!=u.v&&r(u,{...d},{...g},o)}(u=i.s)&&r(u,{...h},{...p},o)}}(r,{},{...t},i),i},n.toString=function(e,t){var n=!0===e||!!t,i="function"==typeof e?e:function(e){return"function"==typeof e?"<"+e.name+">":"<"+e+">"};function s(e,t){for(var n=0;n<t;n++)e.push(" ")}var l=[],o=[];return function e(t,n,r,o){var u;if(void 0!==t.d&&(n.push(" "+i(t.d)),l.push(o.join(", ")+" -> "+i(t.d))),t.k&&(n.push("\n"),s(n,r),n.push(t.k+":")),(t.v||t.s||t.g)&&r++,t.v)for(var a=Object.keys(t.v).sort(),f=0;f<a.length;f++){var h=a[f];n.push("\n"),s(n,r),n.push(h+" ->"),(u=o.slice()).push(t.k+"="+h),e(t.v[h],n,r+1,u)}if(t.g)for(a=Object.keys(t.g).sort(),f=0;f<a.length;f++)for(var p=t.g[a[f]],c=0;c<p.length;c++){var d=p[c];n.push("\n"),s(n,r),n.push(d.fix+" ~>"),(u=o.slice()).push(t.k+"~"+d.fix),e(d.keymap,n,r+1,u)}t.s&&(n.push("\n"),s(n,r),n.push("|"),u=o.slice(),e(t.s,n,r+1,u))}(r,o,0,[]),n?o.join(""):l.join("\n")},n.inspect=n.toString,n.toJSON=function(e){return JSON.stringify(r,(function(e,t){return"function"==typeof t?"[Function]":t}),e)},n}return Object.defineProperty(d,"__esModule",{value:!0}),d=function(e){return new g(e)}}));
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],2:[function(require,module,exports){
-(function (Buffer,__dirname){
+(function (Buffer,__dirname){(function (){
 'use strict';
 
 const Util = require('util');
@@ -565,8 +565,8 @@ internals.assert = function (assertion, condition, error) {
     }
 };
 
-}).call(this,{"isBuffer":require("../../../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js")},"/node_modules/@hapi/code/lib")
-},{"../../../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":35,"@hapi/hoek":17,"util":39}],3:[function(require,module,exports){
+}).call(this)}).call(this,{"isBuffer":require("../../../insert-module-globals/node_modules/is-buffer/index.js")},"/node_modules/@hapi/code/lib")
+},{"../../../insert-module-globals/node_modules/is-buffer/index.js":42,"@hapi/hoek":17,"util":53}],3:[function(require,module,exports){
 'use strict';
 
 const Assert = require('./assert');
@@ -687,7 +687,7 @@ module.exports = function (condition, ...args) {
 };
 
 },{"./error":10}],5:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 'use strict';
 
 const internals = {};
@@ -718,8 +718,8 @@ module.exports = internals.Bench = class {
     }
 };
 
-}).call(this,require('_process'))
-},{"_process":36}],6:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"_process":50}],6:[function(require,module,exports){
 'use strict';
 
 const Ignore = require('./ignore');
@@ -734,7 +734,7 @@ module.exports = function () {
 };
 
 },{"./ignore":16}],7:[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 'use strict';
 
 const Reach = require('./reach');
@@ -912,8 +912,8 @@ internals.base = function (obj, baseProto, options) {
     return Object.create(proto);
 };
 
-}).call(this,require("buffer").Buffer)
-},{"./reach":22,"./types":25,"./utils":26,"buffer":33}],8:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"./reach":22,"./types":25,"./utils":26,"buffer":32}],8:[function(require,module,exports){
 'use strict';
 
 const Assert = require('./assert');
@@ -1223,7 +1223,7 @@ internals.shallow = function (a, b) {
 };
 
 },{"./assert":4,"./deepEqual":9,"./escapeRegex":14,"./utils":26}],9:[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 'use strict';
 
 const Types = require('./types');
@@ -1542,8 +1542,8 @@ internals.SeenEntry = class {
     }
 };
 
-}).call(this,require("buffer").Buffer)
-},{"./types":25,"buffer":33}],10:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"./types":25,"buffer":32}],10:[function(require,module,exports){
 'use strict';
 
 const Stringify = require('./stringify');
@@ -1850,7 +1850,7 @@ module.exports = function (promise) {
 };
 
 },{}],20:[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 'use strict';
 
 const Assert = require('./assert');
@@ -1930,8 +1930,8 @@ module.exports = internals.merge = function (target, source, options) {
     return target;
 };
 
-}).call(this,require("buffer").Buffer)
-},{"./assert":4,"./clone":7,"./utils":26,"buffer":33}],21:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"./assert":4,"./clone":7,"./utils":26,"buffer":32}],21:[function(require,module,exports){
 'use strict';
 
 const internals = {};
@@ -2069,7 +2069,7 @@ module.exports = function (...args) {
 };
 
 },{}],25:[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 'use strict';
 
 const internals = {};
@@ -2126,8 +2126,8 @@ exports.getInternalProto = function (obj) {
     return internals.typeMap.get(objName) || exports.generic;
 };
 
-}).call(this,require("buffer").Buffer)
-},{"buffer":33}],26:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"buffer":32}],26:[function(require,module,exports){
 'use strict';
 
 const internals = {};
@@ -2154,1201 +2154,58 @@ module.exports = function (timeout, returnValue) {
 };
 
 },{}],28:[function(require,module,exports){
-(function (global){
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Gex=e()}}((function(){var e;function n(e){return new r(e)}function r(e){var n=this;function r(e){return null==e||Number.isNaN(e)}function t(e){var n=""+e;return r(e)&&(n=""),n}function o(e){e=""+e;for(var n=!1,r=Object.keys(i),t=0;t<r.length&&!n;t++)n=!!i[r[t]].exec(e);return n}n.on=function(e){if(null==e)return null;var n=typeof e;if("string"===n||"number"===n||"boolean"===n||e instanceof Date||e instanceof RegExp)return o(e)?e:null;if(Array.isArray(e)){for(var t=[],u=0;u<e.length;u++)!r(e[u])&&o(e[u])&&t.push(e[u]);return t}var f={};for(var i in e)Object.prototype.hasOwnProperty.call(e,i)&&o(i)&&(f[i]=e[i]);return f},n.esc=function(e){var n=t(e);return(n=n.replace(/\*/g,"**")).replace(/\?/g,"*?")},n.re=function(e){if(""===e||e)return e="^"+(e=(e=(e=(e=(e=n.escregexp(e)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(e);var r=Object.keys(i);return 1==r.length?i[r[0]]:{...i}},n.escregexp=function(e){return e?(""+e).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""},n.toString=function(){return null!=u?u:u="gex["+Object.keys(i)+"]"},n.inspect=function(){return n.toString()};var u,f=Array.isArray(e)?e:[e],i={};f.forEach((function(e){e=t(e);var r=n.re(e);i[e]=r}))}return e=n,n.Gex=r,e}));
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+/**
+ * Array#filter.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @param {Object=} self
+ * @return {Array}
+ * @throw TypeError
+ */
+
+module.exports = function (arr, fn, self) {
+  if (arr.filter) return arr.filter(fn, self);
+  if (void 0 === arr || null === arr) throw new TypeError;
+  if ('function' != typeof fn) throw new TypeError;
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    if (!hasOwn.call(arr, i)) continue;
+    var val = arr[i];
+    if (fn.call(self, val, i, arr)) ret.push(val);
+  }
+  return ret;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
 },{}],29:[function(require,module,exports){
-/* Copyright (c) 2020 Richard Rodger, MIT License */
-'use strict'
-
-var tests = []
-var print =
-  'undefined' === typeof document
-    ? console.log
-    : function (s, nl) {
-        var out = document.querySelector('#test-results') // eslint-disable-line
-        out.innerHTML = out.innerHTML + s + (false === nl ? ' ' : '<br>')
-      }
-
-var Lab = {
-  script: function () {
-    return {
-      it: web_it,
-      describe: web_describe,
-    }
-  },
-}
-
-function web_it(name, opts, fn) {
-  tests.push({ name: name, opts: opts, fn: fn || opts })
-}
-
-function web_describe(name, testdef) {
-  print(name)
-  testdef()
-
-  runtest(tests.shift())
-}
-
-function runtest(test) {
-  if (null == test) return
-
-  print(test.name, false)
-
-  try {
-    var res = test.fn(function () {})
-
-    if (res) {
-      res.then(function (err) {
-        if (err) {
-          print('fail ' + err)
-        } else {
-          print('pass')
-        }
-        runtest(tests.shift())
-      })
-    } else {
-      print('pass')
-      runtest(tests.shift())
-    }
-  } catch (err) {
-    print('fail ' + err)
-  }
-}
-
-module.exports = Lab
-
-},{}],30:[function(require,module,exports){
-/* Copyright (c) 2013-2020 Richard Rodger and other contributors, MIT License */
-'use strict'
-
-var Lab = require('@hapi/lab')
-Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
-
-var Code = require('@hapi/code')
-
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
-
-var Patrun = require('..')
-var Gex = require('gex')
-
-function rs(x) {
-  return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')
-}
-
-describe('patrun', function () {
-  it('toString', async () => {
-    var r = Patrun()
-    r.add({}, 'R')
-    expect(r.toString(true)).to.equal(' <R>')
-    expect(r.toString(false)).to.equal(' -> <R>')
-    expect(r.toString((d) => 'D:' + d)).to.equal(' -> D:R')
-    expect(r.toString((d) => 'D:' + d, true)).to.equal(' D:R')
-    expect(r.toString((d) => 'D:' + d, false)).to.equal(' -> D:R')
-
-    r.add({ a: 1 }, 'S')
-    expect(r.toString(true)).to.equal(' <R>\na:\n 1 -> <S>')
-    expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>')
-    expect(r.toString((d) => 'D:' + d)).to.equal(' -> D:R\na=1 -> D:S')
-    expect(r.toString((d) => 'D:' + d, true)).to.equal(' D:R\na:\n 1 -> D:S')
-    expect(r.toString((d) => 'D:' + d, false)).to.equal(' -> D:R\na=1 -> D:S')
-
-    r.add({ a: 1, b: 2 }, function foo() {})
-    expect(r.toString(true)).to.equal(
-      ' <R>\na:\n 1 -> <S>\n  b:\n   2 -> <foo>'
-    )
-    expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>\na=1, b=2 -> <foo>')
-    expect(r.toString((d) => 'D:' + d)).to.equal(
-      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
-    )
-    expect(r.toString((d) => 'D:' + d, true)).to.equal(
-      ' D:R\na:\n 1 -> D:S\n  b:\n   2 -> D:function foo() {}'
-    )
-    expect(r.toString((d) => 'D:' + d, false)).to.equal(
-      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
-    )
-  })
-
-  it('empty', async () => {
-    var r = Patrun()
-    expect(r.toString()).to.equal('')
-
-    expect(r.find(NaN)).to.not.exist()
-    expect(r.find(void 0)).to.not.exist()
-    expect(r.find(null)).to.not.exist()
-    expect(r.find({})).to.not.exist()
-    expect(r.find({ a: 1 })).to.not.exist()
-
-    r.add({ a: 1 }, 'A')
-
-    expect(r.find(NaN)).to.not.exist()
-    expect(r.find(void 0)).to.not.exist()
-    expect(r.find(null)).to.not.exist()
-    expect(r.find({})).to.not.exist()
-    expect(r.find({ a: 1 })).to.equal('A')
-  })
-
-  it('root-data', async () => {
-    var r = Patrun()
-    r.add({}, 'R')
-    expect('' + r).to.equal(' -> <R>')
-    expect(rs(r)).to.equal('<R>')
-    expect(JSON.stringify(r.list())).to.equal('[{"match":{},"data":"R"}]')
-
-    expect(r.find({})).to.equal('R')
-    expect(r.find({ x: 1 })).to.equal('R')
-
-    r.add({ a: '1' }, 'r1')
-    expect('' + r).to.equal(' -> <R>\na=1 -> <r1>')
-    expect(rs(r)).to.equal('<R>a:1-><r1>')
-
-    expect(r.find({ x: 1 })).equal('R')
-    expect(r.find({ a: 1 })).equal('r1')
-    expect(r.find({ a: 2 })).equal('R')
-
-    r.add({ a: '1', b: '1' }, 'r2')
-    expect(r.find({ x: 1 })).equal('R')
-    expect(r.find({ a: 1 })).equal('r1')
-    expect(r.find({ a: 1, b: 1 })).equal('r2')
-    expect(r.find({ a: 2 })).equal('R')
-    expect(r.find({ a: 1, b: 2 })).equal('r1') // a:1 is defined
-    expect(r.find({ a: 1, b: 2 }, true)).equal(null) // exact must be ... exact
-    expect(r.find({ a: 2, b: 2 })).equal('R')
-    expect(r.find({ b: 2 })).equal('R')
-
-    r.add({ x: '1', y: '1' }, 'r3')
-    expect(r.find({ x: 1 })).equal('R')
-
-    expect(r.find({ x: 1 }, true)).equal(null)
-
-    expect(JSON.stringify(r.list())).equal(
-      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"},{"match":{"a":"1","b":"1"},"data":"r2"},{"match":{"x":"1","y":"1"},"data":"r3"}]'
-    )
-  })
-
-  it('add', async () => {
-    var r
-
-    r = Patrun()
-    r.add({ a: '1' }, 'r1')
-    expect('' + r).to.equal('a=1 -> <r1>')
-    expect(rs(r)).to.equal('a:1-><r1>')
-
-    expect(JSON.stringify(r.list())).to.equal(
-      '[{"match":{"a":"1"},"data":"r1"}]'
-    )
-
-    r = Patrun()
-    r.add({ a: '1', b: '2' }, 'r1')
-    expect(rs(r)).to.equal('a:1->b:2-><r1>')
-
-    r = Patrun()
-    r.add({ a: '1', b: '2', c: '3' }, 'r1')
-    expect(rs(r)).to.equal('a:1->b:2->c:3-><r1>')
-
-    r = Patrun()
-    r.add({ a: '1', b: '2' }, 'r1')
-    r.add({ a: '1', b: '3' }, 'r2')
-    expect('' + r).to.equal('a=1, b=2 -> <r1>\na=1, b=3 -> <r2>')
-    expect(rs(r)).to.equal('a:1->b:2-><r1>3-><r2>')
-
-    r = Patrun()
-    r.add({ a: '1', b: '2' }, 'r1')
-    r.add({ a: '1', c: '3' }, 'r2')
-    expect(rs(r)).to.equal('a:1->b:2-><r1>|c:3-><r2>')
-
-    r.add({ a: '1', d: '4' }, 'r3')
-    expect(rs(r)).to.equal('a:1->b:2-><r1>|c:3-><r2>|d:4-><r3>')
-
-    r = Patrun()
-    r.add({ a: '1', c: '2' }, 'r1')
-    r.add({ a: '1', b: '3' }, 'r2')
-    expect(rs(r)).to.equal('a:1->b:3-><r2>|c:2-><r1>')
-
-    expect(JSON.stringify(r.list())).to.equal(
-      '[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]'
-    )
-  })
-
-  it('basic', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ p1: 'v1' }, 'r1')
-    expect('r1').to.equal(rt1.find({ p1: 'v1' }))
-    expect(null).to.equal(rt1.find({ p2: 'v1' }))
-
-    rt1.add({ p1: 'v1' }, 'r1x')
-    expect('r1x').to.equal(rt1.find({ p1: 'v1' }))
-    expect(null).to.equal(rt1.find({ p2: 'v1' }))
-
-    rt1.add({ p1: 'v2' }, 'r2')
-    expect('r2').to.equal(rt1.find({ p1: 'v2' }))
-    expect(null).to.equal(rt1.find({ p2: 'v2' }))
-
-    rt1.add({ p2: 'v3' }, 'r3')
-    expect('r3').to.equal(rt1.find({ p2: 'v3' }))
-    expect(null).to.equal(rt1.find({ p2: 'v2' }))
-    expect(null).to.equal(rt1.find({ p2: 'v1' }))
-
-    rt1.add({ p1: 'v1', p3: 'v4' }, 'r4')
-    expect('r4').to.equal(rt1.find({ p1: 'v1', p3: 'v4' }))
-    expect('r1x').to.equal(rt1.find({ p1: 'v1', p3: 'v5' }))
-    expect(null).to.equal(rt1.find({ p2: 'v1' }))
-  })
-
-  it('culdesac', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ p1: 'v1' }, 'r1')
-    rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
-    rt1.add({ p1: 'v1', p3: 'v3' }, 'r3')
-
-    expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }))
-    expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
-  })
-
-  it('falsy-values', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ p1: 0 }, 'r1')
-    rt1.add({ p1: 0, p2: '' }, 'r2')
-    rt1.add({ p1: 0, p2: '', p3: false }, 'r3')
-
-    expect(null).to.equal(rt1.find({ p1: null }))
-    expect('r1').to.equal(rt1.find({ p1: 0 }))
-    expect('r2').to.equal(rt1.find({ p1: 0, p2: '' }))
-    expect('r3').to.equal(rt1.find({ p1: 0, p2: '', p3: false }))
-
-    expect(rt1.list().map((x) => x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({}).map((x) => x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({}, true).map((x) => x.data)).equal([])
-
-    expect(rt1.list({ p1: 0 }).map((x) => x.data)).equal(['r1', 'r2', 'r3'])
-    expect(rt1.list({ p2: '' }).map((x) => x.data)).equal(['r2', 'r3'])
-    expect(rt1.list({ p3: false }).map((x) => x.data)).equal(['r3'])
-
-    expect(rt1.list({ p1: 0 }, true).map((x) => x.data)).equal(['r1'])
-    expect(rt1.list({ p1: 0, p2: '' }, true).map((x) => x.data)).equal(['r2'])
-    expect(
-      rt1.list({ p1: 0, p2: '', p3: false }, true).map((x) => x.data)
-    ).equal(['r3'])
-
-    expect(rt1.list({ p2: '' }, true).map((x) => x.data)).equal([])
-    expect(rt1.list({ p2: '', p3: false }, true).map((x) => x.data)).equal([])
-    expect(rt1.list({ p3: false }, true).map((x) => x.data)).equal([])
-  })
-
-  it('find-exact-collect', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ x0: 'y0' }, 'e0') // deliberate noise
-    rt1.add({ p1: 'v1' }, 'r1')
-    rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
-    rt1.add({ p1: 'v1', p3: 'v3' }, 'r3')
-
-    rt1.add({ q1: 'w1' }, 's1')
-    rt1.add({ q1: 'w1', q2: 'w2' }, 's2')
-    rt1.add({ q1: 'w1', q3: 'w3' }, 's3')
-    rt1.add({ q2: 'w2' }, 's4')
-
-    //console.log(''+rt1)
-    //console.log(rt1.toString(true))
-
-    expect('r1').to.equal(rt1.find({ p1: 'v1' }, true)) // exact
-    expect('r1').to.equal(rt1.find({ p1: 'v1' }, false)) // not exact
-    expect(null).to.equal(rt1.find({ p1: 'v1', p2: 'x' }, true)) // exact
-    expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }, false)) // not exact
-    expect('r2').to.equal(rt1.find({ p1: 'v1', p2: 'v2' }, false)) // not exact
-    expect('r2').to.equal(rt1.find({ p1: 'v1', p2: 'v2' }, true)) // exact
-
-    expect(rt1.find({ p1: 'x' }, false, true)).equal([])
-    expect(rt1.find({ p1: 'v1' }, false, true)).equal(['r1'])
-    expect(rt1.find({ p1: 'x' }, true, true)).equal([])
-    expect(rt1.find({ p1: 'v1' }, true, true)).equal(['r1'])
-
-    // there only is a matching trail
-    expect(rt1.find({ p1: 'v1', p2: 'v2' }, false, true)).equal(['r1', 'r2'])
-    expect(rt1.find({ p1: 'v1', p3: 'v3' }, false, true)).equal(['r1', 'r3'])
-
-    // just follows matching trail
-    expect(rt1.find({ p1: 'v1', p2: 'v2' }, true, true)).equal(['r1', 'r2'])
-    expect(rt1.find({ p1: 'v1', p3: 'v3' }, true, true)).equal(['r1', 'r3'])
-
-    expect(rt1.find({ q1: 'x' }, false, true)).equal([])
-    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['s1'])
-    expect(rt1.find({ q1: 'x' }, true, true)).equal([])
-    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['s1'])
-
-    expect(rt1.find({ q2: 'x' }, false, true)).equal([])
-    expect(rt1.find({ q2: 'w2' }, false, true)).equal(['s4'])
-    expect(rt1.find({ q2: 'x' }, true, true)).equal([])
-    expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
-
-    // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
-      ['s4', 's1', 's2'].sort()
-    )
-    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal(['s1', 's3'])
-
-    // but exact does not follow remainders
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3' }, true, true)).equal(['s1', 's3'])
-
-    // add another remainder trail
-    rt1.add({ q3: 'w3' }, 's5')
-
-    // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
-      ['s4', 's1', 's2'].sort()
-    )
-    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true).sort()).equal(
-      ['s5', 's1', 's3'].sort()
-    )
-
-    // but exact does not follow remainders
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
-    expect(rt1.find({ q1: 'w1', q3: 'w3' }, true, true)).equal(['s1', 's3'])
-
-    expect(rt1.find({ q1: 'x' }, false, true)).equal([])
-    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['s1'])
-    expect(rt1.find({ q1: 'x' }, true, true)).equal([])
-    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['s1'])
-
-    expect(rt1.find({ q2: 'x' }, false, true)).equal([])
-    expect(rt1.find({ q2: 'w2' }, false, true)).equal(['s4'])
-    expect(rt1.find({ q2: 'x' }, true, true)).equal([])
-    expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
-
-    expect(rt1.find({ q3: 'x' }, false, true)).equal([])
-    expect(rt1.find({ q3: 'w3' }, false, true)).equal(['s5'])
-    expect(rt1.find({ q3: 'x' }, true, true)).equal([])
-    expect(rt1.find({ q3: 'w3' }, true, true)).equal(['s5'])
-
-    // add a top
-    rt1.add({}, 't')
-    expect(rt1.find({}, false, true)).equal(['t'])
-
-    expect(rt1.find({ q1: 'x' }, false, true)).equal(['t'])
-    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['t', 's1'])
-    expect(rt1.find({ q1: 'x' }, true, true)).equal(['t'])
-    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['t', 's1'])
-
-    // followed a remainder path (q1 removed)
-    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true)).equal([
-      't',
-      's1',
-      's2',
-      's4',
-    ])
-    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal([
-      't',
-      's1',
-      's3',
-      's5',
-    ])
-  })
-
-  it('remove', async () => {
-    var rt1 = Patrun()
-    rt1.remove({ p1: 'v1' })
-
-    rt1.add({ p1: 'v1' }, 'r0')
-    expect('r0').to.equal(rt1.find({ p1: 'v1' }))
-
-    rt1.remove({ p1: 'v1' })
-    expect(null).to.equal(rt1.find({ p1: 'v1' }))
-
-    rt1.add({ p2: 'v2', p3: 'v3' }, 'r1')
-    rt1.add({ p2: 'v2', p4: 'v4' }, 'r2')
-    expect('r1').to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
-    expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
-
-    rt1.remove({ p2: 'v2', p3: 'v3' })
-    expect(null).to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
-    expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
-  })
-
-  function listtest(mode) {
-    return async () => {
-      var rt1 = Patrun()
-
-      if ('subvals' === mode) {
-        rt1.add({ a: '1' }, 'x')
-      }
-
-      rt1.add({ p1: 'v1' }, 'r0')
-
-      rt1.add({ p1: 'v1', p2: 'v2a' }, 'r1')
-      rt1.add({ p1: 'v1', p2: 'v2b' }, 'r2')
-
-      var found = rt1.list({ p1: 'v1' })
-      expect(found).equal([
-        { match: { p1: 'v1' }, data: 'r0', find: undefined },
-        { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
-        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
-      ])
-
-      found = rt1.list({ p1: 'v1', p2: '*' })
-      expect(found).equal([
-        { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
-        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
-      ])
-
-      rt1.add({ p1: 'v1', p2: 'v2c', p3: 'v3a' }, 'r3a')
-      rt1.add({ p1: 'v1', p2: 'v2d', p3: 'v3b' }, 'r3b')
-      found = rt1.list({ p1: 'v1', p2: '*', p3: 'v3a' })
-      expect(found).equal([
-        {
-          match: { p1: 'v1', p2: 'v2c', p3: 'v3a' },
-          data: 'r3a',
-          find: undefined,
-        },
-      ])
-
-      // gex can accept a list of globs
-      found = rt1.list({ p1: 'v1', p2: ['v2a', 'v2b', 'not-a-value'] })
-      expect(found).equal([
-        { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
-        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
-      ])
-    }
-  }
-
-  it('list.topvals', listtest('topvals'))
-  it('list.subvals', listtest('subvals'))
-
-  it('null-undef-nan', async () => {
-    var rt1 = Patrun()
-
-    rt1.add({ p1: null }, 'r1')
-    expect('{"d":"r1"}').to.equal(rt1.toJSON())
-
-    rt1.add({ p2: void 0 }, 'r2')
-    expect('{"d":"r2"}').to.equal(rt1.toJSON())
-
-    rt1.add({ p99: 'v99' }, 'r99')
-    expect('{"d":"r2","k":"p99","sk":"0~p99","v":{"v99":{"d":"r99"}}}').equal(
-      rt1.toJSON()
-    )
-  })
-
-  it('multi-star', async () => {
-    var p = Patrun()
-
-    p.add({ a: 1 }, 'A')
-    p.add({ a: 1, b: 2 }, 'B')
-    p.add({ c: 3 }, 'C')
-    p.add({ b: 1, c: 4 }, 'D')
-
-    expect(rs(p)).to.equal('a:1-><A>b:2-><B>|b:1->c:4-><D>|c:3-><C>')
-    expect('' + p).to.equal(
-      'a=1 -> <A>\na=1, b=2 -> <B>\nb=1, c=4 -> <D>\nc=3 -> <C>'
-    )
-
-    expect(p.find({ c: 3 })).to.equal('C')
-    expect(p.find({ c: 3, a: 0 })).to.equal('C')
-    expect(p.find({ c: 3, a: 0, b: 0 })).to.equal('C')
-  })
-
-  it('star-backtrack', async () => {
-    var p = Patrun()
-
-    p.add({ a: 1, b: 2 }, 'X')
-    p.add({ c: 3 }, 'Y')
-
-    expect(p.find({ a: 1, b: 2 })).to.equal('X')
-    expect(p.find({ a: 1, b: 0, c: 3 })).to.equal('Y')
-
-    p.add({ a: 1, b: 2, d: 4 }, 'XX')
-    p.add({ c: 3, d: 4 }, 'YY')
-
-    expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
-    expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
-    expect(p.find({ a: 1, b: 2 })).to.equal('X')
-    expect(p.find({ a: 1, b: 0, c: 3 })).to.equal('Y')
-
-    expect(p.list({ a: 1, b: '*' })[0].data).to.equal('X')
-    expect(p.list({ c: 3 })[0].data).to.equal('Y')
-    expect(p.list({ c: 3, d: '*' })[0].data).to.equal('YY')
-    expect(p.list({ a: 1, b: '*', d: '*' })[0].data).to.equal('XX')
-
-    expect('' + p).to.equal(
-      'a=1, b=2 -> <X>\na=1, b=2, d=4 -> <XX>\nc=3 -> <Y>\nc=3, d=4 -> <YY>'
-    )
-  })
-
-  it('remove-intermediate', async () => {
-    var p = Patrun()
-
-    p.add({ a: 1, b: 2, d: 4 }, 'XX')
-    p.add({ c: 3, d: 4 }, 'YY')
-    p.add({ a: 1, b: 2 }, 'X')
-    p.add({ c: 3 }, 'Y')
-
-    p.remove({ c: 3 })
-
-    expect(p.find({ c: 3 })).to.not.exist()
-    expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
-    expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
-    expect(p.find({ a: 1, b: 2 })).to.equal('X')
-
-    p.remove({ a: 1, b: 2 })
-
-    expect(p.find({ c: 3 })).to.not.exist()
-    expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
-    expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
-    expect(p.find({ a: 1, b: 2 })).to.not.exist()
-  })
-
-  it('exact', async () => {
-    var p = Patrun()
-
-    p.add({ a: 1 }, 'X')
-
-    expect(p.findexact({ a: 1 })).to.equal('X')
-    expect(p.findexact({ a: 1, b: 2 })).to.not.exist()
-  })
-
-  it('all', async () => {
-    var p = Patrun()
-
-    p.add({ a: 1 }, 'X')
-    p.add({ b: 2 }, 'Y')
-
-    expect(JSON.stringify(p.list())).to.equal(
-      '[{"match":{"a":"1"},"data":"X"},{"match":{"b":"2"},"data":"Y"}]'
-    )
-  })
-
-  it('custom-happy', async () => {
-    var p1 = Patrun(function (pat) {
-      pat.q = 9
-    })
-
-    p1.add({ a: 1 }, 'Q')
-
-    expect(p1.find({ a: 1 })).to.not.exist()
-    expect(p1.find({ a: 1, q: 9 })).to.equal('Q')
-  })
-
-  it('custom-many', async () => {
-    var p1 = Patrun(function (pat, data) {
-      var items = this.find(pat, true) || []
-      items.push(data)
-
-      return {
-        find: function (args, data) {
-          return 0 < items.length ? items : null
-        },
-        remove: function (args, data) {
-          items.pop()
-          return 0 == items.length
-        },
-      }
-    })
-
-    p1.add({ a: 1 }, 'A')
-    p1.add({ a: 1 }, 'B')
-    p1.add({ b: 1 }, 'C')
-
-    expect(p1.find({ a: 1 }).toString()).to.equal(['A', 'B'].toString())
-    expect(p1.find({ b: 1 }).toString()).to.equal(['C'].toString())
-    expect(p1.list().length).to.equal(2)
-
-    p1.remove({ b: 1 })
-    expect(p1.list().length).to.equal(1)
-    expect(p1.find({ b: 1 })).to.not.exist()
-    expect(p1.find({ a: 1 }).toString()).to.equal(['A', 'B'].toString())
-
-    p1.remove({ a: 1 })
-    expect(p1.list().length).to.equal(1)
-    expect(p1.find({ b: 1 })).to.not.exist()
-
-    expect(JSON.stringify(p1.find({ a: 1 })).toString()).to.equal('["A"]')
-
-    p1.remove({ a: 1 })
-    expect(p1.list().length).to.equal(0)
-    expect(p1.find({ b: 1 })).to.not.exist()
-    expect(p1.find({ a: 1 })).to.not.exist()
-  })
-
-  it('custom-gex', async () => {
-    // this custom function matches glob expressions
-    var p2 = Patrun(function (pat, data) {
-      var gexers = {}
-      Object.keys(pat).forEach(function (k) {
-        var v = pat[k]
-        if ('string' === typeof v && ~v.indexOf('*')) {
-          delete pat[k]
-          gexers[k] = Gex(v)
-        }
-      })
-
-      // handle previous patterns that match this pattern
-      var prev = this.list(pat)
-      var prevfind = prev[0] && prev[0].find
-      var prevdata = prev[0] && this.findexact(prev[0].match)
-
-      return function (args, data) {
-        var out = data
-        Object.keys(gexers).forEach(function (k) {
-          var g = gexers[k]
-          var v = null == args[k] ? '' : args[k]
-          if (null == g.on(v)) {
-            out = null
-          }
-        })
-
-        if (prevfind && null == out) {
-          out = prevfind.call(this, args, prevdata)
-        }
-
-        return out
-      }
-    })
-
-    p2.add({ a: 1, b: '*' }, 'X')
-
-    expect(p2.find({ a: 1 })).to.equal('X')
-    expect(p2.find({ a: 1, b: 'x' })).to.equal('X')
-
-    p2.add({ a: 1, b: '*', c: 'q*z' }, 'Y')
-
-    expect(p2.find({ a: 1 })).to.equal('X')
-    expect(p2.find({ a: 1, b: 'x' })).to.equal('X')
-    expect(p2.find({ a: 1, b: 'x', c: 'qaz' })).to.equal('Y')
-
-    p2.add({ w: 1 }, 'W')
-    expect(p2.find({ w: 1 })).to.equal('W')
-    expect(p2.find({ w: 1, q: 'x' })).to.equal('W')
-
-    p2.add({ w: 1, q: 'x*' }, 'Q')
-    expect(p2.find({ w: 1 })).to.equal('W')
-    expect(p2.find({ w: 1, q: 'x' })).to.equal('Q')
-    expect(p2.find({ w: 1, q: 'y' })).to.equal('W')
-  })
-
-  it('find-exact', async () => {
-    var p1 = Patrun()
-    p1.add({ a: 1 }, 'A')
-    p1.add({ a: 1, b: 2 }, 'B')
-    p1.add({ a: 1, b: 2, c: 3 }, 'C')
-
-    expect(p1.find({ a: 1 })).to.equal('A')
-    expect(p1.find({ a: 1 }, true)).to.equal('A')
-    expect(p1.find({ a: 1, b: 8 })).to.equal('A')
-    expect(p1.find({ a: 1, b: 8 }, true)).to.equal(null)
-    expect(p1.find({ a: 1, b: 8, c: 3 })).to.equal('A')
-    expect(p1.find({ a: 1, b: 8, c: 3 }, true)).to.equal(null)
-
-    expect(p1.find({ a: 1, b: 2 })).to.equal('B')
-    expect(p1.find({ a: 1, b: 2 }, true)).to.equal('B')
-    expect(p1.find({ a: 1, b: 2, c: 9 })).to.equal('B')
-    expect(p1.find({ a: 1, b: 2, c: 9 }, true)).to.equal(null)
-
-    expect(p1.find({ a: 1, b: 2, c: 3 })).to.equal('C')
-    expect(p1.find({ a: 1, b: 2, c: 3 }, true)).to.equal('C')
-    expect(p1.find({ a: 1, b: 2, c: 3, d: 7 })).to.equal('C')
-    expect(p1.find({ a: 1, b: 2, c: 3, d: 7 }, true)).to.equal(null)
-  })
-
-  it('list-any', async () => {
-    var p1 = Patrun()
-    p1.add({ a: 1 }, 'A')
-    p1.add({ a: 1, b: 2 }, 'B')
-    p1.add({ a: 1, b: 2, c: 3 }, 'C')
-
-    var mA = '{"match":{"a":"1"},"data":"A"}'
-    var mB = '{"match":{"a":"1","b":"2"},"data":"B"}'
-    var mC = '{"match":{"a":"1","b":"2","c":"3"},"data":"C"}'
-
-    expect(JSON.stringify(p1.list())).to.equal('[' + [mA, mB, mC] + ']')
-
-    expect(JSON.stringify(p1.list({ a: 1 }))).to.equal('[' + [mA, mB, mC] + ']')
-    expect(JSON.stringify(p1.list({ b: 2 }))).to.equal('[' + [mB, mC] + ']')
-    expect(JSON.stringify(p1.list({ c: 3 }))).to.equal('[' + [mC] + ']')
-
-    expect(JSON.stringify(p1.list({ a: '*' }))).to.equal(
-      '[' + [mA, mB, mC] + ']'
-    )
-    expect(JSON.stringify(p1.list({ b: '*' }))).to.equal('[' + [mB, mC] + ']')
-    expect(JSON.stringify(p1.list({ c: '*' }))).to.equal('[' + [mC] + ']')
-
-    expect(JSON.stringify(p1.list({ a: 1, b: 2 }))).to.equal(
-      '[' + [mB, mC] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1, b: '*' }))).to.equal(
-      '[' + [mB, mC] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1, b: '*', c: 3 }))).to.equal(
-      '[' + [mC] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1, b: '*', c: '*' }))).to.equal(
-      '[' + [mC] + ']'
-    )
-
-    expect(JSON.stringify(p1.list({ a: 1, c: '*' }))).to.equal('[' + [mC] + ']')
-
-    // test star descent
-
-    p1.add({ a: 1, d: 4 }, 'D')
-    var mD = '{"match":{"a":"1","d":"4"},"data":"D"}'
-
-    expect(JSON.stringify(p1.list())).to.equal('[' + [mA, mB, mC, mD] + ']')
-    expect(JSON.stringify(p1.list({ a: 1 }))).to.equal(
-      '[' + [mA, mB, mC, mD] + ']'
-    )
-    expect(JSON.stringify(p1.list({ d: 4 }))).to.equal('[' + [mD] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, d: 4 }))).to.equal('[' + [mD] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, d: '*' }))).to.equal('[' + [mD] + ']')
-    expect(JSON.stringify(p1.list({ d: '*' }))).to.equal('[' + [mD] + ']')
-
-    p1.add({ a: 1, c: 33 }, 'CC')
-    var mCC = '{"match":{"a":"1","c":"33"},"data":"CC"}'
-
-    expect(JSON.stringify(p1.list())).to.equal(
-      '[' + [mA, mB, mC, mCC, mD] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1 }))).to.equal(
-      '[' + [mA, mB, mC, mCC, mD] + ']'
-    )
-
-    expect(JSON.stringify(p1.list({ d: 4 }))).to.equal('[' + [mD] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, d: 4 }))).to.equal('[' + [mD] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, d: '*' }))).to.equal('[' + [mD] + ']')
-    expect(JSON.stringify(p1.list({ d: '*' }))).to.equal('[' + [mD] + ']')
-
-    expect(JSON.stringify(p1.list({ c: 33 }))).to.equal('[' + [mCC] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, c: 33 }))).to.equal('[' + [mCC] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, c: '*' }))).to.equal(
-      '[' + [mC, mCC] + ']'
-    )
-    expect(JSON.stringify(p1.list({ c: '*' }))).to.equal('[' + [mC, mCC] + ']')
-
-    // exact
-    expect(JSON.stringify(p1.list({ a: 1 }, true))).to.equal('[' + [mA] + ']')
-    expect(JSON.stringify(p1.list({ a: '*' }, true))).to.equal('[' + [mA] + ']')
-    expect(JSON.stringify(p1.list({ a: 1, b: 2 }, true))).to.equal(
-      '[' + [mB] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1, b: '*' }, true))).to.equal(
-      '[' + [mB] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1, c: 3 }, true))).to.equal('[]')
-    expect(JSON.stringify(p1.list({ a: 1, c: 33 }, true))).to.equal(
-      '[' + [mCC] + ']'
-    )
-    expect(JSON.stringify(p1.list({ a: 1, c: '*' }, true))).to.equal(
-      '[' + [mCC] + ']'
-    )
-  })
-
-  it('top-custom', async () => {
-    var p1 = Patrun(function (pat, data) {
-      return function (args, data) {
-        data += '!'
-        return data
-      }
-    })
-
-    p1.add({}, 'Q')
-    p1.add({ a: 1 }, 'A')
-    p1.add({ a: 1, b: 2 }, 'B')
-    p1.add({ a: 1, b: 2, c: 3 }, 'C')
-
-    expect(p1.find({})).to.equal('Q!')
-    expect(p1.find({ a: 1 })).to.equal('A!')
-    expect(p1.find({ a: 1, b: 2 })).to.equal('B!')
-    expect(p1.find({ a: 1, b: 2, c: 3 })).to.equal('C!')
-  })
-
-  it('mixed-values', async () => {
-    var p1 = Patrun()
-
-    p1.add({ a: 1 }, 'A')
-    p1.add({ a: true }, 'AA')
-    p1.add({ a: 0 }, 'AAA')
-    p1.add({ a: 'A', b: 2 }, 'B')
-    p1.add({ a: 'A', b: 'B', c: 3 }, 'C')
-
-    expect(p1.find({ a: 1 })).to.equal('A')
-    expect(p1.find({ a: true })).to.equal('AA')
-    expect(p1.find({ a: 0 })).to.equal('AAA')
-    expect(p1.find({ a: 'A', b: 2 })).to.equal('B')
-    expect(p1.find({ a: 'A', b: 'B', c: 3 })).to.equal('C')
-
-    expect(p1.list({ a: 1 }).length).to.equal(1)
-    expect(p1.list({ a: true }).length).to.equal(1)
-    expect(p1.list({ a: 0 }).length).to.equal(1)
-
-    p1.add({}, 'Q')
-    expect(p1.find({})).to.equal('Q')
-  })
-
-  it('no-props', async () => {
-    var p1 = Patrun()
-    p1.add({}, 'Z')
-    expect(p1.find({})).to.equal('Z')
-
-    p1.add({ a: 1 }, 'X')
-    expect(p1.find({})).to.equal('Z')
-
-    p1.add({ b: 2 }, 'Y')
-    expect(p1.find({})).to.equal('Z')
-
-    p1.remove({ b: 2 })
-    expect(p1.find({})).to.equal('Z')
-  })
-
-  it('zero', async () => {
-    var p1 = Patrun()
-    p1.add({ a: 0 }, 'X')
-    expect(p1.find({ a: 0 })).to.equal('X')
-  })
-
-  it('multi-match', async () => {
-    var p1 = Patrun()
-    p1.add({ a: 0 }, 'P')
-    p1.add({ b: 1 }, 'Q')
-    p1.add({ c: 2 }, 'R')
-
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('P')
-    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
-    expect(p1.find({ b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ c: 2 })).to.equal('R')
-
-    p1.add({ a: 0, b: 1 }, 'S')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('S')
-    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
-
-    p1.add({ b: 1, c: 2 }, 'T')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('S')
-    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
-    expect(p1.find({ b: 1, c: 2 })).to.equal('T')
-
-    p1.add({ d: 3 }, 'U')
-    expect(p1.find({ d: 3 })).to.equal('U')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('P')
-    expect(p1.find({ b: 1, d: 3 })).to.equal('Q')
-    expect(p1.find({ c: 2, d: 3 })).to.equal('R')
-
-    p1.add({ c: 2, d: 3 }, 'V')
-    expect(p1.find({ c: 2, d: 3 })).to.equal('V')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, d: 3 })).to.equal('S')
-  })
-
-  it('partial-match', async () => {
-    var p1 = Patrun()
-    p1.add({ a: 0 }, 'P')
-    p1.add({ a: 0, b: 1, c: 2 }, 'Q')
-
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0 })).to.equal('P')
-
-    p1.add({ a: 0, d: 3 }, 'S')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-
-    p1.add({ a: 0, b: 1, c: 2, e: 4, f: 5 }, 'T')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
-
-    p1.add({ a: 0, b: 1 }, 'M')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('M')
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
-
-    p1.add({ a: 0, b: 1, c: 2, e: 4 }, 'N')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('M')
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('N')
-  })
-
-  it('partial-match-remove', async () => {
-    var p1 = Patrun()
-    p1.add({ a: 0 }, 'P')
-    p1.add({ a: 0, b: 1, c: 2 }, 'Q')
-
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0 })).to.equal('P')
-
-    p1.add({ a: 0, d: 3 }, 'S')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-
-    p1.add({ a: 0, b: 1, c: 2, e: 4, f: 5 }, 'T')
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
-    expect(p1.find({ a: 0 })).to.equal('P')
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
-
-    p1.remove({ a: 0 })
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
-    expect(p1.find({ a: 0, b: 1 })).to.equal(null)
-    expect(p1.find({ a: 0 })).to.equal(null)
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
-
-    p1.remove({ a: 0, b: 1, c: 2 })
-    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal(null)
-    expect(p1.find({ a: 0, b: 1 })).to.equal(null)
-    expect(p1.find({ a: 0 })).to.equal(null)
-    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
-    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal(null)
-  })
-
-  it('top', async () => {
-    var r = Patrun()
-    r.add({}, 'R')
-    expect(r.top()).equals({ d: 'R' })
-  })
-
-  it('add-gex', async () => {
-    var p1 = Patrun({ gex: true })
-
-    p1.add({ a: 'A' }, 'XA')
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-    expect(p1.find({})).to.not.exist()
-
-    p1.add({ b: '*' }, 'XB')
-    expect(p1.find({ b: 'A' })).to.equal('XB')
-    expect(p1.find({ b: 'B' })).to.equal('XB')
-    expect(p1.find({ b: '0' })).to.equal('XB')
-    expect(p1.find({ b: 2 })).to.equal('XB')
-    expect(p1.find({ b: 1 })).to.equal('XB')
-    expect(p1.find({ b: 0 })).to.equal('XB')
-    expect(p1.find({ b: '' })).to.equal('XB') // this is correct
-    expect(p1.find({})).to.not.exist()
-
-    p1.add({ c: '*' }, 'XC')
-    expect(p1.find({ c: 'A' })).to.equal('XC')
-    expect(p1.find({ c: 'B' })).to.equal('XC')
-    expect(p1.find({ c: '0' })).to.equal('XC')
-    expect(p1.find({ c: 2 })).to.equal('XC')
-    expect(p1.find({ c: 1 })).to.equal('XC')
-    expect(p1.find({ c: 0 })).to.equal('XC')
-    expect(p1.find({ c: '' })).to.equal('XC') // this is correct
-    expect(p1.find({})).to.not.exist()
-
-    expect(p1.find({ b: 'A', c: 'A' })).to.equal('XB')
-
-    p1.add({ e: '*' }, 'XE')
-    p1.add({ d: '*' }, 'XD')
-
-    //console.log(require('util').inspect(p1.top,{depth:99}))
-
-    // alphanumeric ordering
-    expect(p1.find({ d: 'A', e: 'A' })).to.equal('XD')
-
-    p1.add({ b: 0 }, 'XB0')
-    //console.log(require('util').inspect(p1.top,{depth:99}))
-
-    p1.add({ b: 'B' }, 'XBB')
-    expect(p1.find({ b: 'A' })).to.equal('XB')
-    expect(p1.find({ b: 0 })).to.equal('XB0')
-    expect(p1.find({ b: 'B' })).to.equal('XBB')
-  })
-
-  it('add-mixed-gex', async () => {
-    var p1 = Patrun({ gex: true })
-
-    p1.add({ a: '*' }, 'XAS')
-    p1.add({ a: 'A' }, 'XA')
-
-    p1.add({ b: 'A' }, 'XB')
-    p1.add({ b: '*' }, 'XBS')
-
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-    expect(p1.find({ a: 'Q' })).to.equal('XAS')
-
-    expect(p1.find({ b: 'A' })).to.equal('XB')
-    expect(p1.find({ b: 'Q' })).to.equal('XBS')
-
-    p1.add({ c: 'B' }, 'XCB')
-    p1.add({ c: 'A' }, 'XCA')
-    p1.add({ c: '*b' }, 'XCBe')
-    p1.add({ c: '*a' }, 'XCAe')
-    p1.add({ c: 'b*' }, 'XCsB')
-    p1.add({ c: 'a*' }, 'XCsA')
-
-    expect(p1.find({ c: 'A' })).to.equal('XCA')
-    expect(p1.find({ c: 'B' })).to.equal('XCB')
-    expect(p1.find({ c: 'qb' })).to.equal('XCBe')
-    expect(p1.find({ c: 'qa' })).to.equal('XCAe')
-    expect(p1.find({ c: 'bq' })).to.equal('XCsB')
-    expect(p1.find({ c: 'aq' })).to.equal('XCsA')
-
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-    expect(p1.find({ a: 'Q' })).to.equal('XAS')
-    expect(p1.find({ b: 'A' })).to.equal('XB')
-    expect(p1.find({ b: 'Q' })).to.equal('XBS')
-  })
-
-  it('add-order-gex', async () => {
-    var p1 = Patrun({ gex: true })
-
-    p1.add({ c: 'A' }, 'XC')
-    p1.add({ c: '*' }, 'XCS')
-
-    p1.add({ a: 'A' }, 'XA')
-    p1.add({ a: '*' }, 'XAS')
-
-    p1.add({ b: 'A' }, 'XB')
-    p1.add({ b: '*' }, 'XBS')
-
-    //console.log('\n'+require('util').inspect(p1.top,{depth:99}))
-    //console.log(p1.toString(true))
-
-    expect(p1.find({ c: 'A' })).to.equal('XC')
-    expect(p1.find({ b: 'A' })).to.equal('XB')
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-
-    expect(p1.find({ c: 'Q' })).to.equal('XCS')
-    expect(p1.find({ b: 'Q' })).to.equal('XBS')
-    expect(p1.find({ a: 'Q' })).to.equal('XAS')
-  })
-
-  it('multi-gex', async () => {
-    var p1 = Patrun({ gex: true })
-
-    p1.add({ a: 1, b: 2 }, 'Xa1b2')
-    p1.add({ a: 1, b: '*' }, 'Xa1b*')
-    p1.add({ a: 1, c: 3 }, 'Xa1c3')
-    p1.add({ a: 1, c: '*' }, 'Xa1c*')
-    p1.add({ a: 1, b: 4, c: 5 }, 'Xa1b4c5')
-    p1.add({ a: 1, b: '*', c: 5 }, 'Xa1b*c5')
-    p1.add({ a: 1, b: 4, c: '*' }, 'Xa1b4c*')
-    p1.add({ a: 1, b: '*', c: '*' }, 'Xa1b*c*')
-
-    //console.log(p1.toString(true))
-
-    expect(p1.find({ a: 1, b: 2 })).to.equal('Xa1b2')
-    expect(p1.find({ a: 1, b: 0 })).to.equal('Xa1b*')
-    expect(p1.find({ a: 1, c: 3 })).to.equal('Xa1c3')
-    expect(p1.find({ a: 1, c: 0 })).to.equal('Xa1c*')
-    expect(p1.find({ a: 1, b: 4, c: 5 })).to.equal('Xa1b4c5')
-    expect(p1.find({ a: 1, b: 0, c: 5 })).to.equal('Xa1b*c5')
-    expect(p1.find({ a: 1, b: 4, c: 0 })).to.equal('Xa1b4c*')
-    expect(p1.find({ a: 1, b: 0, c: 0 })).to.equal('Xa1b*c*')
-  })
-
-  it('remove-gex', async () => {
-    var p1 = Patrun({ gex: true })
-
-    p1.add({ a: 'A' }, 'XA')
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-    expect(p1.find({})).to.not.exist()
-
-    p1.add({ b: '*' }, 'XB')
-    expect(p1.find({ b: 'A' })).to.equal('XB')
-    expect(p1.find({ b: 'B' })).to.equal('XB')
-    expect(p1.find({})).to.not.exist()
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-
-    p1.remove({ b: '*' })
-    expect(p1.find({ b: 'A' })).to.not.exist()
-    expect(p1.find({ b: 'B' })).to.not.exist()
-    expect(p1.find({})).to.not.exist()
-    expect(p1.find({ a: 'A' })).to.equal('XA')
-  })
-
-  it('collect-once', async () => {
-    var p1 = Patrun({ gex: true })
-    p1.add({ d: 1, b: 1, a: 1 }, 'A')
-    p1.add({ d: 1 }, 'B')
-    expect(p1.find({ d: 1, b: 1 }, false, true)).equal(['B'])
-
-    var p2 = Patrun({ gex: true })
-    p2.add({ d: 1, b: 1, c: 1 }, 'A')
-    p2.add({ d: 1 }, 'B')
-    expect(p2.find({ d: 1, b: 1 }, false, true)).equal(['B'])
-
-    var p3 = Patrun({ gex: true })
-    p3.add({ d: 1, b: 1, e: 1 }, 'A')
-    p3.add({ d: 1 }, 'B')
-    expect(p3.find({ d: 1, b: 1 }, false, true)).equal(['B'])
-  })
-
-  it('collect-powerset', async () => {
-    var p1 = Patrun({ gex: true })
-
-    p1.add({ a: 1, b: 2 }, 'AB')
-    p1.add({ a: 1, c: 3 }, 'AC')
-    p1.add({ b: 2, c: 3 }, 'BC')
-    p1.add({ a: 1, d: 4 }, 'AD')
-
-    //console.log(''+p1)
-    //console.log(p1.toString(true))
-
-    expect(p1.find({ a: 1, b: 2, x: 1 }, false, true)).equal(['AB'])
-    expect(p1.find({ a: 1, c: 3, x: 1 }, false, true)).equal(['AC'])
-    expect(p1.find({ b: 2, c: 3, x: 1 }, false, true)).equal(['BC'])
-    expect(p1.find({ a: 1, d: 4, x: 1 }, false, true)).equal(['AD'])
-
-    expect(p1.find({ a: 1, b: 2, c: 3 }, false)).equal('AB')
-    expect(p1.find({ a: 1, b: 2, c: 3 }, true)).equal(null)
-    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
-      'AB',
-      'AC',
-      'BC',
-    ])
-
-    p1.add({ b: 1, e: 5 }, 'BE')
-    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
-      'AB',
-      'AC',
-      'BC',
-    ])
-
-    p1.add({ a: 1, b: 2, c: 3 }, 'ABC')
-    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
-      'AB',
-      'ABC',
-      'AC',
-      'BC',
-    ])
-
-    expect(p1.find({ a: 1, b: 2, d: 4, x: 2 }, false, true)).equal(['AB', 'AD'])
-    expect(p1.find({ a: 1, b: 2, c: 3, d: 4, x: 2 }, false, true)).equal([
-      'AB',
-      'ABC',
-      'AC',
-      'AD',
-      'BC',
-    ])
-  })
-})
-
-},{"..":1,"@hapi/code":2,"@hapi/lab":31,"gex":28,"hapi-lab-shim":29}],31:[function(require,module,exports){
-
-},{}],32:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var filter = require('array-filter');
+
+module.exports = function availableTypedArrays() {
+	return filter([
+		'BigInt64Array',
+		'BigUint64Array',
+		'Float32Array',
+		'Float64Array',
+		'Int16Array',
+		'Int32Array',
+		'Int8Array',
+		'Uint16Array',
+		'Uint32Array',
+		'Uint8Array',
+		'Uint8ClampedArray'
+	], function (typedArray) {
+		return typeof global[typedArray] === 'function';
+	});
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"array-filter":28}],30:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -3476,9 +2333,7 @@ function fromByteArray (uint8) {
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(
-      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
-    ))
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
@@ -3502,8 +2357,10 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],33:[function(require,module,exports){
-(function (Buffer){
+},{}],31:[function(require,module,exports){
+
+},{}],32:[function(require,module,exports){
+(function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -5282,8 +4139,220 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-}).call(this,require("buffer").Buffer)
-},{"base64-js":32,"buffer":33,"ieee754":34}],34:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"base64-js":30,"buffer":32,"ieee754":40}],33:[function(require,module,exports){
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString;
+
+module.exports = function forEach (obj, fn, ctx) {
+    if (toString.call(fn) !== '[object Function]') {
+        throw new TypeError('iterator must be a function');
+    }
+    var l = obj.length;
+    if (l === +l) {
+        for (var i = 0; i < l; i++) {
+            fn.call(ctx, obj[i], i, obj);
+        }
+    } else {
+        for (var k in obj) {
+            if (hasOwn.call(obj, k)) {
+                fn.call(ctx, obj[k], k, obj);
+            }
+        }
+    }
+};
+
+
+},{}],34:[function(require,module,exports){
+'use strict';
+
+/* eslint no-invalid-this: 1 */
+
+var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
+var slice = Array.prototype.slice;
+var toStr = Object.prototype.toString;
+var funcType = '[object Function]';
+
+module.exports = function bind(that) {
+    var target = this;
+    if (typeof target !== 'function' || toStr.call(target) !== funcType) {
+        throw new TypeError(ERROR_MESSAGE + target);
+    }
+    var args = slice.call(arguments, 1);
+
+    var bound;
+    var binder = function () {
+        if (this instanceof bound) {
+            var result = target.apply(
+                this,
+                args.concat(slice.call(arguments))
+            );
+            if (Object(result) === result) {
+                return result;
+            }
+            return this;
+        } else {
+            return target.apply(
+                that,
+                args.concat(slice.call(arguments))
+            );
+        }
+    };
+
+    var boundLength = Math.max(0, target.length - args.length);
+    var boundArgs = [];
+    for (var i = 0; i < boundLength; i++) {
+        boundArgs.push('$' + i);
+    }
+
+    bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
+
+    if (target.prototype) {
+        var Empty = function Empty() {};
+        Empty.prototype = target.prototype;
+        bound.prototype = new Empty();
+        Empty.prototype = null;
+    }
+
+    return bound;
+};
+
+},{}],35:[function(require,module,exports){
+'use strict';
+
+var implementation = require('./implementation');
+
+module.exports = Function.prototype.bind || implementation;
+
+},{"./implementation":34}],36:[function(require,module,exports){
+(function (global){(function (){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Gex=e()}}((function(){var e={};Object.defineProperty(e,"__esModule",{value:!0}),e.Gex=void 0;class t{constructor(e){this.desc="",this.gexmap={},(Array.isArray(e)?e:[e]).forEach(e=>{this.gexmap[e]=this.re(this.clean(e))})}dodgy(e){return null==e||Number.isNaN(e)}clean(e){let t=""+e;return this.dodgy(e)?"":t}match(e){e=""+e;let t=!1,r=Object.keys(this.gexmap);for(let n=0;n<r.length&&!t;n++)t=!!this.gexmap[r[n]].exec(e);return t}on(e){if(null==e)return null;let t=typeof e;if("string"===t||"number"===t||"boolean"===t||e instanceof Date||e instanceof RegExp)return this.match(e)?e:null;if(Array.isArray(e)){let t=[];for(let r=0;r<e.length;r++)!this.dodgy(e[r])&&this.match(e[r])&&t.push(e[r]);return t}{let t={};for(let r in e)Object.prototype.hasOwnProperty.call(e,r)&&this.match(r)&&(t[r]=e[r]);return t}}esc(e){let t=this.clean(e);return(t=t.replace(/\*/g,"**")).replace(/\?/g,"*?")}escregexp(e){return e?(""+e).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""}re(e){if(""===e||e)return e="^"+(e=(e=(e=(e=(e=this.escregexp(e)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(e);{let e=Object.keys(this.gexmap);return 1==e.length?this.gexmap[e[0]]:{...this.gexmap}}}toString(){let e=this.desc;return""!=e?e:this.desc="Gex["+Object.keys(this.gexmap)+"]"}inspect(){return this.toString()}}return e.Gex=function(e){return new t(e)},e}));
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],37:[function(require,module,exports){
+/* Copyright (c) 2020 Richard Rodger, MIT License */
+'use strict'
+
+var tests = []
+var print =
+  'undefined' === typeof document
+    ? console.log
+    : function (s, nl) {
+        var out = document.querySelector('#test-results') // eslint-disable-line
+        out.innerHTML = out.innerHTML + s + (false === nl ? ' ' : '<br>')
+      }
+
+var Lab = {
+  script: function () {
+    return {
+      it: web_it,
+      describe: web_describe,
+    }
+  },
+}
+
+function web_it(name, opts, fn) {
+  tests.push({ name: name, opts: opts, fn: fn || opts })
+}
+
+function web_describe(name, testdef) {
+  print(name)
+  testdef()
+
+  runtest(tests.shift())
+}
+
+function runtest(test) {
+  if (null == test) return
+
+  print(test.name, false)
+
+  try {
+    var res = test.fn(function () {})
+
+    if (res) {
+      res.then(function (err) {
+        if (err) {
+          print('fail ' + err)
+        } else {
+          print('pass')
+        }
+        runtest(tests.shift())
+      })
+    } else {
+      print('pass')
+      runtest(tests.shift())
+    }
+  } catch (err) {
+    print('fail ' + err)
+  }
+}
+
+module.exports = Lab
+
+},{}],38:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var origSymbol = global.Symbol;
+var hasSymbolSham = require('./shams');
+
+module.exports = function hasNativeSymbols() {
+	if (typeof origSymbol !== 'function') { return false; }
+	if (typeof Symbol !== 'function') { return false; }
+	if (typeof origSymbol('foo') !== 'symbol') { return false; }
+	if (typeof Symbol('bar') !== 'symbol') { return false; }
+
+	return hasSymbolSham();
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./shams":39}],39:[function(require,module,exports){
+'use strict';
+
+/* eslint complexity: [2, 18], max-statements: [2, 33] */
+module.exports = function hasSymbols() {
+	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
+	if (typeof Symbol.iterator === 'symbol') { return true; }
+
+	var obj = {};
+	var sym = Symbol('test');
+	var symObj = Object(sym);
+	if (typeof sym === 'string') { return false; }
+
+	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
+	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
+
+	// temp disabled per https://github.com/ljharb/object.assign/issues/17
+	// if (sym instanceof Symbol) { return false; }
+	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
+	// if (!(symObj instanceof Symbol)) { return false; }
+
+	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
+	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
+
+	var symVal = 42;
+	obj[sym] = symVal;
+	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
+	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
+
+	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
+
+	var syms = Object.getOwnPropertySymbols(obj);
+	if (syms.length !== 1 || syms[0] !== sym) { return false; }
+
+	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
+
+	if (typeof Object.getOwnPropertyDescriptor === 'function') {
+		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
+		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
+	}
+
+	return true;
+};
+
+},{}],40:[function(require,module,exports){
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -5369,7 +4438,36 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],35:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    if (superCtor) {
+      ctor.super_ = superCtor
+      ctor.prototype = Object.create(superCtor.prototype, {
+        constructor: {
+          value: ctor,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      })
+    }
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    if (superCtor) {
+      ctor.super_ = superCtor
+      var TempCtor = function () {}
+      TempCtor.prototype = superCtor.prototype
+      ctor.prototype = new TempCtor()
+      ctor.prototype.constructor = ctor
+    }
+  }
+}
+
+},{}],42:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -5392,7 +4490,436 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],36:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
+'use strict';
+
+var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var toStr = Object.prototype.toString;
+
+var isStandardArguments = function isArguments(value) {
+	if (hasToStringTag && value && typeof value === 'object' && Symbol.toStringTag in value) {
+		return false;
+	}
+	return toStr.call(value) === '[object Arguments]';
+};
+
+var isLegacyArguments = function isArguments(value) {
+	if (isStandardArguments(value)) {
+		return true;
+	}
+	return value !== null &&
+		typeof value === 'object' &&
+		typeof value.length === 'number' &&
+		value.length >= 0 &&
+		toStr.call(value) !== '[object Array]' &&
+		toStr.call(value.callee) === '[object Function]';
+};
+
+var supportsStandardArguments = (function () {
+	return isStandardArguments(arguments);
+}());
+
+isStandardArguments.isLegacyArguments = isLegacyArguments; // for tests
+
+module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArguments;
+
+},{}],44:[function(require,module,exports){
+'use strict';
+
+var toStr = Object.prototype.toString;
+var fnToStr = Function.prototype.toString;
+var isFnRegex = /^\s*(?:function)?\*/;
+var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var getProto = Object.getPrototypeOf;
+var getGeneratorFunc = function () { // eslint-disable-line consistent-return
+	if (!hasToStringTag) {
+		return false;
+	}
+	try {
+		return Function('return function*() {}')();
+	} catch (e) {
+	}
+};
+var generatorFunc = getGeneratorFunc();
+var GeneratorFunction = generatorFunc ? getProto(generatorFunc) : {};
+
+module.exports = function isGeneratorFunction(fn) {
+	if (typeof fn !== 'function') {
+		return false;
+	}
+	if (isFnRegex.test(fnToStr.call(fn))) {
+		return true;
+	}
+	if (!hasToStringTag) {
+		var str = toStr.call(fn);
+		return str === '[object GeneratorFunction]';
+	}
+	return getProto(fn) === GeneratorFunction;
+};
+
+},{}],45:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var forEach = require('foreach');
+var availableTypedArrays = require('available-typed-arrays');
+var callBound = require('es-abstract/helpers/callBound');
+
+var $toString = callBound('Object.prototype.toString');
+var hasSymbols = require('has-symbols')();
+var hasToStringTag = hasSymbols && typeof Symbol.toStringTag === 'symbol';
+
+var typedArrays = availableTypedArrays();
+
+var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
+	for (var i = 0; i < array.length; i += 1) {
+		if (array[i] === value) {
+			return i;
+		}
+	}
+	return -1;
+};
+var $slice = callBound('String.prototype.slice');
+var toStrTags = {};
+var gOPD = require('es-abstract/helpers/getOwnPropertyDescriptor');
+var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+if (hasToStringTag && gOPD && getPrototypeOf) {
+	forEach(typedArrays, function (typedArray) {
+		var arr = new global[typedArray]();
+		if (!(Symbol.toStringTag in arr)) {
+			throw new EvalError('this engine has support for Symbol.toStringTag, but ' + typedArray + ' does not have the property! Please report this.');
+		}
+		var proto = getPrototypeOf(arr);
+		var descriptor = gOPD(proto, Symbol.toStringTag);
+		if (!descriptor) {
+			var superProto = getPrototypeOf(proto);
+			descriptor = gOPD(superProto, Symbol.toStringTag);
+		}
+		toStrTags[typedArray] = descriptor.get;
+	});
+}
+
+var tryTypedArrays = function tryAllTypedArrays(value) {
+	var anyTrue = false;
+	forEach(toStrTags, function (getter, typedArray) {
+		if (!anyTrue) {
+			try {
+				anyTrue = getter.call(value) === typedArray;
+			} catch (e) { /**/ }
+		}
+	});
+	return anyTrue;
+};
+
+module.exports = function isTypedArray(value) {
+	if (!value || typeof value !== 'object') { return false; }
+	if (!hasToStringTag) {
+		var tag = $slice($toString(value), 8, -1);
+		return $indexOf(typedArrays, tag) > -1;
+	}
+	if (!gOPD) { return false; }
+	return tryTypedArrays(value);
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"available-typed-arrays":29,"es-abstract/helpers/callBound":48,"es-abstract/helpers/getOwnPropertyDescriptor":49,"foreach":33,"has-symbols":38}],46:[function(require,module,exports){
+'use strict';
+
+/* globals
+	Atomics,
+	SharedArrayBuffer,
+*/
+
+var undefined;
+
+var $TypeError = TypeError;
+
+var $gOPD = Object.getOwnPropertyDescriptor;
+if ($gOPD) {
+	try {
+		$gOPD({}, '');
+	} catch (e) {
+		$gOPD = null; // this is IE 8, which has a broken gOPD
+	}
+}
+
+var throwTypeError = function () { throw new $TypeError(); };
+var ThrowTypeError = $gOPD
+	? (function () {
+		try {
+			// eslint-disable-next-line no-unused-expressions, no-caller, no-restricted-properties
+			arguments.callee; // IE 8 does not throw here
+			return throwTypeError;
+		} catch (calleeThrows) {
+			try {
+				// IE 8 throws on Object.getOwnPropertyDescriptor(arguments, '')
+				return $gOPD(arguments, 'callee').get;
+			} catch (gOPDthrows) {
+				return throwTypeError;
+			}
+		}
+	}())
+	: throwTypeError;
+
+var hasSymbols = require('has-symbols')();
+
+var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+
+var generator; // = function * () {};
+var generatorFunction = generator ? getProto(generator) : undefined;
+var asyncFn; // async function() {};
+var asyncFunction = asyncFn ? asyncFn.constructor : undefined;
+var asyncGen; // async function * () {};
+var asyncGenFunction = asyncGen ? getProto(asyncGen) : undefined;
+var asyncGenIterator = asyncGen ? asyncGen() : undefined;
+
+var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
+
+var INTRINSICS = {
+	'%Array%': Array,
+	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
+	'%ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer.prototype,
+	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
+	'%ArrayPrototype%': Array.prototype,
+	'%ArrayProto_entries%': Array.prototype.entries,
+	'%ArrayProto_forEach%': Array.prototype.forEach,
+	'%ArrayProto_keys%': Array.prototype.keys,
+	'%ArrayProto_values%': Array.prototype.values,
+	'%AsyncFromSyncIteratorPrototype%': undefined,
+	'%AsyncFunction%': asyncFunction,
+	'%AsyncFunctionPrototype%': asyncFunction ? asyncFunction.prototype : undefined,
+	'%AsyncGenerator%': asyncGen ? getProto(asyncGenIterator) : undefined,
+	'%AsyncGeneratorFunction%': asyncGenFunction,
+	'%AsyncGeneratorPrototype%': asyncGenFunction ? asyncGenFunction.prototype : undefined,
+	'%AsyncIteratorPrototype%': asyncGenIterator && hasSymbols && Symbol.asyncIterator ? asyncGenIterator[Symbol.asyncIterator]() : undefined,
+	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
+	'%Boolean%': Boolean,
+	'%BooleanPrototype%': Boolean.prototype,
+	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
+	'%DataViewPrototype%': typeof DataView === 'undefined' ? undefined : DataView.prototype,
+	'%Date%': Date,
+	'%DatePrototype%': Date.prototype,
+	'%decodeURI%': decodeURI,
+	'%decodeURIComponent%': decodeURIComponent,
+	'%encodeURI%': encodeURI,
+	'%encodeURIComponent%': encodeURIComponent,
+	'%Error%': Error,
+	'%ErrorPrototype%': Error.prototype,
+	'%eval%': eval, // eslint-disable-line no-eval
+	'%EvalError%': EvalError,
+	'%EvalErrorPrototype%': EvalError.prototype,
+	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
+	'%Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined : Float32Array.prototype,
+	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
+	'%Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined : Float64Array.prototype,
+	'%Function%': Function,
+	'%FunctionPrototype%': Function.prototype,
+	'%Generator%': generator ? getProto(generator()) : undefined,
+	'%GeneratorFunction%': generatorFunction,
+	'%GeneratorPrototype%': generatorFunction ? generatorFunction.prototype : undefined,
+	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined : Int8Array,
+	'%Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined : Int8Array.prototype,
+	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined : Int16Array,
+	'%Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined : Int8Array.prototype,
+	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
+	'%Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined : Int32Array.prototype,
+	'%isFinite%': isFinite,
+	'%isNaN%': isNaN,
+	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
+	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
+	'%JSONParse%': typeof JSON === 'object' ? JSON.parse : undefined,
+	'%Map%': typeof Map === 'undefined' ? undefined : Map,
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
+	'%MapPrototype%': typeof Map === 'undefined' ? undefined : Map.prototype,
+	'%Math%': Math,
+	'%Number%': Number,
+	'%NumberPrototype%': Number.prototype,
+	'%Object%': Object,
+	'%ObjectPrototype%': Object.prototype,
+	'%ObjProto_toString%': Object.prototype.toString,
+	'%ObjProto_valueOf%': Object.prototype.valueOf,
+	'%parseFloat%': parseFloat,
+	'%parseInt%': parseInt,
+	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
+	'%PromisePrototype%': typeof Promise === 'undefined' ? undefined : Promise.prototype,
+	'%PromiseProto_then%': typeof Promise === 'undefined' ? undefined : Promise.prototype.then,
+	'%Promise_all%': typeof Promise === 'undefined' ? undefined : Promise.all,
+	'%Promise_reject%': typeof Promise === 'undefined' ? undefined : Promise.reject,
+	'%Promise_resolve%': typeof Promise === 'undefined' ? undefined : Promise.resolve,
+	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
+	'%RangeError%': RangeError,
+	'%RangeErrorPrototype%': RangeError.prototype,
+	'%ReferenceError%': ReferenceError,
+	'%ReferenceErrorPrototype%': ReferenceError.prototype,
+	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
+	'%RegExp%': RegExp,
+	'%RegExpPrototype%': RegExp.prototype,
+	'%Set%': typeof Set === 'undefined' ? undefined : Set,
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
+	'%SetPrototype%': typeof Set === 'undefined' ? undefined : Set.prototype,
+	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
+	'%SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer.prototype,
+	'%String%': String,
+	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
+	'%StringPrototype%': String.prototype,
+	'%Symbol%': hasSymbols ? Symbol : undefined,
+	'%SymbolPrototype%': hasSymbols ? Symbol.prototype : undefined,
+	'%SyntaxError%': SyntaxError,
+	'%SyntaxErrorPrototype%': SyntaxError.prototype,
+	'%ThrowTypeError%': ThrowTypeError,
+	'%TypedArray%': TypedArray,
+	'%TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined,
+	'%TypeError%': $TypeError,
+	'%TypeErrorPrototype%': $TypeError.prototype,
+	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array,
+	'%Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array.prototype,
+	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
+	'%Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray.prototype,
+	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
+	'%Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array.prototype,
+	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
+	'%Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array.prototype,
+	'%URIError%': URIError,
+	'%URIErrorPrototype%': URIError.prototype,
+	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
+	'%WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined : WeakMap.prototype,
+	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet,
+	'%WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined : WeakSet.prototype
+};
+
+var bind = require('function-bind');
+var $replace = bind.call(Function.call, String.prototype.replace);
+
+/* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
+var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
+var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
+var stringToPath = function stringToPath(string) {
+	var result = [];
+	$replace(string, rePropName, function (match, number, quote, subString) {
+		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
+	});
+	return result;
+};
+/* end adaptation */
+
+var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
+	if (!(name in INTRINSICS)) {
+		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
+	}
+
+	// istanbul ignore if // hopefully this is impossible to test :-)
+	if (typeof INTRINSICS[name] === 'undefined' && !allowMissing) {
+		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+	}
+
+	return INTRINSICS[name];
+};
+
+module.exports = function GetIntrinsic(name, allowMissing) {
+	if (typeof name !== 'string' || name.length === 0) {
+		throw new TypeError('intrinsic name must be a non-empty string');
+	}
+	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
+		throw new TypeError('"allowMissing" argument must be a boolean');
+	}
+
+	var parts = stringToPath(name);
+
+	var value = getBaseIntrinsic('%' + (parts.length > 0 ? parts[0] : '') + '%', allowMissing);
+	for (var i = 1; i < parts.length; i += 1) {
+		if (value != null) {
+			if ($gOPD && (i + 1) >= parts.length) {
+				var desc = $gOPD(value, parts[i]);
+				if (!allowMissing && !(parts[i] in value)) {
+					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
+				}
+				// By convention, when a data property is converted to an accessor
+				// property to emulate a data property that does not suffer from
+				// the override mistake, that accessor's getter is marked with
+				// an `originalValue` property. Here, when we detect this, we
+				// uphold the illusion by pretending to see that original data
+				// property, i.e., returning the value rather than the getter
+				// itself.
+				value = desc && 'get' in desc && !('originalValue' in desc.get) ? desc.get : value[parts[i]];
+			} else {
+				value = value[parts[i]];
+			}
+		}
+	}
+	return value;
+};
+
+},{"function-bind":35,"has-symbols":38}],47:[function(require,module,exports){
+'use strict';
+
+var bind = require('function-bind');
+
+var GetIntrinsic = require('../GetIntrinsic');
+
+var $apply = GetIntrinsic('%Function.prototype.apply%');
+var $call = GetIntrinsic('%Function.prototype.call%');
+var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
+
+var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
+
+if ($defineProperty) {
+	try {
+		$defineProperty({}, 'a', { value: 1 });
+	} catch (e) {
+		// IE 8 has a broken defineProperty
+		$defineProperty = null;
+	}
+}
+
+module.exports = function callBind() {
+	return $reflectApply(bind, $call, arguments);
+};
+
+var applyBind = function applyBind() {
+	return $reflectApply(bind, $apply, arguments);
+};
+
+if ($defineProperty) {
+	$defineProperty(module.exports, 'apply', { value: applyBind });
+} else {
+	module.exports.apply = applyBind;
+}
+
+},{"../GetIntrinsic":46,"function-bind":35}],48:[function(require,module,exports){
+'use strict';
+
+var GetIntrinsic = require('../GetIntrinsic');
+
+var callBind = require('./callBind');
+
+var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
+
+module.exports = function callBoundIntrinsic(name, allowMissing) {
+	var intrinsic = GetIntrinsic(name, !!allowMissing);
+	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.')) {
+		return callBind(intrinsic);
+	}
+	return intrinsic;
+};
+
+},{"../GetIntrinsic":46,"./callBind":47}],49:[function(require,module,exports){
+'use strict';
+
+var GetIntrinsic = require('../GetIntrinsic');
+
+var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+if ($gOPD) {
+	try {
+		$gOPD([], 'length');
+	} catch (e) {
+		// IE 8 has a broken gOPD
+		$gOPD = null;
+	}
+}
+
+module.exports = $gOPD;
+
+},{"../GetIntrinsic":46}],50:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -5578,40 +5105,349 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],37:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-},{}],38:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],39:[function(require,module,exports){
-(function (process,global){
+},{}],52:[function(require,module,exports){
+// Currently in sync with Node.js lib/internal/util/types.js
+// https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
+
+'use strict';
+
+var isArgumentsObject = require('is-arguments');
+var isGeneratorFunction = require('is-generator-function');
+var whichTypedArray = require('which-typed-array');
+var isTypedArray = require('is-typed-array');
+
+function uncurryThis(f) {
+  return f.call.bind(f);
+}
+
+var BigIntSupported = typeof BigInt !== 'undefined';
+var SymbolSupported = typeof Symbol !== 'undefined';
+
+var ObjectToString = uncurryThis(Object.prototype.toString);
+
+var numberValue = uncurryThis(Number.prototype.valueOf);
+var stringValue = uncurryThis(String.prototype.valueOf);
+var booleanValue = uncurryThis(Boolean.prototype.valueOf);
+
+if (BigIntSupported) {
+  var bigIntValue = uncurryThis(BigInt.prototype.valueOf);
+}
+
+if (SymbolSupported) {
+  var symbolValue = uncurryThis(Symbol.prototype.valueOf);
+}
+
+function checkBoxedPrimitive(value, prototypeValueOf) {
+  if (typeof value !== 'object') {
+    return false;
+  }
+  try {
+    prototypeValueOf(value);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+exports.isArgumentsObject = isArgumentsObject;
+exports.isGeneratorFunction = isGeneratorFunction;
+exports.isTypedArray = isTypedArray;
+
+// Taken from here and modified for better browser support
+// https://github.com/sindresorhus/p-is-promise/blob/cda35a513bda03f977ad5cde3a079d237e82d7ef/index.js
+function isPromise(input) {
+	return (
+		(
+			typeof Promise !== 'undefined' &&
+			input instanceof Promise
+		) ||
+		(
+			input !== null &&
+			typeof input === 'object' &&
+			typeof input.then === 'function' &&
+			typeof input.catch === 'function'
+		)
+	);
+}
+exports.isPromise = isPromise;
+
+function isArrayBufferView(value) {
+  if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
+    return ArrayBuffer.isView(value);
+  }
+
+  return (
+    isTypedArray(value) ||
+    isDataView(value)
+  );
+}
+exports.isArrayBufferView = isArrayBufferView;
+
+
+function isUint8Array(value) {
+  return whichTypedArray(value) === 'Uint8Array';
+}
+exports.isUint8Array = isUint8Array;
+
+function isUint8ClampedArray(value) {
+  return whichTypedArray(value) === 'Uint8ClampedArray';
+}
+exports.isUint8ClampedArray = isUint8ClampedArray;
+
+function isUint16Array(value) {
+  return whichTypedArray(value) === 'Uint16Array';
+}
+exports.isUint16Array = isUint16Array;
+
+function isUint32Array(value) {
+  return whichTypedArray(value) === 'Uint32Array';
+}
+exports.isUint32Array = isUint32Array;
+
+function isInt8Array(value) {
+  return whichTypedArray(value) === 'Int8Array';
+}
+exports.isInt8Array = isInt8Array;
+
+function isInt16Array(value) {
+  return whichTypedArray(value) === 'Int16Array';
+}
+exports.isInt16Array = isInt16Array;
+
+function isInt32Array(value) {
+  return whichTypedArray(value) === 'Int32Array';
+}
+exports.isInt32Array = isInt32Array;
+
+function isFloat32Array(value) {
+  return whichTypedArray(value) === 'Float32Array';
+}
+exports.isFloat32Array = isFloat32Array;
+
+function isFloat64Array(value) {
+  return whichTypedArray(value) === 'Float64Array';
+}
+exports.isFloat64Array = isFloat64Array;
+
+function isBigInt64Array(value) {
+  return whichTypedArray(value) === 'BigInt64Array';
+}
+exports.isBigInt64Array = isBigInt64Array;
+
+function isBigUint64Array(value) {
+  return whichTypedArray(value) === 'BigUint64Array';
+}
+exports.isBigUint64Array = isBigUint64Array;
+
+function isMapToString(value) {
+  return ObjectToString(value) === '[object Map]';
+}
+isMapToString.working = (
+  typeof Map !== 'undefined' &&
+  isMapToString(new Map())
+);
+
+function isMap(value) {
+  if (typeof Map === 'undefined') {
+    return false;
+  }
+
+  return isMapToString.working
+    ? isMapToString(value)
+    : value instanceof Map;
+}
+exports.isMap = isMap;
+
+function isSetToString(value) {
+  return ObjectToString(value) === '[object Set]';
+}
+isSetToString.working = (
+  typeof Set !== 'undefined' &&
+  isSetToString(new Set())
+);
+function isSet(value) {
+  if (typeof Set === 'undefined') {
+    return false;
+  }
+
+  return isSetToString.working
+    ? isSetToString(value)
+    : value instanceof Set;
+}
+exports.isSet = isSet;
+
+function isWeakMapToString(value) {
+  return ObjectToString(value) === '[object WeakMap]';
+}
+isWeakMapToString.working = (
+  typeof WeakMap !== 'undefined' &&
+  isWeakMapToString(new WeakMap())
+);
+function isWeakMap(value) {
+  if (typeof WeakMap === 'undefined') {
+    return false;
+  }
+
+  return isWeakMapToString.working
+    ? isWeakMapToString(value)
+    : value instanceof WeakMap;
+}
+exports.isWeakMap = isWeakMap;
+
+function isWeakSetToString(value) {
+  return ObjectToString(value) === '[object WeakSet]';
+}
+isWeakSetToString.working = (
+  typeof WeakSet !== 'undefined' &&
+  isWeakSetToString(new WeakSet())
+);
+function isWeakSet(value) {
+  return isWeakSetToString(value);
+}
+exports.isWeakSet = isWeakSet;
+
+function isArrayBufferToString(value) {
+  return ObjectToString(value) === '[object ArrayBuffer]';
+}
+isArrayBufferToString.working = (
+  typeof ArrayBuffer !== 'undefined' &&
+  isArrayBufferToString(new ArrayBuffer())
+);
+function isArrayBuffer(value) {
+  if (typeof ArrayBuffer === 'undefined') {
+    return false;
+  }
+
+  return isArrayBufferToString.working
+    ? isArrayBufferToString(value)
+    : value instanceof ArrayBuffer;
+}
+exports.isArrayBuffer = isArrayBuffer;
+
+function isDataViewToString(value) {
+  return ObjectToString(value) === '[object DataView]';
+}
+isDataViewToString.working = (
+  typeof ArrayBuffer !== 'undefined' &&
+  typeof DataView !== 'undefined' &&
+  isDataViewToString(new DataView(new ArrayBuffer(1), 0, 1))
+);
+function isDataView(value) {
+  if (typeof DataView === 'undefined') {
+    return false;
+  }
+
+  return isDataViewToString.working
+    ? isDataViewToString(value)
+    : value instanceof DataView;
+}
+exports.isDataView = isDataView;
+
+function isSharedArrayBufferToString(value) {
+  return ObjectToString(value) === '[object SharedArrayBuffer]';
+}
+isSharedArrayBufferToString.working = (
+  typeof SharedArrayBuffer !== 'undefined' &&
+  isSharedArrayBufferToString(new SharedArrayBuffer())
+);
+function isSharedArrayBuffer(value) {
+  if (typeof SharedArrayBuffer === 'undefined') {
+    return false;
+  }
+
+  return isSharedArrayBufferToString.working
+    ? isSharedArrayBufferToString(value)
+    : value instanceof SharedArrayBuffer;
+}
+exports.isSharedArrayBuffer = isSharedArrayBuffer;
+
+function isAsyncFunction(value) {
+  return ObjectToString(value) === '[object AsyncFunction]';
+}
+exports.isAsyncFunction = isAsyncFunction;
+
+function isMapIterator(value) {
+  return ObjectToString(value) === '[object Map Iterator]';
+}
+exports.isMapIterator = isMapIterator;
+
+function isSetIterator(value) {
+  return ObjectToString(value) === '[object Set Iterator]';
+}
+exports.isSetIterator = isSetIterator;
+
+function isGeneratorObject(value) {
+  return ObjectToString(value) === '[object Generator]';
+}
+exports.isGeneratorObject = isGeneratorObject;
+
+function isWebAssemblyCompiledModule(value) {
+  return ObjectToString(value) === '[object WebAssembly.Module]';
+}
+exports.isWebAssemblyCompiledModule = isWebAssemblyCompiledModule;
+
+function isNumberObject(value) {
+  return checkBoxedPrimitive(value, numberValue);
+}
+exports.isNumberObject = isNumberObject;
+
+function isStringObject(value) {
+  return checkBoxedPrimitive(value, stringValue);
+}
+exports.isStringObject = isStringObject;
+
+function isBooleanObject(value) {
+  return checkBoxedPrimitive(value, booleanValue);
+}
+exports.isBooleanObject = isBooleanObject;
+
+function isBigIntObject(value) {
+  return BigIntSupported && checkBoxedPrimitive(value, bigIntValue);
+}
+exports.isBigIntObject = isBigIntObject;
+
+function isSymbolObject(value) {
+  return SymbolSupported && checkBoxedPrimitive(value, symbolValue);
+}
+exports.isSymbolObject = isSymbolObject;
+
+function isBoxedPrimitive(value) {
+  return (
+    isNumberObject(value) ||
+    isStringObject(value) ||
+    isBooleanObject(value) ||
+    isBigIntObject(value) ||
+    isSymbolObject(value)
+  );
+}
+exports.isBoxedPrimitive = isBoxedPrimitive;
+
+function isAnyArrayBuffer(value) {
+  return typeof Uint8Array !== 'undefined' && (
+    isArrayBuffer(value) ||
+    isSharedArrayBuffer(value)
+  );
+}
+exports.isAnyArrayBuffer = isAnyArrayBuffer;
+
+['isProxy', 'isExternal', 'isModuleNamespaceObject'].forEach(function(method) {
+  Object.defineProperty(exports, method, {
+    enumerable: false,
+    value: function() {
+      throw new Error(method + ' is not supported in userland');
+    }
+  });
+});
+
+},{"is-arguments":43,"is-generator-function":44,"is-typed-array":45,"which-typed-array":54}],53:[function(require,module,exports){
+(function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5632,6 +5468,16 @@ module.exports = function isBuffer(arg) {
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
+  function getOwnPropertyDescriptors(obj) {
+    var keys = Object.keys(obj);
+    var descriptors = {};
+    for (var i = 0; i < keys.length; i++) {
+      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
+    }
+    return descriptors;
+  };
 
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
@@ -5677,15 +5523,15 @@ exports.format = function(f) {
 // Returns a modified function which warns once by default.
 // If --no-deprecation is set, then it is a no-op.
 exports.deprecate = function(fn, msg) {
+  if (typeof process !== 'undefined' && process.noDeprecation === true) {
+    return fn;
+  }
+
   // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
+  if (typeof process === 'undefined') {
     return function() {
       return exports.deprecate(fn, msg).apply(this, arguments);
     };
-  }
-
-  if (process.noDeprecation === true) {
-    return fn;
   }
 
   var warned = false;
@@ -5708,13 +5554,20 @@ exports.deprecate = function(fn, msg) {
 
 
 var debugs = {};
-var debugEnviron;
+var debugEnvRegex = /^$/;
+
+if (process.env.NODE_DEBUG) {
+  var debugEnv = process.env.NODE_DEBUG;
+  debugEnv = debugEnv.replace(/[|\\{}()[\]^$+?.]/g, '\\$&')
+    .replace(/\*/g, '.*')
+    .replace(/,/g, '$|^')
+    .toUpperCase();
+  debugEnvRegex = new RegExp('^' + debugEnv + '$', 'i');
+}
 exports.debuglog = function(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = process.env.NODE_DEBUG || '';
   set = set.toUpperCase();
   if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+    if (debugEnvRegex.test(set)) {
       var pid = process.pid;
       debugs[set] = function() {
         var msg = exports.format.apply(exports, arguments);
@@ -6061,6 +5914,8 @@ function reduceToSingleString(output, base, braces) {
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
+exports.types = require('./support/types');
+
 function isArray(ar) {
   return Array.isArray(ar);
 }
@@ -6105,6 +5960,7 @@ function isRegExp(re) {
   return isObject(re) && objectToString(re) === '[object RegExp]';
 }
 exports.isRegExp = isRegExp;
+exports.types.isRegExp = isRegExp;
 
 function isObject(arg) {
   return typeof arg === 'object' && arg !== null;
@@ -6115,12 +5971,14 @@ function isDate(d) {
   return isObject(d) && objectToString(d) === '[object Date]';
 }
 exports.isDate = isDate;
+exports.types.isDate = isDate;
 
 function isError(e) {
   return isObject(e) &&
       (objectToString(e) === '[object Error]' || e instanceof Error);
 }
 exports.isError = isError;
+exports.types.isNativeError = isError;
 
 function isFunction(arg) {
   return typeof arg === 'function';
@@ -6199,6 +6057,1427 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":38,"_process":36,"inherits":37}]},{},[30])(30)
+var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
+
+exports.promisify = function promisify(original) {
+  if (typeof original !== 'function')
+    throw new TypeError('The "original" argument must be of type Function');
+
+  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
+    var fn = original[kCustomPromisifiedSymbol];
+    if (typeof fn !== 'function') {
+      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
+    }
+    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+      value: fn, enumerable: false, writable: false, configurable: true
+    });
+    return fn;
+  }
+
+  function fn() {
+    var promiseResolve, promiseReject;
+    var promise = new Promise(function (resolve, reject) {
+      promiseResolve = resolve;
+      promiseReject = reject;
+    });
+
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+    args.push(function (err, value) {
+      if (err) {
+        promiseReject(err);
+      } else {
+        promiseResolve(value);
+      }
+    });
+
+    try {
+      original.apply(this, args);
+    } catch (err) {
+      promiseReject(err);
+    }
+
+    return promise;
+  }
+
+  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
+
+  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+    value: fn, enumerable: false, writable: false, configurable: true
+  });
+  return Object.defineProperties(
+    fn,
+    getOwnPropertyDescriptors(original)
+  );
+}
+
+exports.promisify.custom = kCustomPromisifiedSymbol
+
+function callbackifyOnRejected(reason, cb) {
+  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
+  // Because `null` is a special error value in callbacks which means "no error
+  // occurred", we error-wrap so the callback consumer can distinguish between
+  // "the promise rejected with null" or "the promise fulfilled with undefined".
+  if (!reason) {
+    var newReason = new Error('Promise was rejected with a falsy value');
+    newReason.reason = reason;
+    reason = newReason;
+  }
+  return cb(reason);
+}
+
+function callbackify(original) {
+  if (typeof original !== 'function') {
+    throw new TypeError('The "original" argument must be of type Function');
+  }
+
+  // We DO NOT return the promise as it gives the user a false sense that
+  // the promise is actually somehow related to the callback's execution
+  // and that the callback throwing will reject the promise.
+  function callbackified() {
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+
+    var maybeCb = args.pop();
+    if (typeof maybeCb !== 'function') {
+      throw new TypeError('The last argument must be of type Function');
+    }
+    var self = this;
+    var cb = function() {
+      return maybeCb.apply(self, arguments);
+    };
+    // In true node style we process the callback on `nextTick` with all the
+    // implications (stack, `uncaughtException`, `async_hooks`)
+    original.apply(this, args)
+      .then(function(ret) { process.nextTick(cb.bind(null, null, ret)) },
+            function(rej) { process.nextTick(callbackifyOnRejected.bind(null, rej, cb)) });
+  }
+
+  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
+  Object.defineProperties(callbackified,
+                          getOwnPropertyDescriptors(original));
+  return callbackified;
+}
+exports.callbackify = callbackify;
+
+}).call(this)}).call(this,require('_process'))
+},{"./support/isBuffer":51,"./support/types":52,"_process":50,"inherits":41}],54:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var forEach = require('foreach');
+var availableTypedArrays = require('available-typed-arrays');
+var callBound = require('es-abstract/helpers/callBound');
+
+var $toString = callBound('Object.prototype.toString');
+var hasSymbols = require('has-symbols')();
+var hasToStringTag = hasSymbols && typeof Symbol.toStringTag === 'symbol';
+
+var typedArrays = availableTypedArrays();
+
+var $slice = callBound('String.prototype.slice');
+var toStrTags = {};
+var gOPD = require('es-abstract/helpers/getOwnPropertyDescriptor');
+var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+if (hasToStringTag && gOPD && getPrototypeOf) {
+	forEach(typedArrays, function (typedArray) {
+		if (typeof global[typedArray] === 'function') {
+			var arr = new global[typedArray]();
+			if (!(Symbol.toStringTag in arr)) {
+				throw new EvalError('this engine has support for Symbol.toStringTag, but ' + typedArray + ' does not have the property! Please report this.');
+			}
+			var proto = getPrototypeOf(arr);
+			var descriptor = gOPD(proto, Symbol.toStringTag);
+			if (!descriptor) {
+				var superProto = getPrototypeOf(proto);
+				descriptor = gOPD(superProto, Symbol.toStringTag);
+			}
+			toStrTags[typedArray] = descriptor.get;
+		}
+	});
+}
+
+var tryTypedArrays = function tryAllTypedArrays(value) {
+	var foundName = false;
+	forEach(toStrTags, function (getter, typedArray) {
+		if (!foundName) {
+			try {
+				var name = getter.call(value);
+				if (name === typedArray) {
+					foundName = name;
+				}
+			} catch (e) {}
+		}
+	});
+	return foundName;
+};
+
+var isTypedArray = require('is-typed-array');
+
+module.exports = function whichTypedArray(value) {
+	if (!isTypedArray(value)) { return false; }
+	if (!hasToStringTag) { return $slice($toString(value), 8, -1); }
+	return tryTypedArrays(value);
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"available-typed-arrays":29,"es-abstract/helpers/callBound":57,"es-abstract/helpers/getOwnPropertyDescriptor":58,"foreach":33,"has-symbols":38,"is-typed-array":45}],55:[function(require,module,exports){
+arguments[4][46][0].apply(exports,arguments)
+},{"dup":46,"function-bind":35,"has-symbols":38}],56:[function(require,module,exports){
+arguments[4][47][0].apply(exports,arguments)
+},{"../GetIntrinsic":55,"dup":47,"function-bind":35}],57:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"../GetIntrinsic":55,"./callBind":56,"dup":48}],58:[function(require,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"../GetIntrinsic":55,"dup":49}],59:[function(require,module,exports){
+/* Copyright (c) 2013-2020 Richard Rodger and other contributors, MIT License */
+'use strict'
+
+var Lab = require('@hapi/lab')
+Lab = null != Lab.script ? Lab : require('hapi-lab-shim')
+
+var Code = require('@hapi/code')
+
+var lab = (exports.lab = Lab.script())
+var describe = lab.describe
+var it = lab.it
+var expect = Code.expect
+
+var Patrun = require('..')
+var { Gex } = require('gex')
+
+
+function rs(x) {
+  return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')
+}
+
+describe('patrun', function () {
+  it('toString', async () => {
+    var r = Patrun()
+    r.add({}, 'R')
+    expect(r.toString(true)).to.equal(' <R>')
+    expect(r.toString(false)).to.equal(' -> <R>')
+    expect(r.toString((d) => 'D:' + d)).to.equal(' -> D:R')
+    expect(r.toString((d) => 'D:' + d, true)).to.equal(' D:R')
+    expect(r.toString((d) => 'D:' + d, false)).to.equal(' -> D:R')
+
+    r.add({ a: 1 }, 'S')
+    expect(r.toString(true)).to.equal(' <R>\na:\n 1 -> <S>')
+    expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>')
+    expect(r.toString((d) => 'D:' + d)).to.equal(' -> D:R\na=1 -> D:S')
+    expect(r.toString((d) => 'D:' + d, true)).to.equal(' D:R\na:\n 1 -> D:S')
+    expect(r.toString((d) => 'D:' + d, false)).to.equal(' -> D:R\na=1 -> D:S')
+
+    r.add({ a: 1, b: 2 }, function foo() {})
+    expect(r.toString(true)).to.equal(
+      ' <R>\na:\n 1 -> <S>\n  b:\n   2 -> <foo>'
+    )
+    expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>\na=1, b=2 -> <foo>')
+    expect(r.toString((d) => 'D:' + d)).to.equal(
+      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
+    )
+    expect(r.toString((d) => 'D:' + d, true)).to.equal(
+      ' D:R\na:\n 1 -> D:S\n  b:\n   2 -> D:function foo() {}'
+    )
+    expect(r.toString((d) => 'D:' + d, false)).to.equal(
+      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
+    )
+  })
+
+  it('empty', async () => {
+    var r = Patrun()
+    expect(r.toString()).to.equal('')
+
+    expect(r.find(NaN)).to.not.exist()
+    expect(r.find(void 0)).to.not.exist()
+    expect(r.find(null)).to.not.exist()
+    expect(r.find({})).to.not.exist()
+    expect(r.find({ a: 1 })).to.not.exist()
+
+    r.add({ a: 1 }, 'A')
+
+    expect(r.find(NaN)).to.not.exist()
+    expect(r.find(void 0)).to.not.exist()
+    expect(r.find(null)).to.not.exist()
+    expect(r.find({})).to.not.exist()
+    expect(r.find({ a: 1 })).to.equal('A')
+  })
+
+  it('toString-matchers', async () => {
+    var s = (r)=>(''+r).replace(/\n/g,' ; ')
+    var t = (r)=>r.toString(true)+'\n'
+
+    var r = Patrun({gex:true})
+    r.add({a:'a'}, 'Aa')
+    r.add({a:'*'}, 'A*')
+
+    expect(s(r)).equal('a=a -> <Aa> ; a~* -> <A*>')
+    expect(t(r)).equal(`
+a:
+ a -> <Aa>
+ * ~> <A*>
+`)
+
+    
+    r.add({b:'b'}, 'Bb')
+    r.add({b:'*'}, 'B*')
+
+    expect(s(r)).equal('a=a -> <Aa> ; a~* -> <A*> ; b=b -> <Bb> ; b~* -> <B*>')
+    expect(t(r)).equal(`
+a:
+ a -> <Aa>
+ * ~> <A*>
+ |
+  b:
+   b -> <Bb>
+   * ~> <B*>
+`)
+    
+    r.add({a:'a', b:'b'}, 'AB')
+    r.add({a:'*', b:'*'}, 'AB*')
+    expect(s(r)).equal('a=a -> <Aa> ; a=a, b=b -> <AB> ;'+
+                       ' a~* -> <A*> ; a~*, b~* -> <AB*> ; b=b -> <Bb> ; b~* -> <B*>')
+    //console.log(r.toString(true))
+    expect(t(r)).equal(`
+a:
+ a -> <Aa>
+  b:
+   b -> <AB>
+ * ~> <A*>
+  b:
+   * ~> <AB*>
+ |
+  b:
+   b -> <Bb>
+   * ~> <B*>
+`)
+
+  })
+  
+  it('root-data', async () => {
+    var r = Patrun()
+    r.add({}, 'R')
+    expect('' + r).to.equal(' -> <R>')
+    expect(rs(r)).to.equal('<R>')
+    expect(JSON.stringify(r.list())).to.equal('[{"match":{},"data":"R"}]')
+
+    expect(r.find({})).to.equal('R')
+    expect(r.find({ x: 1 })).to.equal('R')
+
+    r.add({ a: '1' }, 'r1')
+    expect('' + r).to.equal(' -> <R>\na=1 -> <r1>')
+    expect(rs(r)).to.equal('<R>a:1-><r1>')
+
+    expect(r.find({ x: 1 })).equal('R')
+    expect(r.find({ a: 1 })).equal('r1')
+    expect(r.find({ a: 2 })).equal('R')
+
+    r.add({ a: '1', b: '1' }, 'r2')
+    expect(r.find({ x: 1 })).equal('R')
+    expect(r.find({ a: 1 })).equal('r1')
+    expect(r.find({ a: 1, b: 1 })).equal('r2')
+    expect(r.find({ a: 2 })).equal('R')
+    expect(r.find({ a: 1, b: 2 })).equal('r1') // a:1 is defined
+    expect(r.find({ a: 1, b: 2 }, true)).equal(null) // exact must be ... exact
+    expect(r.find({ a: 2, b: 2 })).equal('R')
+    expect(r.find({ b: 2 })).equal('R')
+
+    r.add({ x: '1', y: '1' }, 'r3')
+    expect(r.find({ x: 1 })).equal('R')
+
+    expect(r.find({ x: 1 }, true)).equal(null)
+
+    expect(JSON.stringify(r.list())).equal(
+      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"},{"match":{"a":"1","b":"1"},"data":"r2"},{"match":{"x":"1","y":"1"},"data":"r3"}]'
+    )
+  })
+
+  it('add', async () => {
+    var r
+
+    r = Patrun()
+    r.add({ a: '1' }, 'r1')
+    expect('' + r).to.equal('a=1 -> <r1>')
+    expect(rs(r)).to.equal('a:1-><r1>')
+
+    expect(JSON.stringify(r.list())).to.equal(
+      '[{"match":{"a":"1"},"data":"r1"}]'
+    )
+
+    r = Patrun()
+    r.add({ a: '1', b: '2' }, 'r1')
+    expect(rs(r)).to.equal('a:1->b:2-><r1>')
+
+    r = Patrun()
+    r.add({ a: '1', b: '2', c: '3' }, 'r1')
+    expect(rs(r)).to.equal('a:1->b:2->c:3-><r1>')
+
+    r = Patrun()
+    r.add({ a: '1', b: '2' }, 'r1')
+    r.add({ a: '1', b: '3' }, 'r2')
+    expect('' + r).to.equal('a=1, b=2 -> <r1>\na=1, b=3 -> <r2>')
+    expect(rs(r)).to.equal('a:1->b:2-><r1>3-><r2>')
+
+    r = Patrun()
+    r.add({ a: '1', b: '2' }, 'r1')
+    r.add({ a: '1', c: '3' }, 'r2')
+    expect(rs(r)).to.equal('a:1->b:2-><r1>|c:3-><r2>')
+
+    r.add({ a: '1', d: '4' }, 'r3')
+    expect(rs(r)).to.equal('a:1->b:2-><r1>|c:3-><r2>|d:4-><r3>')
+
+    r = Patrun()
+    r.add({ a: '1', c: '2' }, 'r1')
+    r.add({ a: '1', b: '3' }, 'r2')
+    expect(rs(r)).to.equal('a:1->b:3-><r2>|c:2-><r1>')
+
+    expect(JSON.stringify(r.list())).to.equal(
+      '[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]'
+    )
+  })
+
+  
+  it('basic', async () => {
+    var rt1 = Patrun()
+
+    rt1.add({ p1: 'v1' }, 'r1')
+    // console.log('---')
+    expect('r1').to.equal(rt1.find({ p1: 'v1' }))
+    expect(null).to.equal(rt1.find({ p2: 'v1' }))
+
+    rt1.add({ p1: 'v1' }, 'r1x')
+    // console.log('---')
+    expect('r1x').to.equal(rt1.find({ p1: 'v1' }))
+    expect(null).to.equal(rt1.find({ p2: 'v1' }))
+
+    rt1.add({ p1: 'v2' }, 'r2')
+    // console.log('---')
+    expect('r2').to.equal(rt1.find({ p1: 'v2' }))
+    expect(null).to.equal(rt1.find({ p2: 'v2' }))
+
+    rt1.add({ p2: 'v3' }, 'r3')
+    // console.log('---')
+    expect('r3').to.equal(rt1.find({ p2: 'v3' }))
+    expect(null).to.equal(rt1.find({ p2: 'v2' }))
+    expect(null).to.equal(rt1.find({ p2: 'v1' }))
+
+    rt1.add({ p1: 'v1', p3: 'v4' }, 'r4')
+    // console.log('---')
+    expect('r4').to.equal(rt1.find({ p1: 'v1', p3: 'v4' }))
+    expect('r1x').to.equal(rt1.find({ p1: 'v1', p3: 'v5' }))
+    expect(null).to.equal(rt1.find({ p2: 'v1' }))
+
+    rt1.add({ p1: 'v1', p2: 'v5' }, 'r5')
+    expect(rt1.find({p1:'v1',p2:'v5'})).equal('r5')
+    // console.log('---')
+    // console.log(rt1.toString(true))
+  })
+
+
+  
+  it('culdesac', async () => {
+    var rt1 = Patrun()
+
+    rt1.add({ p1: 'v1' }, 'r1')
+    rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
+    rt1.add({ p1: 'v1', p3: 'v3' }, 'r3')
+
+    expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }))
+    expect('r3').to.equal(rt1.find({ p1: 'v1', p2: 'x', p3: 'v3' }))
+  })
+
+  it('falsy-values', async () => {
+    var rt1 = Patrun()
+
+    rt1.add({ p1: 0 }, 'r1')
+    rt1.add({ p1: 0, p2: '' }, 'r2')
+    rt1.add({ p1: 0, p2: '', p3: false }, 'r3')
+
+    expect(null).to.equal(rt1.find({ p1: null }))
+    expect('r1').to.equal(rt1.find({ p1: 0 }))
+    expect('r2').to.equal(rt1.find({ p1: 0, p2: '' }))
+    expect('r3').to.equal(rt1.find({ p1: 0, p2: '', p3: false }))
+
+    expect(rt1.list().map((x) => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({}).map((x) => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({}, true).map((x) => x.data)).equal([])
+
+    expect(rt1.list({ p1: 0 }).map((x) => x.data)).equal(['r1', 'r2', 'r3'])
+    expect(rt1.list({ p2: '' }).map((x) => x.data)).equal(['r2', 'r3'])
+    expect(rt1.list({ p3: false }).map((x) => x.data)).equal(['r3'])
+
+    expect(rt1.list({ p1: 0 }, true).map((x) => x.data)).equal(['r1'])
+    expect(rt1.list({ p1: 0, p2: '' }, true).map((x) => x.data)).equal(['r2'])
+    expect(
+      rt1.list({ p1: 0, p2: '', p3: false }, true).map((x) => x.data)
+    ).equal(['r3'])
+
+    expect(rt1.list({ p2: '' }, true).map((x) => x.data)).equal([])
+    expect(rt1.list({ p2: '', p3: false }, true).map((x) => x.data)).equal([])
+    expect(rt1.list({ p3: false }, true).map((x) => x.data)).equal([])
+  })
+
+  it('find-exact-collect', async () => {
+    var rt1 = Patrun()
+
+    rt1.add({ x0: 'y0' }, 'e0') // deliberate noise
+    rt1.add({ p1: 'v1' }, 'r1')
+    rt1.add({ p1: 'v1', p2: 'v2' }, 'r2')
+    rt1.add({ p1: 'v1', p3: 'v3' }, 'r3')
+
+    rt1.add({ q1: 'w1' }, 's1')
+    rt1.add({ q1: 'w1', q2: 'w2' }, 's2')
+    rt1.add({ q1: 'w1', q3: 'w3' }, 's3')
+    rt1.add({ q2: 'w2' }, 's4')
+
+    //console.log(''+rt1)
+    //console.log(rt1.toString(true))
+
+    expect('r1').to.equal(rt1.find({ p1: 'v1' }, true)) // exact
+    expect('r1').to.equal(rt1.find({ p1: 'v1' }, false)) // not exact
+    expect(null).to.equal(rt1.find({ p1: 'v1', p2: 'x' }, true)) // exact
+    expect('r1').to.equal(rt1.find({ p1: 'v1', p2: 'x' }, false)) // not exact
+    expect('r2').to.equal(rt1.find({ p1: 'v1', p2: 'v2' }, false)) // not exact
+    expect('r2').to.equal(rt1.find({ p1: 'v1', p2: 'v2' }, true)) // exact
+
+    expect(rt1.find({ p1: 'x' }, false, true)).equal([])
+    expect(rt1.find({ p1: 'v1' }, false, true)).equal(['r1'])
+    expect(rt1.find({ p1: 'x' }, true, true)).equal([])
+    expect(rt1.find({ p1: 'v1' }, true, true)).equal(['r1'])
+
+    // there only is a matching trail
+    expect(rt1.find({ p1: 'v1', p2: 'v2' }, false, true)).equal(['r1', 'r2'])
+    expect(rt1.find({ p1: 'v1', p3: 'v3' }, false, true)).equal(['r1', 'r3'])
+
+    // just follows matching trail
+    expect(rt1.find({ p1: 'v1', p2: 'v2' }, true, true)).equal(['r1', 'r2'])
+    expect(rt1.find({ p1: 'v1', p3: 'v3' }, true, true)).equal(['r1', 'r3'])
+
+    expect(rt1.find({ q1: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['s1'])
+    expect(rt1.find({ q1: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['s1'])
+
+    expect(rt1.find({ q2: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, false, true)).equal(['s4'])
+    expect(rt1.find({ q2: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
+
+    // followed a remainder path (q1 removed)
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
+      ['s4', 's1', 's2'].sort()
+    )
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal(['s1', 's3'])
+
+    // but exact does not follow remainders
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, true, true)).equal(['s1', 's3'])
+
+    // add another remainder trail
+    rt1.add({ q3: 'w3' }, 's5')
+
+    // followed a remainder path (q1 removed)
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
+      ['s4', 's1', 's2'].sort()
+    )
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true).sort()).equal(
+      ['s5', 's1', 's3'].sort()
+    )
+
+    // but exact does not follow remainders
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, true, true)).equal(['s1', 's2'])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, true, true)).equal(['s1', 's3'])
+
+    expect(rt1.find({ q1: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['s1'])
+    expect(rt1.find({ q1: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['s1'])
+
+    expect(rt1.find({ q2: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, false, true)).equal(['s4'])
+    expect(rt1.find({ q2: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q2: 'w2' }, true, true)).equal(['s4'])
+
+    expect(rt1.find({ q3: 'x' }, false, true)).equal([])
+    expect(rt1.find({ q3: 'w3' }, false, true)).equal(['s5'])
+    expect(rt1.find({ q3: 'x' }, true, true)).equal([])
+    expect(rt1.find({ q3: 'w3' }, true, true)).equal(['s5'])
+
+    // add a top
+    rt1.add({}, 't')
+    expect(rt1.find({}, false, true)).equal(['t'])
+
+    expect(rt1.find({ q1: 'x' }, false, true)).equal(['t'])
+    expect(rt1.find({ q1: 'w1' }, false, true)).equal(['t', 's1'])
+    expect(rt1.find({ q1: 'x' }, true, true)).equal(['t'])
+    expect(rt1.find({ q1: 'w1' }, true, true)).equal(['t', 's1'])
+
+    // followed a remainder path (q1 removed)
+    expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true)).equal([
+      't',
+      's1',
+      's2',
+      's4',
+    ])
+    expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal([
+      't',
+      's1',
+      's3',
+      's5',
+    ])
+  })
+
+  it('remove', async () => {
+    var rt1 = Patrun()
+    rt1.remove({ p1: 'v1' })
+
+    rt1.add({ p1: 'v1' }, 'r0')
+    expect('r0').to.equal(rt1.find({ p1: 'v1' }))
+
+    rt1.remove({ p1: 'v1' })
+    expect(null).to.equal(rt1.find({ p1: 'v1' }))
+
+    rt1.add({ p2: 'v2', p3: 'v3' }, 'r1')
+    rt1.add({ p2: 'v2', p4: 'v4' }, 'r2')
+    expect('r1').to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
+    expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
+
+    rt1.remove({ p2: 'v2', p3: 'v3' })
+    expect(null).to.equal(rt1.find({ p2: 'v2', p3: 'v3' }))
+    expect('r2').to.equal(rt1.find({ p2: 'v2', p4: 'v4' }))
+  })
+
+  function listtest(mode) {
+    return async () => {
+      var rt1 = Patrun()
+
+      if ('subvals' === mode) {
+        rt1.add({ a: '1' }, 'x')
+      }
+
+      rt1.add({ p1: 'v1' }, 'r0')
+
+      rt1.add({ p1: 'v1', p2: 'v2a' }, 'r1')
+      rt1.add({ p1: 'v1', p2: 'v2b' }, 'r2')
+
+      var found = rt1.list({ p1: 'v1' })
+      expect(found).equal([
+        { match: { p1: 'v1' }, data: 'r0', find: undefined },
+        { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
+        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
+      ])
+
+      found = rt1.list({ p1: 'v1', p2: '*' })
+      expect(found).equal([
+        { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
+        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
+      ])
+
+      rt1.add({ p1: 'v1', p2: 'v2c', p3: 'v3a' }, 'r3a')
+      rt1.add({ p1: 'v1', p2: 'v2d', p3: 'v3b' }, 'r3b')
+      found = rt1.list({ p1: 'v1', p2: '*', p3: 'v3a' })
+      expect(found).equal([
+        {
+          match: { p1: 'v1', p2: 'v2c', p3: 'v3a' },
+          data: 'r3a',
+          find: undefined,
+        },
+      ])
+
+      // gex can accept a list of globs
+      found = rt1.list({ p1: 'v1', p2: ['v2a', 'v2b', 'not-a-value'] })
+      expect(found).equal([
+        { match: { p1: 'v1', p2: 'v2a' }, data: 'r1', find: undefined },
+        { match: { p1: 'v1', p2: 'v2b' }, data: 'r2', find: undefined },
+      ])
+    }
+  }
+
+  it('list.topvals', listtest('topvals'))
+  it('list.subvals', listtest('subvals'))
+
+  it('null-undef-nan', async () => {
+    var rt1 = Patrun()
+
+    rt1.add({ p1: null }, 'r1')
+    expect('{"d":"r1"}').to.equal(rt1.toJSON())
+
+    rt1.add({ p2: void 0 }, 'r2')
+    expect('{"d":"r2"}').to.equal(rt1.toJSON())
+
+    rt1.add({ p99: 'v99' }, 'r99')
+    //expect('{"d":"r2","k":"p99","sk":"0~p99","v":{"v99":{"d":"r99"}}}').equal(
+    //  rt1.toJSON()
+    //)
+
+    expect('{"d":"r2","k":"p99","v":{"v99":{"d":"r99"}}}').equal(
+      rt1.toJSON()
+    )
+
+  })
+
+  it('multi-star', async () => {
+    var p = Patrun()
+
+    p.add({ a: 1 }, 'A')
+    p.add({ a: 1, b: 2 }, 'B')
+    p.add({ c: 3 }, 'C')
+    p.add({ b: 1, c: 4 }, 'D')
+
+    expect(rs(p)).to.equal('a:1-><A>b:2-><B>|b:1->c:4-><D>|c:3-><C>')
+    expect('' + p).to.equal(
+      'a=1 -> <A>\na=1, b=2 -> <B>\nb=1, c=4 -> <D>\nc=3 -> <C>'
+    )
+
+    expect(p.find({ c: 3 })).to.equal('C')
+    expect(p.find({ c: 3, a: 0 })).to.equal('C')
+    expect(p.find({ c: 3, a: 0, b: 0 })).to.equal('C')
+  })
+
+  it('star-backtrack', async () => {
+    var p = Patrun()
+
+    p.add({ a: 1, b: 2 }, 'X')
+    p.add({ c: 3 }, 'Y')
+
+    expect(p.find({ a: 1, b: 2 })).to.equal('X')
+    expect(p.find({ a: 1, b: 0, c: 3 })).to.equal('Y')
+
+    p.add({ a: 1, b: 2, d: 4 }, 'XX')
+    p.add({ c: 3, d: 4 }, 'YY')
+
+    expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
+    expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
+    expect(p.find({ a: 1, b: 2 })).to.equal('X')
+    expect(p.find({ a: 1, b: 0, c: 3 })).to.equal('Y')
+
+    expect(p.list({ a: 1, b: '*' })[0].data).to.equal('X')
+    expect(p.list({ c: 3 })[0].data).to.equal('Y')
+    expect(p.list({ c: 3, d: '*' })[0].data).to.equal('YY')
+    expect(p.list({ a: 1, b: '*', d: '*' })[0].data).to.equal('XX')
+
+    expect('' + p).to.equal(
+      'a=1, b=2 -> <X>\na=1, b=2, d=4 -> <XX>\nc=3 -> <Y>\nc=3, d=4 -> <YY>'
+    )
+  })
+
+  it('remove-intermediate', async () => {
+    var p = Patrun()
+
+    p.add({ a: 1, b: 2, d: 4 }, 'XX')
+    p.add({ c: 3, d: 4 }, 'YY')
+    p.add({ a: 1, b: 2 }, 'X')
+    p.add({ c: 3 }, 'Y')
+
+    p.remove({ c: 3 })
+
+    expect(p.find({ c: 3 })).to.not.exist()
+    expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
+    expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
+    expect(p.find({ a: 1, b: 2 })).to.equal('X')
+
+    p.remove({ a: 1, b: 2 })
+
+    expect(p.find({ c: 3 })).to.not.exist()
+    expect(p.find({ a: 1, c: 3, d: 4 })).to.equal('YY')
+    expect(p.find({ a: 1, b: 2, d: 4 })).to.equal('XX')
+    expect(p.find({ a: 1, b: 2 })).to.not.exist()
+  })
+
+  it('exact', async () => {
+    var p = Patrun()
+
+    p.add({ a: 1 }, 'X')
+
+    expect(p.findexact({ a: 1 })).to.equal('X')
+    expect(p.findexact({ a: 1, b: 2 })).to.not.exist()
+  })
+
+  it('all', async () => {
+    var p = Patrun()
+
+    p.add({ a: 1 }, 'X')
+    p.add({ b: 2 }, 'Y')
+
+    expect(JSON.stringify(p.list())).to.equal(
+      '[{"match":{"a":"1"},"data":"X"},{"match":{"b":"2"},"data":"Y"}]'
+    )
+  })
+
+  it('custom-happy', async () => {
+    var p1 = Patrun(function (pat) {
+      pat.q = 9
+    })
+
+    p1.add({ a: 1 }, 'Q')
+
+    expect(p1.find({ a: 1 })).to.not.exist()
+    expect(p1.find({ a: 1, q: 9 })).to.equal('Q')
+  })
+
+  it('custom-many', async () => {
+    var p1 = Patrun(function (pat, data) {
+      var items = this.find(pat, true) || []
+      items.push(data)
+
+      return {
+        find: function (args, data) {
+          return 0 < items.length ? items : null
+        },
+        remove: function (args, data) {
+          items.pop()
+          return 0 == items.length
+        },
+      }
+    })
+
+    p1.add({ a: 1 }, 'A')
+    p1.add({ a: 1 }, 'B')
+    p1.add({ b: 1 }, 'C')
+
+    expect(p1.find({ a: 1 }).toString()).to.equal(['A', 'B'].toString())
+    expect(p1.find({ b: 1 }).toString()).to.equal(['C'].toString())
+    expect(p1.list().length).to.equal(2)
+
+    p1.remove({ b: 1 })
+    expect(p1.list().length).to.equal(1)
+    expect(p1.find({ b: 1 })).to.not.exist()
+    expect(p1.find({ a: 1 }).toString()).to.equal(['A', 'B'].toString())
+
+    p1.remove({ a: 1 })
+    expect(p1.list().length).to.equal(1)
+    expect(p1.find({ b: 1 })).to.not.exist()
+
+    expect(JSON.stringify(p1.find({ a: 1 })).toString()).to.equal('["A"]')
+
+    p1.remove({ a: 1 })
+    expect(p1.list().length).to.equal(0)
+    expect(p1.find({ b: 1 })).to.not.exist()
+    expect(p1.find({ a: 1 })).to.not.exist()
+  })
+
+  it('custom-gex', async () => {
+    // this custom function matches glob expressions
+    var p2 = Patrun(function (pat, data) {
+      var gexers = {}
+      Object.keys(pat).forEach(function (k) {
+        var v = pat[k]
+        if ('string' === typeof v && ~v.indexOf('*')) {
+          delete pat[k]
+          gexers[k] = Gex(v)
+        }
+      })
+
+      // handle previous patterns that match this pattern
+      var prev = this.list(pat)
+      var prevfind = prev[0] && prev[0].find
+      var prevdata = prev[0] && this.findexact(prev[0].match)
+
+      return function (args, data) {
+        var out = data
+        Object.keys(gexers).forEach(function (k) {
+          var g = gexers[k]
+          var v = null == args[k] ? '' : args[k]
+          if (null == g.on(v)) {
+            out = null
+          }
+        })
+
+        if (prevfind && null == out) {
+          out = prevfind.call(this, args, prevdata)
+        }
+
+        return out
+      }
+    })
+
+    p2.add({ a: 1, b: '*' }, 'X')
+    // console.dir(p2.top(),{depth:null})
+    
+    expect(p2.find({ a: 1 })).to.equal('X')
+    expect(p2.find({ a: 1, b: 'x' })).to.equal('X')
+
+    p2.add({ a: 1, b: '*', c: 'q*z' }, 'Y')
+
+    expect(p2.find({ a: 1 })).to.equal('X')
+    expect(p2.find({ a: 1, b: 'x' })).to.equal('X')
+    expect(p2.find({ a: 1, b: 'x', c: 'qaz' })).to.equal('Y')
+
+    p2.add({ w: 1 }, 'W')
+    expect(p2.find({ w: 1 })).to.equal('W')
+    expect(p2.find({ w: 1, q: 'x' })).to.equal('W')
+
+    p2.add({ w: 1, q: 'x*' }, 'Q')
+    expect(p2.find({ w: 1 })).to.equal('W')
+    expect(p2.find({ w: 1, q: 'x' })).to.equal('Q')
+    expect(p2.find({ w: 1, q: 'y' })).to.equal('W')
+  })
+
+  it('find-exact', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 1 }, 'A')
+    p1.add({ a: 1, b: 2 }, 'B')
+    p1.add({ a: 1, b: 2, c: 3 }, 'C')
+
+    expect(p1.find({ a: 1 })).to.equal('A')
+    expect(p1.find({ a: 1 }, true)).to.equal('A')
+    expect(p1.find({ a: 1, b: 8 })).to.equal('A')
+    expect(p1.find({ a: 1, b: 8 }, true)).to.equal(null)
+    expect(p1.find({ a: 1, b: 8, c: 3 })).to.equal('A')
+    expect(p1.find({ a: 1, b: 8, c: 3 }, true)).to.equal(null)
+
+    expect(p1.find({ a: 1, b: 2 })).to.equal('B')
+    expect(p1.find({ a: 1, b: 2 }, true)).to.equal('B')
+    expect(p1.find({ a: 1, b: 2, c: 9 })).to.equal('B')
+    expect(p1.find({ a: 1, b: 2, c: 9 }, true)).to.equal(null)
+
+    expect(p1.find({ a: 1, b: 2, c: 3 })).to.equal('C')
+    expect(p1.find({ a: 1, b: 2, c: 3 }, true)).to.equal('C')
+    expect(p1.find({ a: 1, b: 2, c: 3, d: 7 })).to.equal('C')
+    expect(p1.find({ a: 1, b: 2, c: 3, d: 7 }, true)).to.equal(null)
+  })
+
+  it('list-any', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 1 }, 'A')
+    p1.add({ a: 1, b: 2 }, 'B')
+    p1.add({ a: 1, b: 2, c: 3 }, 'C')
+
+    var mA = '{"match":{"a":"1"},"data":"A"}'
+    var mB = '{"match":{"a":"1","b":"2"},"data":"B"}'
+    var mC = '{"match":{"a":"1","b":"2","c":"3"},"data":"C"}'
+
+    expect(JSON.stringify(p1.list())).to.equal('[' + [mA, mB, mC] + ']')
+
+    expect(JSON.stringify(p1.list({ a: 1 }))).to.equal('[' + [mA, mB, mC] + ']')
+    expect(JSON.stringify(p1.list({ b: 2 }))).to.equal('[' + [mB, mC] + ']')
+    expect(JSON.stringify(p1.list({ c: 3 }))).to.equal('[' + [mC] + ']')
+
+    expect(JSON.stringify(p1.list({ a: '*' }))).to.equal(
+      '[' + [mA, mB, mC] + ']'
+    )
+    expect(JSON.stringify(p1.list({ b: '*' }))).to.equal('[' + [mB, mC] + ']')
+    expect(JSON.stringify(p1.list({ c: '*' }))).to.equal('[' + [mC] + ']')
+
+    expect(JSON.stringify(p1.list({ a: 1, b: 2 }))).to.equal(
+      '[' + [mB, mC] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1, b: '*' }))).to.equal(
+      '[' + [mB, mC] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1, b: '*', c: 3 }))).to.equal(
+      '[' + [mC] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1, b: '*', c: '*' }))).to.equal(
+      '[' + [mC] + ']'
+    )
+
+    expect(JSON.stringify(p1.list({ a: 1, c: '*' }))).to.equal('[' + [mC] + ']')
+
+    // test star descent
+
+    p1.add({ a: 1, d: 4 }, 'D')
+    var mD = '{"match":{"a":"1","d":"4"},"data":"D"}'
+
+    expect(JSON.stringify(p1.list())).to.equal('[' + [mA, mB, mC, mD] + ']')
+    expect(JSON.stringify(p1.list({ a: 1 }))).to.equal(
+      '[' + [mA, mB, mC, mD] + ']'
+    )
+    expect(JSON.stringify(p1.list({ d: 4 }))).to.equal('[' + [mD] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, d: 4 }))).to.equal('[' + [mD] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, d: '*' }))).to.equal('[' + [mD] + ']')
+    expect(JSON.stringify(p1.list({ d: '*' }))).to.equal('[' + [mD] + ']')
+
+    p1.add({ a: 1, c: 33 }, 'CC')
+    var mCC = '{"match":{"a":"1","c":"33"},"data":"CC"}'
+
+    expect(JSON.stringify(p1.list())).to.equal(
+      '[' + [mA, mB, mC, mCC, mD] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1 }))).to.equal(
+      '[' + [mA, mB, mC, mCC, mD] + ']'
+    )
+
+    expect(JSON.stringify(p1.list({ d: 4 }))).to.equal('[' + [mD] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, d: 4 }))).to.equal('[' + [mD] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, d: '*' }))).to.equal('[' + [mD] + ']')
+    expect(JSON.stringify(p1.list({ d: '*' }))).to.equal('[' + [mD] + ']')
+
+    expect(JSON.stringify(p1.list({ c: 33 }))).to.equal('[' + [mCC] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, c: 33 }))).to.equal('[' + [mCC] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, c: '*' }))).to.equal(
+      '[' + [mC, mCC] + ']'
+    )
+    expect(JSON.stringify(p1.list({ c: '*' }))).to.equal('[' + [mC, mCC] + ']')
+
+    // exact
+    expect(JSON.stringify(p1.list({ a: 1 }, true))).to.equal('[' + [mA] + ']')
+    expect(JSON.stringify(p1.list({ a: '*' }, true))).to.equal('[' + [mA] + ']')
+    expect(JSON.stringify(p1.list({ a: 1, b: 2 }, true))).to.equal(
+      '[' + [mB] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1, b: '*' }, true))).to.equal(
+      '[' + [mB] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1, c: 3 }, true))).to.equal('[]')
+    expect(JSON.stringify(p1.list({ a: 1, c: 33 }, true))).to.equal(
+      '[' + [mCC] + ']'
+    )
+    expect(JSON.stringify(p1.list({ a: 1, c: '*' }, true))).to.equal(
+      '[' + [mCC] + ']'
+    )
+  })
+
+  it('top-custom', async () => {
+    var p1 = Patrun(function (pat, data) {
+      return function (args, data) {
+        data += '!'
+        return data
+      }
+    })
+
+    p1.add({}, 'Q')
+    p1.add({ a: 1 }, 'A')
+    p1.add({ a: 1, b: 2 }, 'B')
+    p1.add({ a: 1, b: 2, c: 3 }, 'C')
+
+    expect(p1.find({})).to.equal('Q!')
+    expect(p1.find({ a: 1 })).to.equal('A!')
+    expect(p1.find({ a: 1, b: 2 })).to.equal('B!')
+    expect(p1.find({ a: 1, b: 2, c: 3 })).to.equal('C!')
+  })
+
+  it('mixed-values', async () => {
+    var p1 = Patrun()
+
+    p1.add({ a: 1 }, 'A')
+    p1.add({ a: true }, 'AA')
+    p1.add({ a: 0 }, 'AAA')
+    p1.add({ a: 'A', b: 2 }, 'B')
+    p1.add({ a: 'A', b: 'B', c: 3 }, 'C')
+
+    expect(p1.find({ a: 1 })).to.equal('A')
+    expect(p1.find({ a: true })).to.equal('AA')
+    expect(p1.find({ a: 0 })).to.equal('AAA')
+    expect(p1.find({ a: 'A', b: 2 })).to.equal('B')
+    expect(p1.find({ a: 'A', b: 'B', c: 3 })).to.equal('C')
+
+    expect(p1.list({ a: 1 }).length).to.equal(1)
+    expect(p1.list({ a: true }).length).to.equal(1)
+    expect(p1.list({ a: 0 }).length).to.equal(1)
+
+    p1.add({}, 'Q')
+    expect(p1.find({})).to.equal('Q')
+  })
+
+  it('no-props', async () => {
+    var p1 = Patrun()
+    p1.add({}, 'Z')
+    expect(p1.find({})).to.equal('Z')
+
+    p1.add({ a: 1 }, 'X')
+    expect(p1.find({})).to.equal('Z')
+
+    p1.add({ b: 2 }, 'Y')
+    expect(p1.find({})).to.equal('Z')
+
+    p1.remove({ b: 2 })
+    expect(p1.find({})).to.equal('Z')
+  })
+
+  it('zero', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 0 }, 'X')
+    expect(p1.find({ a: 0 })).to.equal('X')
+  })
+
+  it('multi-match', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 0 }, 'P')
+    p1.add({ b: 1 }, 'Q')
+    p1.add({ c: 2 }, 'R')
+
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('P')
+    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
+    expect(p1.find({ b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ c: 2 })).to.equal('R')
+
+    p1.add({ a: 0, b: 1 }, 'S')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('S')
+    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
+
+    p1.add({ b: 1, c: 2 }, 'T')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('S')
+    expect(p1.find({ a: 0, c: 2 })).to.equal('P')
+    expect(p1.find({ b: 1, c: 2 })).to.equal('T')
+
+    p1.add({ d: 3 }, 'U')
+    expect(p1.find({ d: 3 })).to.equal('U')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('P')
+    expect(p1.find({ b: 1, d: 3 })).to.equal('Q')
+    expect(p1.find({ c: 2, d: 3 })).to.equal('R')
+
+    p1.add({ c: 2, d: 3 }, 'V')
+    expect(p1.find({ c: 2, d: 3 })).to.equal('V')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, d: 3 })).to.equal('S')
+  })
+
+  it('partial-match', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 0 }, 'P')
+    p1.add({ a: 0, b: 1, c: 2 }, 'Q')
+
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+
+    p1.add({ a: 0, d: 3 }, 'S')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+
+    p1.add({ a: 0, b: 1, c: 2, e: 4, f: 5 }, 'T')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.add({ a: 0, b: 1 }, 'M')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('M')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.add({ a: 0, b: 1, c: 2, e: 4 }, 'N')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('M')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('N')
+  })
+
+  it('partial-match-remove', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 0 }, 'P')
+    p1.add({ a: 0, b: 1, c: 2 }, 'Q')
+
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+
+    p1.add({ a: 0, d: 3 }, 'S')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+
+    p1.add({ a: 0, b: 1, c: 2, e: 4, f: 5 }, 'T')
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal('P')
+    expect(p1.find({ a: 0 })).to.equal('P')
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.remove({ a: 0 })
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal('Q')
+    expect(p1.find({ a: 0, b: 1 })).to.equal(null)
+    expect(p1.find({ a: 0 })).to.equal(null)
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal('Q')
+
+    p1.remove({ a: 0, b: 1, c: 2 })
+    expect(p1.find({ a: 0, b: 1, c: 2 })).to.equal(null)
+    expect(p1.find({ a: 0, b: 1 })).to.equal(null)
+    expect(p1.find({ a: 0 })).to.equal(null)
+    expect(p1.find({ a: 0, d: 3 })).to.equal('S')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4, f: 5 })).to.equal('T')
+    expect(p1.find({ a: 0, b: 1, c: 2, e: 4 })).to.equal(null)
+  })
+
+  it('top', async () => {
+    var r = Patrun()
+    r.add({}, 'R')
+    expect(r.top()).equals({ d: 'R' })
+  })
+
+  it('add-gex', async () => {
+    var p1 = Patrun({ gex: true })
+
+    p1.add({ a: 'A' }, 'XA')
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+    expect(p1.find({})).to.not.exist()
+
+    p1.add({ b: '*' }, 'XB')
+    expect(p1.find({ b: 'A' })).to.equal('XB')
+    expect(p1.find({ b: 'B' })).to.equal('XB')
+    expect(p1.find({ b: '0' })).to.equal('XB')
+    expect(p1.find({ b: 2 })).to.equal('XB')
+    expect(p1.find({ b: 1 })).to.equal('XB')
+    expect(p1.find({ b: 0 })).to.equal('XB')
+    expect(p1.find({ b: '' })).to.equal('XB') // this is correct
+    expect(p1.find({})).to.not.exist()
+
+    p1.add({ c: '*' }, 'XC')
+    expect(p1.find({ c: 'A' })).to.equal('XC')
+    expect(p1.find({ c: 'B' })).to.equal('XC')
+    expect(p1.find({ c: '0' })).to.equal('XC')
+    expect(p1.find({ c: 2 })).to.equal('XC')
+    expect(p1.find({ c: 1 })).to.equal('XC')
+    expect(p1.find({ c: 0 })).to.equal('XC')
+    expect(p1.find({ c: '' })).to.equal('XC') // this is correct
+    expect(p1.find({})).to.not.exist()
+
+    expect(p1.find({ b: 'A', c: 'A' })).to.equal('XB')
+
+    p1.add({ e: '*' }, 'XE')
+    p1.add({ d: '*' }, 'XD')
+
+    // console.dir(p1.top(),{depth:null})
+
+    // alphanumeric ordering
+    expect(p1.find({ d: 'A', e: 'A' })).to.equal('XD')
+
+    p1.add({ b: 0 }, 'XB0')
+    //console.log(require('util').inspect(p1.top,{depth:99}))
+
+    p1.add({ b: 'B' }, 'XBB')
+    expect(p1.find({ b: 'A' })).to.equal('XB')
+    expect(p1.find({ b: 0 })).to.equal('XB0')
+    expect(p1.find({ b: 'B' })).to.equal('XBB')
+  })
+
+  it('add-mixed-gex', async () => {
+    var p1 = Patrun({ gex: true })
+
+    p1.add({ a: '*' }, 'XAS')
+    p1.add({ a: 'A' }, 'XA')
+
+    p1.add({ b: 'A' }, 'XB')
+    p1.add({ b: '*' }, 'XBS')
+
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+    expect(p1.find({ a: 'Q' })).to.equal('XAS')
+
+    expect(p1.find({ b: 'A' })).to.equal('XB')
+    expect(p1.find({ b: 'Q' })).to.equal('XBS')
+
+    p1.add({ c: 'B' }, 'XCB')
+    p1.add({ c: 'A' }, 'XCA')
+    p1.add({ c: '*b' }, 'XCBe')
+    p1.add({ c: '*a' }, 'XCAe')
+    p1.add({ c: 'b*' }, 'XCsB')
+    p1.add({ c: 'a*' }, 'XCsA')
+
+    expect(p1.find({ c: 'A' })).to.equal('XCA')
+    expect(p1.find({ c: 'B' })).to.equal('XCB')
+    expect(p1.find({ c: 'qb' })).to.equal('XCBe')
+    expect(p1.find({ c: 'qa' })).to.equal('XCAe')
+    expect(p1.find({ c: 'bq' })).to.equal('XCsB')
+    expect(p1.find({ c: 'aq' })).to.equal('XCsA')
+
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+    expect(p1.find({ a: 'Q' })).to.equal('XAS')
+    expect(p1.find({ b: 'A' })).to.equal('XB')
+    expect(p1.find({ b: 'Q' })).to.equal('XBS')
+  })
+
+  it('add-order-gex', async () => {
+    var p1 = Patrun({ gex: true })
+
+    p1.add({ c: 'A' }, 'XC')
+    p1.add({ c: '*' }, 'XCS')
+
+    p1.add({ a: 'A' }, 'XA')
+    p1.add({ a: '*' }, 'XAS')
+
+    p1.add({ b: 'A' }, 'XB')
+    p1.add({ b: '*' }, 'XBS')
+
+    //console.log('\n'+require('util').inspect(p1.top,{depth:99}))
+    //console.log(p1.toString(true))
+
+    expect(p1.find({ c: 'A' })).to.equal('XC')
+    expect(p1.find({ b: 'A' })).to.equal('XB')
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+
+    expect(p1.find({ c: 'Q' })).to.equal('XCS')
+    expect(p1.find({ b: 'Q' })).to.equal('XBS')
+    expect(p1.find({ a: 'Q' })).to.equal('XAS')
+  })
+
+  it('multi-gex', async () => {
+    var p1 = Patrun({ gex: true })
+
+    p1.add({ a: 1, b: 2 }, 'Xa1b2')
+    p1.add({ a: 1, b: '*' }, 'Xa1b*')
+    p1.add({ a: 1, c: 3 }, 'Xa1c3')
+    p1.add({ a: 1, c: '*' }, 'Xa1c*')
+    p1.add({ a: 1, b: 4, c: 5 }, 'Xa1b4c5')
+    p1.add({ a: 1, b: '*', c: 5 }, 'Xa1b*c5')
+    p1.add({ a: 1, b: 4, c: '*' }, 'Xa1b4c*')
+    p1.add({ a: 1, b: '*', c: '*' }, 'Xa1b*c*')
+
+    // console.log(p1.toString(true))
+
+    expect(p1.find({ a: 1, b: 2 })).to.equal('Xa1b2')
+    expect(p1.find({ a: 1, b: 0 })).to.equal('Xa1b*')
+    expect(p1.find({ a: 1, c: 3 })).to.equal('Xa1c3')
+    expect(p1.find({ a: 1, c: 0 })).to.equal('Xa1c*')
+    expect(p1.find({ a: 1, b: 4, c: 5 })).to.equal('Xa1b4c5')
+    expect(p1.find({ a: 1, b: 0, c: 5 })).to.equal('Xa1b*c5')
+    expect(p1.find({ a: 1, b: 4, c: 0 })).to.equal('Xa1b4c*')
+    expect(p1.find({ a: 1, b: 0, c: 0 })).to.equal('Xa1b*c*')
+  })
+
+  it('remove-gex', async () => {
+    var p1 = Patrun({ gex: true })
+
+    p1.add({ a: 'A' }, 'XA')
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+    expect(p1.find({})).to.not.exist()
+
+    p1.add({ b: '*' }, 'XB')
+    expect(p1.find({ b: 'A' })).to.equal('XB')
+    expect(p1.find({ b: 'B' })).to.equal('XB')
+    expect(p1.find({})).to.not.exist()
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+
+    p1.remove({ b: '*' })
+    expect(p1.find({ b: 'A' })).to.not.exist()
+    expect(p1.find({ b: 'B' })).to.not.exist()
+    expect(p1.find({})).to.not.exist()
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+  })
+
+
+  it('add-interval', async () => {
+    var p1 = Patrun({ interval: true })
+
+    p1.add({ a: 'A' }, 'XA')
+    expect(p1.find({ a: 'A' })).to.equal('XA')
+    expect(p1.find({})).to.not.exist()
+    
+    p1.add({ b: '>10' }, 'XB')
+    //console.log(p1+'')
+    
+    expect(p1.find({ b: 11 })).to.equal('XB')
+    expect(p1.find({ b: 12.5 })).to.equal('XB')
+    expect(p1.find({ b: '11' })).to.equal('XB')
+    expect(p1.find({ b: '12.5' })).to.equal('XB')
+    expect(p1.find({ b: 1 })).to.not.exist()
+    expect(p1.find({ b: 0 })).to.not.exist()
+    expect(p1.find({ b: '' })).not.exist()
+    expect(p1.find({})).to.not.exist()
+  })
+
+
+  it('add-gex-interval', async () => {
+    var p1 = Patrun({ gex: true, interval: true })
+
+    p1.add({ a: 'A', c: '>10&<20', e: '*a' }, 'A0')
+    expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
+    expect(p1.find({ a: 'B', c: 11, e: 'xa' })).to.not.exist()
+    expect(p1.find({ a: 'A', c: 9, e: 'xa' })).to.not.exist()
+    expect(p1.find({ a: 'A', c: 11, e: 'ax' })).to.not.exist()
+
+    // ensure key path ordering is preserved
+    p1.add({ a: 'A', b: 'B' }, 'AB0')
+    expect(p1.find({ a: 'A', b: 'B' })).to.equal('AB0')
+    expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
+
+    // uses vm arrays 
+    p1.add({ a: 'A', c: '<=10' }, 'AC0')
+    expect(p1.find({ a: 'A', b: 'B' })).to.equal('AB0')
+    expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
+    expect(p1.find({ a: 'A', c: 9 })).to.equal('AC0')
+    
+    //console.log(p1.toString(true))
+  })
+
+  
+  
+  it('collect-once', async () => {
+    var p1 = Patrun({ gex: true })
+    p1.add({ d: 1, b: 1, a: 1 }, 'A')
+    p1.add({ d: 1 }, 'B')
+    expect(p1.find({ d: 1, b: 1 }, false, true)).equal(['B'])
+
+    var p2 = Patrun({ gex: true })
+    p2.add({ d: 1, b: 1, c: 1 }, 'A')
+    p2.add({ d: 1 }, 'B')
+    expect(p2.find({ d: 1, b: 1 }, false, true)).equal(['B'])
+
+    var p3 = Patrun({ gex: true })
+    p3.add({ d: 1, b: 1, e: 1 }, 'A')
+    p3.add({ d: 1 }, 'B')
+    expect(p3.find({ d: 1, b: 1 }, false, true)).equal(['B'])
+  })
+
+  it('collect-powerset', async () => {
+    var p1 = Patrun({ gex: true })
+
+    p1.add({ a: 1, b: 2 }, 'AB')
+    p1.add({ a: 1, c: 3 }, 'AC')
+    p1.add({ b: 2, c: 3 }, 'BC')
+    p1.add({ a: 1, d: 4 }, 'AD')
+
+    //console.log(''+p1)
+    //console.log(p1.toString(true))
+
+    expect(p1.find({ a: 1, b: 2, x: 1 }, false, true)).equal(['AB'])
+    expect(p1.find({ a: 1, c: 3, x: 1 }, false, true)).equal(['AC'])
+    expect(p1.find({ b: 2, c: 3, x: 1 }, false, true)).equal(['BC'])
+    expect(p1.find({ a: 1, d: 4, x: 1 }, false, true)).equal(['AD'])
+
+    expect(p1.find({ a: 1, b: 2, c: 3 }, false)).equal('AB')
+    expect(p1.find({ a: 1, b: 2, c: 3 }, true)).equal(null)
+    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
+      'AB',
+      'AC',
+      'BC',
+    ])
+
+    p1.add({ b: 1, e: 5 }, 'BE')
+    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
+      'AB',
+      'AC',
+      'BC',
+    ])
+
+    p1.add({ a: 1, b: 2, c: 3 }, 'ABC')
+    expect(p1.find({ a: 1, b: 2, c: 3, x: 2 }, false, true)).equal([
+      'AB',
+      'ABC',
+      'AC',
+      'BC',
+    ])
+
+    expect(p1.find({ a: 1, b: 2, d: 4, x: 2 }, false, true)).equal(['AB', 'AD'])
+    expect(p1.find({ a: 1, b: 2, c: 3, d: 4, x: 2 }, false, true)).equal([
+      'AB',
+      'ABC',
+      'AC',
+      'AD',
+      'BC',
+    ])
+  })
+})
+
+},{"..":1,"@hapi/code":2,"@hapi/lab":31,"gex":36,"hapi-lab-shim":37}]},{},[59])(59)
 });

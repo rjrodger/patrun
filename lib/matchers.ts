@@ -1,7 +1,7 @@
 /* Copyright (c) 2020 Richard Rodger, MIT License */
 /* $lab:coverage:off$ */
 
-const Gex = require('gex')
+import { Gex } from 'gex'
 
 /* $lab:coverage:on$ */
 
