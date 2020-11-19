@@ -14,7 +14,6 @@ var expect = Code.expect
 var Patrun = require('..')
 var { Gex } = require('gex')
 
-
 function rs(x) {
   return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')
 }
@@ -72,12 +71,12 @@ describe('patrun', function () {
   })
 
   it('toString-matchers', async () => {
-    var s = (r)=>(''+r).replace(/\n/g,' ; ')
-    var t = (r)=>r.toString(true)+'\n'
+    var s = (r) => ('' + r).replace(/\n/g, ' ; ')
+    var t = (r) => r.toString(true) + '\n'
 
-    var r = Patrun({gex:true})
-    r.add({a:'a'}, 'Aa')
-    r.add({a:'*'}, 'A*')
+    var r = Patrun({ gex: true })
+    r.add({ a: 'a' }, 'Aa')
+    r.add({ a: '*' }, 'A*')
 
     expect(s(r)).equal('a=a -> <Aa> ; a~* -> <A*>')
     expect(t(r)).equal(`
@@ -86,9 +85,8 @@ a:
  * ~> <A*>
 `)
 
-    
-    r.add({b:'b'}, 'Bb')
-    r.add({b:'*'}, 'B*')
+    r.add({ b: 'b' }, 'Bb')
+    r.add({ b: '*' }, 'B*')
 
     expect(s(r)).equal('a=a -> <Aa> ; a~* -> <A*> ; b=b -> <Bb> ; b~* -> <B*>')
     expect(t(r)).equal(`
@@ -100,11 +98,13 @@ a:
    b -> <Bb>
    * ~> <B*>
 `)
-    
-    r.add({a:'a', b:'b'}, 'AB')
-    r.add({a:'*', b:'*'}, 'AB*')
-    expect(s(r)).equal('a=a -> <Aa> ; a=a, b=b -> <AB> ;'+
-                       ' a~* -> <A*> ; a~*, b~* -> <AB*> ; b=b -> <Bb> ; b~* -> <B*>')
+
+    r.add({ a: 'a', b: 'b' }, 'AB')
+    r.add({ a: '*', b: '*' }, 'AB*')
+    expect(s(r)).equal(
+      'a=a -> <Aa> ; a=a, b=b -> <AB> ;' +
+        ' a~* -> <A*> ; a~*, b~* -> <AB*> ; b=b -> <Bb> ; b~* -> <B*>'
+    )
     //console.log(r.toString(true))
     expect(t(r)).equal(`
 a:
@@ -119,9 +119,8 @@ a:
    b -> <Bb>
    * ~> <B*>
 `)
-
   })
-  
+
   it('root-data', async () => {
     var r = Patrun()
     r.add({}, 'R')
@@ -204,7 +203,6 @@ a:
     )
   })
 
-  
   it('basic', async () => {
     var rt1 = Patrun()
 
@@ -236,13 +234,11 @@ a:
     expect(null).to.equal(rt1.find({ p2: 'v1' }))
 
     rt1.add({ p1: 'v1', p2: 'v5' }, 'r5')
-    expect(rt1.find({p1:'v1',p2:'v5'})).equal('r5')
+    expect(rt1.find({ p1: 'v1', p2: 'v5' })).equal('r5')
     // console.log('---')
     // console.log(rt1.toString(true))
   })
 
-
-  
   it('culdesac', async () => {
     var rt1 = Patrun()
 
@@ -478,10 +474,7 @@ a:
     //  rt1.toJSON()
     //)
 
-    expect('{"d":"r2","k":"p99","v":{"v99":{"d":"r99"}}}').equal(
-      rt1.toJSON()
-    )
-
+    expect('{"d":"r2","k":"p99","v":{"v99":{"d":"r99"}}}').equal(rt1.toJSON())
   })
 
   it('multi-star', async () => {
@@ -661,7 +654,7 @@ a:
 
     p2.add({ a: 1, b: '*' }, 'X')
     // console.dir(p2.top(),{depth:null})
-    
+
     expect(p2.find({ a: 1 })).to.equal('X')
     expect(p2.find({ a: 1, b: 'x' })).to.equal('X')
 
@@ -1129,17 +1122,16 @@ a:
     expect(p1.find({ a: 'A' })).to.equal('XA')
   })
 
-
   it('add-interval', async () => {
     var p1 = Patrun({ interval: true })
 
     p1.add({ a: 'A' }, 'XA')
     expect(p1.find({ a: 'A' })).to.equal('XA')
     expect(p1.find({})).to.not.exist()
-    
+
     p1.add({ b: '>10' }, 'XB')
     //console.log(p1+'')
-    
+
     expect(p1.find({ b: 11 })).to.equal('XB')
     expect(p1.find({ b: 12.5 })).to.equal('XB')
     expect(p1.find({ b: '11' })).to.equal('XB')
@@ -1149,7 +1141,6 @@ a:
     expect(p1.find({ b: '' })).not.exist()
     expect(p1.find({})).to.not.exist()
   })
-
 
   it('add-gex-interval', async () => {
     var p1 = Patrun({ gex: true, interval: true })
@@ -1165,17 +1156,15 @@ a:
     expect(p1.find({ a: 'A', b: 'B' })).to.equal('AB0')
     expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
 
-    // uses vm arrays 
+    // uses vm arrays
     p1.add({ a: 'A', c: '<=10' }, 'AC0')
     expect(p1.find({ a: 'A', b: 'B' })).to.equal('AB0')
     expect(p1.find({ a: 'A', c: 11, e: 'xa' })).to.equal('A0')
     expect(p1.find({ a: 'A', c: 9 })).to.equal('AC0')
-    
+
     //console.log(p1.toString(true))
   })
 
-  
-  
   it('collect-once', async () => {
     var p1 = Patrun({ gex: true })
     p1.add({ d: 1, b: 1, a: 1 }, 'A')

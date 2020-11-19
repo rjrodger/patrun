@@ -26,9 +26,8 @@ function Patrun(custom) {
     self.add = function (pat, data) {
         pat = { ...pat };
         var customizer = 'function' === typeof custom ? custom.call(self, pat, data) : null;
-        var keys = Object
-            .keys(pat)
-            .filter(key => null != pat[key])
+        var keys = Object.keys(pat)
+            .filter((key) => null != pat[key])
             .sort();
         keys.forEach(function (key) {
             pat[key] = String(pat[key]);
@@ -83,7 +82,7 @@ function Patrun(custom) {
                 keymap.s = {
                     k: keymap.k,
                     // sk: keymap.sk,
-                    v: keymap.v
+                    v: keymap.v,
                 };
                 if (s) {
                     keymap.s.s = s;
@@ -216,7 +215,7 @@ function Patrun(custom) {
                     }
                 }
                 if (null == nextkeymap && keymap.g) {
-                    let mvs = (keymap.g[key] || []);
+                    let mvs = keymap.g[key] || [];
                     for (let mvi = 0; mvi < mvs.length; mvi++) {
                         // TODO: should parse!
                         if (mvs[mvi].fix === pat[key]) {
