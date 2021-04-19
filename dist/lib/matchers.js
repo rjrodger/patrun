@@ -64,7 +64,7 @@ const IntervalRE = new RegExp([
         '/s*' + // optional whitespace
         '([/)/]]?)' + // 10, interval operator symbol
         ')?' + // end optional second term
-        '/s*$',
+        '/s*$', // optional whitespace
 ].join('').replace(/\//g, '\\'));
 class IntervalMatcher {
     constructor() {
