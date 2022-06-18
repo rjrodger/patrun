@@ -1,6 +1,6 @@
 {
   "name": "patrun",
-  "version": "7.2.0",
+  "version": "7.2.1",
   "main": "dist/patrun.js",
   "browser": "dist/patrun.min.js",
   "types": "dist/patrun.d.ts",
@@ -29,7 +29,7 @@
     "reset": "npm run clean && npm i && npm run build && npm test",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
     "repo-publish": "npm run clean && npm i && npm run repo-publish-quick",
-    "repo-publish-quick": "npm run prettier && npm run build && npm run test && npm run test-web && npm run repo-tag && npm publish --registry http://registry.npmjs.org "
+    "repo-publish-quick": "npm run prettier && npm run build && npm run test && npm run test-web && npm run repo-tag && npm publish --registry https://registry.npmjs.org "
   },
   "license": "MIT",
   "files": [
