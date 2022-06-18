@@ -13,7 +13,6 @@ import {
   IntervalMatcher,
 } from './lib/matchers'
 
-
 function Patrun(custom: any) {
   custom = custom || {}
 
@@ -31,11 +30,11 @@ function Patrun(custom: any) {
   }
 
   // Provide internal search order structure
-  self.top = function() {
+  self.top = function () {
     return top
   }
 
-  self.add = function(pat: any, data: any) {
+  self.add = function (pat: any, data: any) {
     pat = { ...pat }
 
     var customizer =
@@ -45,7 +44,7 @@ function Patrun(custom: any) {
       .filter((key) => null != pat[key])
       .sort()
 
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       pat[key] = String(pat[key])
     })
 
@@ -162,11 +161,11 @@ function Patrun(custom: any) {
     return self
   }
 
-  self.findexact = function(pat: any) {
+  self.findexact = function (pat: any) {
     return self.find(pat, true)
   }
 
-  self.find = function(pat: any, exact: any, collect: any) {
+  self.find = function (pat: any, exact: any, collect: any) {
     if (null == pat) return null
 
     var keymap: any = top
@@ -255,7 +254,7 @@ function Patrun(custom: any) {
     return collect ? collection : data
   }
 
-  self.remove = function(pat: any) {
+  self.remove = function (pat: any) {
     var keymap = top
     var data = null
     var key
@@ -309,7 +308,7 @@ function Patrun(custom: any) {
   }
 
   // values can be verbatim, glob, or array of globs
-  self.list = function(pat: any, exact: boolean) {
+  self.list = function (pat: any, exact: boolean) {
     pat = pat || {}
 
     function descend(keymap: any, match: any, missing: any, acc: any) {
@@ -380,15 +379,15 @@ function Patrun(custom: any) {
     return acc
   }
 
-  self.toString = function(first: any, second: any) {
+  self.toString = function (first: any, second: any) {
     var tree = true === first ? true : !!second
 
     var dstr =
       'function' === typeof first
         ? first
-        : function(d: any) {
-          return 'function' === typeof d ? '<' + d.name + '>' : '<' + d + '>'
-        }
+        : function (d: any) {
+            return 'function' === typeof d ? '<' + d.name + '>' : '<' + d + '>'
+          }
 
     function indent(o: any, d: any) {
       for (var i = 0; i < d; i++) {
@@ -472,10 +471,10 @@ function Patrun(custom: any) {
 
   self.inspect = self.toString
 
-  self.toJSON = function(indent: any) {
+  self.toJSON = function (indent: any) {
     return JSON.stringify(
       top,
-      function(_key: any, val: any) {
+      function (_key: any, val: any) {
         if ('function' === typeof val) return '[Function]'
         return val
       },
@@ -486,11 +485,9 @@ function Patrun(custom: any) {
   return self
 }
 
-
 function make(custom: any) {
   return new (Patrun as any)(custom)
 }
-
 
 if ('undefined' !== typeof module) {
   module.exports = make
@@ -498,7 +495,4 @@ if ('undefined' !== typeof module) {
 
 export default make
 
-export {
-  Patrun,
-  Gex,
-}
+export { Patrun, Gex }
