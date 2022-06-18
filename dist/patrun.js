@@ -1,13 +1,12 @@
 "use strict";
 /* Copyright (c) 2013-2020 Richard Rodger, MIT License */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Gex = exports.Patrun = void 0;
 // TODO: matchers should accept string[] of key names - only operate on these keys
 // TODO: expose walk as method for general purpose
 const gex_1 = require("gex");
+Object.defineProperty(exports, "Gex", { enumerable: true, get: function () { return gex_1.Gex; } });
 const matchers_1 = require("./lib/matchers");
-module.exports = function (custom) {
-    return new Patrun(custom);
-};
 function Patrun(custom) {
     custom = custom || {};
     var self = {};
@@ -253,7 +252,7 @@ function Patrun(custom) {
         function descend(keymap, match, missing, acc) {
             if (keymap.v) {
                 var key = keymap.k;
-                var gexval = gex_1.Gex(pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*');
+                var gexval = (0, gex_1.Gex)(pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*');
                 var itermatch = { ...match };
                 var itermissing = { ...missing };
                 var nextkeymap;
@@ -366,7 +365,7 @@ function Patrun(custom) {
     };
     self.inspect = self.toString;
     self.toJSON = function (indent) {
-        return JSON.stringify(top, function (key, val) {
+        return JSON.stringify(top, function (_key, val) {
             if ('function' === typeof val)
                 return '[Function]';
             return val;
@@ -374,4 +373,12 @@ function Patrun(custom) {
     };
     return self;
 }
+exports.Patrun = Patrun;
+function make(custom) {
+    return new Patrun(custom);
+}
+if ('undefined' !== typeof module) {
+    module.exports = make;
+}
+exports.default = make;
 //# sourceMappingURL=patrun.js.map

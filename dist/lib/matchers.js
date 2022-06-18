@@ -1,13 +1,12 @@
 "use strict";
 /* Copyright (c) 2020 Richard Rodger, MIT License */
 /* $lab:coverage:off$ */
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
-    if (!privateMap.has(receiver)) {
-        throw new TypeError("attempted to get private field on non-instance");
-    }
-    return privateMap.get(receiver);
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _and, _or, _nil, _err, _mgt, _mgte, _mlt, _mlte, _meq;
+var _IntervalMatcher_and, _IntervalMatcher_or, _IntervalMatcher_nil, _IntervalMatcher_err, _IntervalMatcher_mgt, _IntervalMatcher_mgte, _IntervalMatcher_mlt, _IntervalMatcher_mlte, _IntervalMatcher_meq;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntervalMatcher = exports.GexMatcher = void 0;
 const gex_1 = require("gex");
@@ -16,7 +15,7 @@ class GexMatcher {
     }
     make(key, fix) {
         if ('string' === typeof fix && fix.match(/[*?]/)) {
-            let gex = gex_1.Gex(fix);
+            let gex = (0, gex_1.Gex)(fix);
             return {
                 kind: 'gex',
                 match: (val) => null != gex.on(val),
@@ -69,19 +68,19 @@ const IntervalRE = new RegExp([
 class IntervalMatcher {
     constructor() {
         this.kind = 'interval';
-        _and.set(this, (lhs, rhs) => function and(x) {
+        _IntervalMatcher_and.set(this, (lhs, rhs) => function and(x) {
             return lhs(x) && rhs(x);
         });
-        _or.set(this, (lhs, rhs) => function or(x) {
+        _IntervalMatcher_or.set(this, (lhs, rhs) => function or(x) {
             return lhs(x) || rhs(x);
         });
-        _nil.set(this, (n) => function nil(x) { return false; });
-        _err.set(this, (n) => function err(x) { return false; });
-        _mgt.set(this, (n) => function gt(x) { return x > n; });
-        _mgte.set(this, (n) => function gte(x) { return x >= n; });
-        _mlt.set(this, (n) => function lt(x) { return x < n; });
-        _mlte.set(this, (n) => function lte(x) { return x <= n; });
-        _meq.set(this, (n) => function eq(x) { return x === n; });
+        _IntervalMatcher_nil.set(this, (n) => function nil(x) { return false; });
+        _IntervalMatcher_err.set(this, (n) => function err(x) { return false; });
+        _IntervalMatcher_mgt.set(this, (n) => function gt(x) { return x > n; });
+        _IntervalMatcher_mgte.set(this, (n) => function gte(x) { return x >= n; });
+        _IntervalMatcher_mlt.set(this, (n) => function lt(x) { return x < n; });
+        _IntervalMatcher_mlte.set(this, (n) => function lte(x) { return x <= n; });
+        _IntervalMatcher_meq.set(this, (n) => function eq(x) { return x === n; });
     }
     make(key, fix) {
         if ('string' === typeof fix &&
@@ -94,81 +93,84 @@ class IntervalMatcher {
             if (null != m) {
                 let os0 = IntervalMatcher.normop(m[1]) || IntervalMatcher.normop(m[5]);
                 let os1 = IntervalMatcher.normop(m[8]) || IntervalMatcher.normop(m[10]);
-                let o0 = '=' === os0 ? __classPrivateFieldGet(this, _meq) :
-                    '<' === os0 ? __classPrivateFieldGet(this, _mlt) :
-                        ')' === os0 ? __classPrivateFieldGet(this, _mlt) :
-                            '<=' === os0 ? __classPrivateFieldGet(this, _mlte) :
-                                ']' === os0 ? __classPrivateFieldGet(this, _mlte) :
-                                    '>' === os0 ? __classPrivateFieldGet(this, _mgt) :
-                                        '(' === os0 ? __classPrivateFieldGet(this, _mgt) :
-                                            '>=' === os0 ? __classPrivateFieldGet(this, _mgte) :
-                                                '[' === os0 ? __classPrivateFieldGet(this, _mgte) : __classPrivateFieldGet(this, _err);
+                let o0 = '=' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_meq, "f") :
+                    '<' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mlt, "f") :
+                        ')' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mlt, "f") :
+                            '<=' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f") :
+                                ']' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f") :
+                                    '>' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mgt, "f") :
+                                        '(' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mgt, "f") :
+                                            '>=' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f") :
+                                                '[' === os0 ? __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f") :
+                                                    __classPrivateFieldGet(this, _IntervalMatcher_err, "f");
                 let n0 = Number(m[2]);
                 let n1 = null == m[9] ? NaN : Number(m[9]);
                 let jos = m[7];
-                let jo = null == jos ? __classPrivateFieldGet(this, _or) :
-                    '&' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _and) :
-                        ',' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _and) : __classPrivateFieldGet(this, _or);
+                let jo = null == jos ? __classPrivateFieldGet(this, _IntervalMatcher_or, "f") :
+                    '&' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _IntervalMatcher_and, "f") :
+                        ',' === jos.substring(0, 1) ? __classPrivateFieldGet(this, _IntervalMatcher_and, "f") :
+                            __classPrivateFieldGet(this, _IntervalMatcher_or, "f");
                 if ('..' === jos) {
-                    jo = __classPrivateFieldGet(this, _and);
-                    o0 = __classPrivateFieldGet(this, _err) === o0 ? __classPrivateFieldGet(this, _mgte) : o0;
+                    jo = __classPrivateFieldGet(this, _IntervalMatcher_and, "f");
+                    o0 = __classPrivateFieldGet(this, _IntervalMatcher_err, "f") === o0 ? __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f") : o0;
                     os1 = '' === os1 ? '<=' : os1;
                 }
-                let o1 = null == os1 ? __classPrivateFieldGet(this, _nil) :
-                    '=' === os1 ? __classPrivateFieldGet(this, _meq) :
-                        '<' === os1 ? __classPrivateFieldGet(this, _mlt) :
-                            ')' === os1 ? __classPrivateFieldGet(this, _mlt) :
-                                '<=' === os1 ? __classPrivateFieldGet(this, _mlte) :
-                                    ']' === os1 ? __classPrivateFieldGet(this, _mlte) :
-                                        '>' === os1 ? __classPrivateFieldGet(this, _mgt) :
-                                            '>=' === os1 ? __classPrivateFieldGet(this, _mgte) : __classPrivateFieldGet(this, _err);
+                let o1 = null == os1 ? __classPrivateFieldGet(this, _IntervalMatcher_nil, "f") :
+                    '=' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_meq, "f") :
+                        '<' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_mlt, "f") :
+                            ')' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_mlt, "f") :
+                                '<=' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f") :
+                                    ']' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f") :
+                                        '>' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_mgt, "f") :
+                                            '>=' === os1 ? __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f") :
+                                                __classPrivateFieldGet(this, _IntervalMatcher_err, "f");
                 // merge ops if same number
                 if (n0 === n1) {
                     if ('=' === os0 && null != os1) {
                         n1 = NaN;
-                        o1 = __classPrivateFieldGet(this, _nil);
+                        o1 = __classPrivateFieldGet(this, _IntervalMatcher_nil, "f");
                         if (os1.includes('<')) {
-                            o0 = __classPrivateFieldGet(this, _mlte);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f");
                         }
                         else if (os1.includes('>')) {
-                            o0 = __classPrivateFieldGet(this, _mgte);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f");
                         }
                         else if (os1.includes('=')) {
-                            o0 = __classPrivateFieldGet(this, _meq);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_meq, "f");
                         }
                         else {
-                            o0 = __classPrivateFieldGet(this, _err);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_err, "f");
                         }
                     }
                     else if ('=' === os1 && null != os0) {
                         n1 = NaN;
-                        o1 = __classPrivateFieldGet(this, _nil);
+                        o1 = __classPrivateFieldGet(this, _IntervalMatcher_nil, "f");
                         if (os0.includes('<')) {
-                            o0 = __classPrivateFieldGet(this, _mlte);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f");
                         }
                         else if (os0.includes('>')) {
-                            o0 = __classPrivateFieldGet(this, _mgte);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f");
                         }
                         else {
-                            o0 = __classPrivateFieldGet(this, _err);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_err, "f");
                         }
                     }
                 }
                 // console.log(jo(o0(n0), o1(n1)), o0(n0), o1(n1))
                 // if one sided interval, add the other side out to infinity
-                if (__classPrivateFieldGet(this, _err) !== o0) {
-                    if (__classPrivateFieldGet(this, _nil) === o1) {
-                        if (__classPrivateFieldGet(this, _mlt) === o0 || __classPrivateFieldGet(this, _mlte) === o0) {
+                if (__classPrivateFieldGet(this, _IntervalMatcher_err, "f") !== o0) {
+                    if (__classPrivateFieldGet(this, _IntervalMatcher_nil, "f") === o1) {
+                        if (__classPrivateFieldGet(this, _IntervalMatcher_mlt, "f") === o0 || __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f") === o0) {
                             o1 = o0;
                             n1 = n0;
-                            o0 = __classPrivateFieldGet(this, _mgte);
+                            o0 = __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f");
                             n0 = Number.NEGATIVE_INFINITY;
-                            jo = __classPrivateFieldGet(this, _and);
+                            jo = __classPrivateFieldGet(this, _IntervalMatcher_and, "f");
                         }
-                        else if (__classPrivateFieldGet(this, _mgt) === o0 || __classPrivateFieldGet(this, _mgte) === o0) {
-                            o1 = __classPrivateFieldGet(this, _mlte);
+                        else if (__classPrivateFieldGet(this, _IntervalMatcher_mgt, "f") === o0 || __classPrivateFieldGet(this, _IntervalMatcher_mgte, "f") === o0) {
+                            o1 = __classPrivateFieldGet(this, _IntervalMatcher_mlte, "f");
                             n1 = Number.POSITIVE_INFINITY;
-                            jo = __classPrivateFieldGet(this, _and);
+                            jo = __classPrivateFieldGet(this, _IntervalMatcher_and, "f");
                         }
                         // else this.meq ok as is
                     }
@@ -384,7 +386,7 @@ class IntervalMatcher {
     }
 }
 exports.IntervalMatcher = IntervalMatcher;
-_and = new WeakMap(), _or = new WeakMap(), _nil = new WeakMap(), _err = new WeakMap(), _mgt = new WeakMap(), _mgte = new WeakMap(), _mlt = new WeakMap(), _mlte = new WeakMap(), _meq = new WeakMap();
+_IntervalMatcher_and = new WeakMap(), _IntervalMatcher_or = new WeakMap(), _IntervalMatcher_nil = new WeakMap(), _IntervalMatcher_err = new WeakMap(), _IntervalMatcher_mgt = new WeakMap(), _IntervalMatcher_mgte = new WeakMap(), _IntervalMatcher_mlt = new WeakMap(), _IntervalMatcher_mlte = new WeakMap(), _IntervalMatcher_meq = new WeakMap();
 // == sames as =, <= same as =<
 IntervalMatcher.normop = (op) => null == op ? null :
     (((op.match(/([<>\(\)\[\]])/) || [])[1] || '') + ((op.match(/(=)/) || [])[1] || ''));
