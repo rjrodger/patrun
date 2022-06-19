@@ -491,6 +491,8 @@ function make(custom: any) {
 
 if ('undefined' !== typeof module) {
   module.exports = make
+  module.exports.Patrun = Patrun
+  module.exports.Gex = Gex
 }
 
 export default make

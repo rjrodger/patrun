@@ -379,6 +379,8 @@ function make(custom) {
 }
 if ('undefined' !== typeof module) {
     module.exports = make;
+    module.exports.Patrun = Patrun;
+    module.exports.Gex = gex_1.Gex;
 }
 exports.default = make;
 //# sourceMappingURL=patrun.js.map
