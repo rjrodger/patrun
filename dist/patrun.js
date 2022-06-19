@@ -1,5 +1,5 @@
 "use strict";
-/* Copyright (c) 2013-2020 Richard Rodger, MIT License */
+/* Copyright (c) 2013-2022 Richard Rodger, MIT License */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gex = exports.Patrun = void 0;
 // TODO: matchers should accept string[] of key names - only operate on these keys
