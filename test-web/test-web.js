@@ -566,7 +566,7 @@ internals.assert = function (assertion, condition, error) {
 };
 
 }).call(this)}).call(this,{"isBuffer":require("../../../is-buffer/index.js")},"/node_modules/@hapi/code/lib")
-},{"../../../is-buffer/index.js":48,"@hapi/hoek":17,"util":55}],3:[function(require,module,exports){
+},{"../../../is-buffer/index.js":47,"@hapi/hoek":17,"util":54}],3:[function(require,module,exports){
 'use strict';
 
 const Assert = require('./assert');
@@ -727,7 +727,7 @@ module.exports = internals.Bench = class {
 };
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":52}],6:[function(require,module,exports){
+},{"_process":51}],6:[function(require,module,exports){
 'use strict';
 
 const Ignore = require('./ignore');
@@ -4155,7 +4155,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":29,"buffer":31,"ieee754":45}],32:[function(require,module,exports){
+},{"base64-js":29,"buffer":31,"ieee754":44}],32:[function(require,module,exports){
 'use strict';
 
 var GetIntrinsic = require('get-intrinsic');
@@ -4302,7 +4302,7 @@ var forEach = function forEach(list, iterator, thisArg) {
 
 module.exports = forEach;
 
-},{"is-callable":49}],36:[function(require,module,exports){
+},{"is-callable":48}],36:[function(require,module,exports){
 'use strict';
 
 /* eslint no-invalid-this: 1 */
@@ -4699,11 +4699,7 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 	return value;
 };
 
-},{"function-bind":37,"has":44,"has-symbols":41}],39:[function(require,module,exports){
-(function (global){(function (){
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).Gex=e()}}((function(){var e={exports:{}};Object.defineProperty(e.exports,"__esModule",{value:!0}),e.exports.Gex=void 0;class t{constructor(e){this.desc="",this.gexmap={},null!=e&&(Array.isArray(e)?e:[e]).forEach(e=>{this.gexmap[e]=this.re(this.clean(e))})}dodgy(e){return null==e||Number.isNaN(e)}clean(e){let t=""+e;return this.dodgy(e)?"":t}match(e){e=""+e;let t=!1,r=Object.keys(this.gexmap);for(let s=0;s<r.length&&!t;s++)t=!!this.gexmap[r[s]].exec(e);return t}on(e){if(null==e)return null;let t=typeof e;if("string"===t||"number"===t||"boolean"===t||e instanceof Date||e instanceof RegExp)return this.match(e)?e:null;if(Array.isArray(e)){let t=[];for(let r=0;r<e.length;r++)!this.dodgy(e[r])&&this.match(e[r])&&t.push(e[r]);return t}{let t={};for(let r in e)Object.prototype.hasOwnProperty.call(e,r)&&this.match(r)&&(t[r]=e[r]);return t}}esc(e){let t=this.clean(e);return(t=t.replace(/\*/g,"**")).replace(/\?/g,"*?")}escregexp(e){return e?(""+e).replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&"):""}re(e){if(""===e||e)return e="^"+(e=(e=(e=(e=(e=this.escregexp(e)).replace(/\\\*/g,"[\\s\\S]*")).replace(/\\\?/g,"[\\s\\S]")).replace(/\[\\s\\S\]\*\[\\s\\S\]\*/g,"\\*")).replace(/\[\\s\\S\]\*\[\\s\\S\]/g,"\\?"))+"$",new RegExp(e);{let e=Object.keys(this.gexmap);return 1==e.length?this.gexmap[e[0]]:{...this.gexmap}}}toString(){let e=this.desc;return""!=e?e:this.desc="Gex["+Object.keys(this.gexmap)+"]"}inspect(){return this.toString()}}function r(e){return new t(e)}return e.exports.Gex=r,e.exports=r,e.exports.Gex=r,e.exports.default=r,e=e.exports}));
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],40:[function(require,module,exports){
+},{"function-bind":37,"has":43,"has-symbols":40}],39:[function(require,module,exports){
 /* Copyright (c) 2020 Richard Rodger, MIT License */
 'use strict'
 
@@ -4764,7 +4760,7 @@ function runtest(test) {
 
 module.exports = Lab
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 var origSymbol = typeof Symbol !== 'undefined' && Symbol;
@@ -4779,7 +4775,7 @@ module.exports = function hasNativeSymbols() {
 	return hasSymbolSham();
 };
 
-},{"./shams":42}],42:[function(require,module,exports){
+},{"./shams":41}],41:[function(require,module,exports){
 'use strict';
 
 /* eslint complexity: [2, 18], max-statements: [2, 33] */
@@ -4823,7 +4819,7 @@ module.exports = function hasSymbols() {
 	return true;
 };
 
-},{}],43:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 var hasSymbols = require('has-symbols/shams');
@@ -4832,14 +4828,14 @@ module.exports = function hasToStringTagShams() {
 	return hasSymbols() && !!Symbol.toStringTag;
 };
 
-},{"has-symbols/shams":42}],44:[function(require,module,exports){
+},{"has-symbols/shams":41}],43:[function(require,module,exports){
 'use strict';
 
 var bind = require('function-bind');
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
-},{"function-bind":37}],45:[function(require,module,exports){
+},{"function-bind":37}],44:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -4926,7 +4922,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -4955,7 +4951,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 var hasToStringTag = require('has-tostringtag/shams')();
@@ -4990,7 +4986,7 @@ isStandardArguments.isLegacyArguments = isLegacyArguments; // for tests
 
 module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArguments;
 
-},{"call-bind/callBound":32,"has-tostringtag/shams":43}],48:[function(require,module,exports){
+},{"call-bind/callBound":32,"has-tostringtag/shams":42}],47:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -5013,7 +5009,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],49:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 var fnToStr = Function.prototype.toString;
@@ -5089,7 +5085,7 @@ module.exports = reflectApply
 		return strClass === fnClass || strClass === genClass;
 	};
 
-},{}],50:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 var toStr = Object.prototype.toString;
@@ -5129,7 +5125,7 @@ module.exports = function isGeneratorFunction(fn) {
 	return getProto(fn) === GeneratorFunction;
 };
 
-},{"has-tostringtag/shams":43}],51:[function(require,module,exports){
+},{"has-tostringtag/shams":42}],50:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -5193,7 +5189,7 @@ module.exports = function isTypedArray(value) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"available-typed-arrays":28,"call-bind/callBound":32,"es-abstract/helpers/getOwnPropertyDescriptor":34,"for-each":35,"has-tostringtag/shams":43}],52:[function(require,module,exports){
+},{"available-typed-arrays":28,"call-bind/callBound":32,"es-abstract/helpers/getOwnPropertyDescriptor":34,"for-each":35,"has-tostringtag/shams":42}],51:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -5379,14 +5375,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],54:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 // Currently in sync with Node.js lib/internal/util/types.js
 // https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
 
@@ -5722,7 +5718,7 @@ exports.isAnyArrayBuffer = isAnyArrayBuffer;
   });
 });
 
-},{"is-arguments":47,"is-generator-function":50,"is-typed-array":51,"which-typed-array":56}],55:[function(require,module,exports){
+},{"is-arguments":46,"is-generator-function":49,"is-typed-array":50,"which-typed-array":55}],54:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6441,7 +6437,7 @@ function callbackify(original) {
 exports.callbackify = callbackify;
 
 }).call(this)}).call(this,require('_process'))
-},{"./support/isBuffer":53,"./support/types":54,"_process":52,"inherits":46}],56:[function(require,module,exports){
+},{"./support/isBuffer":52,"./support/types":53,"_process":51,"inherits":45}],55:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -6500,7 +6496,7 @@ module.exports = function whichTypedArray(value) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"available-typed-arrays":28,"call-bind/callBound":32,"es-abstract/helpers/getOwnPropertyDescriptor":34,"for-each":35,"has-tostringtag/shams":43,"is-typed-array":51}],57:[function(require,module,exports){
+},{"available-typed-arrays":28,"call-bind/callBound":32,"es-abstract/helpers/getOwnPropertyDescriptor":34,"for-each":35,"has-tostringtag/shams":42,"is-typed-array":50}],56:[function(require,module,exports){
 /* Copyright (c) 2013-2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
@@ -6515,7 +6511,7 @@ var it = lab.it
 var expect = Code.expect
 
 var Patrun = require('..')
-var { Gex } = require('gex')
+// var { Gex } = require('gex')
 
 function rs(x) {
   return x.toString(true).replace(/\s+/g, '').replace(/\n+/g, '')
@@ -7128,7 +7124,7 @@ a:
         var v = pat[k]
         if ('string' === typeof v && ~v.indexOf('*')) {
           delete pat[k]
-          gexers[k] = Gex(v)
+          gexers[k] = Patrun.Gex(v)
         }
       })
 
@@ -7735,5 +7731,5 @@ a:
   })
 })
 
-},{"..":1,"@hapi/code":2,"@hapi/lab":30,"gex":39,"hapi-lab-shim":40}]},{},[57])(57)
+},{"..":1,"@hapi/code":2,"@hapi/lab":30,"hapi-lab-shim":39}]},{},[56])(56)
 });
