@@ -1,6 +1,6 @@
 {
   "name": "patrun",
-  "version": "7.2.6",
+  "version": "7.2.7",
   "main": "dist/patrun.js",
   "browser": "dist/patrun.min.js",
   "types": "dist/patrun.d.ts",

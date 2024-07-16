@@ -485,6 +485,8 @@ function Patrun(custom?: any) {
   return self
 }
 
+type PatrunRouter = ReturnType<typeof Patrun>
+
 function make(custom?: any) {
   return new (Patrun as any)(custom)
 }
@@ -498,3 +500,5 @@ if ('undefined' !== typeof module) {
 export default make
 
 export { Patrun, Gex }
+
+export type { PatrunRouter }
