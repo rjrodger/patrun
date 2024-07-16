@@ -83,7 +83,7 @@ function run0() {
 
   s0.on('cycle', function (event) {
     console.log(
-      event.target.toString() + ':' + util.inspect(process.memoryUsage())
+      event.target.toString() + ':' + util.inspect(process.memoryUsage()),
     )
   }).run({ maxTime: 2 })
 }
@@ -103,7 +103,7 @@ function run1() {
 
   s1.on('cycle', function (event) {
     console.log(
-      event.target.toString() + ':' + util.inspect(process.memoryUsage())
+      event.target.toString() + ':' + util.inspect(process.memoryUsage()),
     )
   }).run({ maxTime: 20 })
 }
@@ -140,14 +140,14 @@ function run2() {
               ij[k * l][1] = 0
             }
           }
-        })(w, ijmax[w][0], ijmax[w][1])
+        })(w, ijmax[w][0], ijmax[w][1]),
       )
     }
   }
 
   s2.on('cycle', function (event) {
     console.log(
-      event.target.toString() + ':' + util.inspect(process.memoryUsage())
+      event.target.toString() + ':' + util.inspect(process.memoryUsage()),
     )
   }).run({ maxTime: 2 })
 }

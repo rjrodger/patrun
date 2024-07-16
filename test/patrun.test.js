@@ -37,17 +37,17 @@ describe('patrun', function () {
 
     r.add({ a: 1, b: 2 }, function foo() {})
     expect(r.toString(true)).to.equal(
-      ' <R>\na:\n 1 -> <S>\n  b:\n   2 -> <foo>'
+      ' <R>\na:\n 1 -> <S>\n  b:\n   2 -> <foo>',
     )
     expect(r.toString(false)).to.equal(' -> <R>\na=1 -> <S>\na=1, b=2 -> <foo>')
     expect(r.toString((d) => 'D:' + d)).to.equal(
-      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
+      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}',
     )
     expect(r.toString((d) => 'D:' + d, true)).to.equal(
-      ' D:R\na:\n 1 -> D:S\n  b:\n   2 -> D:function foo() {}'
+      ' D:R\na:\n 1 -> D:S\n  b:\n   2 -> D:function foo() {}',
     )
     expect(r.toString((d) => 'D:' + d, false)).to.equal(
-      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}'
+      ' -> D:R\na=1 -> D:S\na=1, b=2 -> D:function foo() {}',
     )
   })
 
@@ -103,7 +103,7 @@ a:
     r.add({ a: '*', b: '*' }, 'AB*')
     expect(s(r)).equal(
       'a=a -> <Aa> ; a=a, b=b -> <AB> ;' +
-        ' a~* -> <A*> ; a~*, b~* -> <AB*> ; b=b -> <Bb> ; b~* -> <B*>'
+        ' a~* -> <A*> ; a~*, b~* -> <AB*> ; b=b -> <Bb> ; b~* -> <B*>',
     )
     //console.log(r.toString(true))
     expect(t(r)).equal(`
@@ -155,7 +155,7 @@ a:
     expect(r.find({ x: 1 }, true)).equal(null)
 
     expect(JSON.stringify(r.list())).equal(
-      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"},{"match":{"a":"1","b":"1"},"data":"r2"},{"match":{"x":"1","y":"1"},"data":"r3"}]'
+      '[{"match":{},"data":"R"},{"match":{"a":"1"},"data":"r1"},{"match":{"a":"1","b":"1"},"data":"r2"},{"match":{"x":"1","y":"1"},"data":"r3"}]',
     )
   })
 
@@ -168,7 +168,7 @@ a:
     expect(rs(r)).to.equal('a:1-><r1>')
 
     expect(JSON.stringify(r.list())).to.equal(
-      '[{"match":{"a":"1"},"data":"r1"}]'
+      '[{"match":{"a":"1"},"data":"r1"}]',
     )
 
     r = Patrun()
@@ -199,7 +199,7 @@ a:
     expect(rs(r)).to.equal('a:1->b:3-><r2>|c:2-><r1>')
 
     expect(JSON.stringify(r.list())).to.equal(
-      '[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]'
+      '[{"match":{"a":"1","b":"3"},"data":"r2"},{"match":{"a":"1","c":"2"},"data":"r1"}]',
     )
   })
 
@@ -273,7 +273,7 @@ a:
     expect(rt1.list({ p1: 0 }, true).map((x) => x.data)).equal(['r1'])
     expect(rt1.list({ p1: 0, p2: '' }, true).map((x) => x.data)).equal(['r2'])
     expect(
-      rt1.list({ p1: 0, p2: '', p3: false }, true).map((x) => x.data)
+      rt1.list({ p1: 0, p2: '', p3: false }, true).map((x) => x.data),
     ).equal(['r3'])
 
     expect(rt1.list({ p2: '' }, true).map((x) => x.data)).equal([])
@@ -329,7 +329,7 @@ a:
 
     // followed a remainder path (q1 removed)
     expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
-      ['s4', 's1', 's2'].sort()
+      ['s4', 's1', 's2'].sort(),
     )
     expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true)).equal(['s1', 's3'])
 
@@ -342,10 +342,10 @@ a:
 
     // followed a remainder path (q1 removed)
     expect(rt1.find({ q1: 'w1', q2: 'w2' }, false, true).sort()).equal(
-      ['s4', 's1', 's2'].sort()
+      ['s4', 's1', 's2'].sort(),
     )
     expect(rt1.find({ q1: 'w1', q3: 'w3' }, false, true).sort()).equal(
-      ['s5', 's1', 's3'].sort()
+      ['s5', 's1', 's3'].sort(),
     )
 
     // but exact does not follow remainders
@@ -487,7 +487,7 @@ a:
 
     expect(rs(p)).to.equal('a:1-><A>b:2-><B>|b:1->c:4-><D>|c:3-><C>')
     expect('' + p).to.equal(
-      'a=1 -> <A>\na=1, b=2 -> <B>\nb=1, c=4 -> <D>\nc=3 -> <C>'
+      'a=1 -> <A>\na=1, b=2 -> <B>\nb=1, c=4 -> <D>\nc=3 -> <C>',
     )
 
     expect(p.find({ c: 3 })).to.equal('C')
@@ -518,7 +518,7 @@ a:
     expect(p.list({ a: 1, b: '*', d: '*' })[0].data).to.equal('XX')
 
     expect('' + p).to.equal(
-      'a=1, b=2 -> <X>\na=1, b=2, d=4 -> <XX>\nc=3 -> <Y>\nc=3, d=4 -> <YY>'
+      'a=1, b=2 -> <X>\na=1, b=2, d=4 -> <XX>\nc=3 -> <Y>\nc=3, d=4 -> <YY>',
     )
   })
 
@@ -561,7 +561,7 @@ a:
     p.add({ b: 2 }, 'Y')
 
     expect(JSON.stringify(p.list())).to.equal(
-      '[{"match":{"a":"1"},"data":"X"},{"match":{"b":"2"},"data":"Y"}]'
+      '[{"match":{"a":"1"},"data":"X"},{"match":{"b":"2"},"data":"Y"}]',
     )
   })
 
@@ -715,22 +715,22 @@ a:
     expect(JSON.stringify(p1.list({ c: 3 }))).to.equal('[' + [mC] + ']')
 
     expect(JSON.stringify(p1.list({ a: '*' }))).to.equal(
-      '[' + [mA, mB, mC] + ']'
+      '[' + [mA, mB, mC] + ']',
     )
     expect(JSON.stringify(p1.list({ b: '*' }))).to.equal('[' + [mB, mC] + ']')
     expect(JSON.stringify(p1.list({ c: '*' }))).to.equal('[' + [mC] + ']')
 
     expect(JSON.stringify(p1.list({ a: 1, b: 2 }))).to.equal(
-      '[' + [mB, mC] + ']'
+      '[' + [mB, mC] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1, b: '*' }))).to.equal(
-      '[' + [mB, mC] + ']'
+      '[' + [mB, mC] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1, b: '*', c: 3 }))).to.equal(
-      '[' + [mC] + ']'
+      '[' + [mC] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1, b: '*', c: '*' }))).to.equal(
-      '[' + [mC] + ']'
+      '[' + [mC] + ']',
     )
 
     expect(JSON.stringify(p1.list({ a: 1, c: '*' }))).to.equal('[' + [mC] + ']')
@@ -742,7 +742,7 @@ a:
 
     expect(JSON.stringify(p1.list())).to.equal('[' + [mA, mB, mC, mD] + ']')
     expect(JSON.stringify(p1.list({ a: 1 }))).to.equal(
-      '[' + [mA, mB, mC, mD] + ']'
+      '[' + [mA, mB, mC, mD] + ']',
     )
     expect(JSON.stringify(p1.list({ d: 4 }))).to.equal('[' + [mD] + ']')
     expect(JSON.stringify(p1.list({ a: 1, d: 4 }))).to.equal('[' + [mD] + ']')
@@ -753,10 +753,10 @@ a:
     var mCC = '{"match":{"a":"1","c":"33"},"data":"CC"}'
 
     expect(JSON.stringify(p1.list())).to.equal(
-      '[' + [mA, mB, mC, mCC, mD] + ']'
+      '[' + [mA, mB, mC, mCC, mD] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1 }))).to.equal(
-      '[' + [mA, mB, mC, mCC, mD] + ']'
+      '[' + [mA, mB, mC, mCC, mD] + ']',
     )
 
     expect(JSON.stringify(p1.list({ d: 4 }))).to.equal('[' + [mD] + ']')
@@ -767,7 +767,7 @@ a:
     expect(JSON.stringify(p1.list({ c: 33 }))).to.equal('[' + [mCC] + ']')
     expect(JSON.stringify(p1.list({ a: 1, c: 33 }))).to.equal('[' + [mCC] + ']')
     expect(JSON.stringify(p1.list({ a: 1, c: '*' }))).to.equal(
-      '[' + [mC, mCC] + ']'
+      '[' + [mC, mCC] + ']',
     )
     expect(JSON.stringify(p1.list({ c: '*' }))).to.equal('[' + [mC, mCC] + ']')
 
@@ -775,17 +775,17 @@ a:
     expect(JSON.stringify(p1.list({ a: 1 }, true))).to.equal('[' + [mA] + ']')
     expect(JSON.stringify(p1.list({ a: '*' }, true))).to.equal('[' + [mA] + ']')
     expect(JSON.stringify(p1.list({ a: 1, b: 2 }, true))).to.equal(
-      '[' + [mB] + ']'
+      '[' + [mB] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1, b: '*' }, true))).to.equal(
-      '[' + [mB] + ']'
+      '[' + [mB] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1, c: 3 }, true))).to.equal('[]')
     expect(JSON.stringify(p1.list({ a: 1, c: 33 }, true))).to.equal(
-      '[' + [mCC] + ']'
+      '[' + [mCC] + ']',
     )
     expect(JSON.stringify(p1.list({ a: 1, c: '*' }, true))).to.equal(
-      '[' + [mCC] + ']'
+      '[' + [mCC] + ']',
     )
   })
 

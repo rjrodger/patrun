@@ -48,32 +48,32 @@ salestax
 console.log('Default rate: ' + salestax.find({})(99))
 
 console.log(
-  'Standard rate in Ireland on E99: ' + salestax.find({ country: 'IE' })(99)
+  'Standard rate in Ireland on E99: ' + salestax.find({ country: 'IE' })(99),
 )
 
 console.log(
   'Food rate in Ireland on E99:     ' +
-    salestax.find({ country: 'IE', type: 'food' })(99)
+    salestax.find({ country: 'IE', type: 'food' })(99),
 )
 
 console.log(
   'Reduced rate in Germany on E99:  ' +
-    salestax.find({ country: 'IE', type: 'reduced' })(99)
+    salestax.find({ country: 'IE', type: 'reduced' })(99),
 )
 
 console.log(
   'Standard rate in Alabama on $99: ' +
-    salestax.find({ country: 'US', state: 'AL' })(99)
+    salestax.find({ country: 'US', state: 'AL' })(99),
 )
 
 console.log(
   'Standard rate in Montgomery, Alabama on $99: ' +
-    salestax.find({ country: 'US', state: 'AL', city: 'Montgomery' })(99)
+    salestax.find({ country: 'US', state: 'AL', city: 'Montgomery' })(99),
 )
 
 console.log(
   'Reduced rate in New York for clothes on $99: ' +
-    salestax.find({ country: 'US', state: 'NY', type: 'reduced' })(99)
+    salestax.find({ country: 'US', state: 'NY', type: 'reduced' })(99),
 )
 
 // prints:
@@ -89,7 +89,7 @@ console.log(
 console.log(
   salestax.toString(function (f) {
     return f.name + ':' + f.val
-  })
+  }),
 )
 
 pm = patrun().add({ a: 1, b: 1 }, 'B1').add({ a: 1, b: 2 }, 'B2')

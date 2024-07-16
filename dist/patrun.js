@@ -1,7 +1,8 @@
 "use strict";
 /* Copyright (c) 2013-2022 Richard Rodger, MIT License */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Gex = exports.Patrun = void 0;
+exports.Gex = void 0;
+exports.Patrun = Patrun;
 // TODO: matchers should accept string[] of key names - only operate on these keys
 // TODO: expose walk as method for general purpose
 const gex_1 = require("gex");
@@ -373,7 +374,6 @@ function Patrun(custom) {
     };
     return self;
 }
-exports.Patrun = Patrun;
 function make(custom) {
     return new Patrun(custom);
 }

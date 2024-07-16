@@ -61,7 +61,7 @@ function Patrun(custom?: any) {
 
       let mv: MatchValue | undefined = matchers.reduce(
         (m, t) => m || t.make(key, fix),
-        undefined
+        undefined,
       )
 
       // if (mv) mv.val$ = fix
@@ -315,7 +315,7 @@ function Patrun(custom?: any) {
       if (keymap.v) {
         var key = keymap.k
         var gexval = Gex(
-          pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*'
+          pat ? (null == pat[key] ? (exact ? null : '*') : pat[key]) : '*',
         )
         var itermatch = { ...match }
         var itermissing = { ...missing }
@@ -352,7 +352,7 @@ function Patrun(custom?: any) {
                 nextkeymap,
                 { ...valitermatch },
                 { ...valitermissing },
-                acc
+                acc,
               )
             }
           }
@@ -478,14 +478,14 @@ function Patrun(custom?: any) {
         if ('function' === typeof val) return '[Function]'
         return val
       },
-      indent
+      indent,
     )
   }
 
   return self
 }
 
-function make(custom: any) {
+function make(custom?: any) {
   return new (Patrun as any)(custom)
 }
 

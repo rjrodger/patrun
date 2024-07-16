@@ -49,7 +49,7 @@ exports.GexMatcher = GexMatcher;
 // TODO: non-Number types: special case
 // NOTE: '/' == '\\'
 const IntervalRE = new RegExp([
-    '^/s*',
+    '^/s*', // optional whitespace
     '(=*[<>/(/[]?=*)?' + // 1, lenient operator symbol
         '/s*' + // optional whitespace
         '([-+0-9a-fA-FeEoOxX]+(/.([0-9a-fA-FeEoOxX]+))?)' + // 2,3,4 number

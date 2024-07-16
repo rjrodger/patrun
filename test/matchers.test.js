@@ -411,7 +411,7 @@ describe('matchers', function () {
         jm`n0:3,o0:gt,n1:4,o1:lt`,
         jm`n0:1,o0:gt,n1:2,o1:lt`,
         jm`n0:5,o0:gt,n1:6,o1:lt`,
-      ])
+      ]),
     ).equal([
       j`n:1,o:gt`,
       j`n:2,o:lt`,
@@ -428,7 +428,7 @@ describe('matchers', function () {
         jm`n0:1,o0:gt,n1:2,o1:lte`,
         jm`n0:3,o0:gt,n1:4,o1:lte`,
         jm`n0:3,o0:gt,n1:4,o1:lt`,
-      ])
+      ]),
     ).equal([
       j`n:1,o:gt`,
       j`n:2,o:lt`,
@@ -456,7 +456,7 @@ describe('matchers', function () {
         jm`n0:1,o0:gte,n1:2,o1:lt`,
         jm`n0:3,o0:gte,n1:4,o1:lt`,
         jm`n0:3,o0:gt,n1:4,o1:lt`,
-      ])
+      ]),
     ).equal([
       j`n:1,o:gte`,
       j`n:2,o:lt`,
@@ -479,7 +479,7 @@ describe('matchers', function () {
         jm`n0:7,o0:gte,n1:8,o1:lt`,
         jm`n0:7,o0:gt,n1:8,o1:lt`,
         jm`n0:5,o0:gte,n1:6,o1:lt`,
-      ])
+      ]),
     ).equal([
       j`n:1,o:gt`,
       j`n:2,o:lt`,
