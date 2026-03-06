@@ -1,0 +1,51 @@
+# Star backtrack and key insertion ordering tests
+# These target uncovered code paths for star path traversal
+
+# Star backtrack: when a key doesn't match, follow star path
+add	{"a":"1","c":"1"}	AC11
+add	{"b":"1","c":"1"}	BC11
+find	{"a":"1","c":"1"}	AC11
+find	{"b":"1","c":"1"}	BC11
+find	{"a":"1","b":"1","c":"1"}	AC11
+clear
+
+# Insert key before existing with star and gex paths (targets lines 88-89)
+# Build up: c has data, then b,c which creates star at b level, then a,c inserts before b
+clear	{}		{"gex":true}
+add	{"c":"1"}	C1
+add	{"b":"x*","c":"1"}	BXSTARC1
+add	{"a":"1","c":"1"}	A1C1
+find	{"a":"1","c":"1"}	A1C1
+find	{"b":"xy","c":"1"}	BXSTARC1
+find	{"c":"1"}	C1
+clear	{}		{"gex":true}
+
+# Deep star backtrack with multiple levels
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1","b":"1","c":"1"}	ABC111
+add	{"b":"1","c":"1"}	BC11
+find	{"a":"1","b":"1","c":"1"}	ABC111
+find	{"a":"2","b":"1","c":"1"}	BC11
+clear
+
+# Key ordering: insert in reverse alphabetical order
+add	{"c":"1"}	C1
+add	{"b":"1"}	B1
+add	{"a":"1"}	A1
+find	{"a":"1"}	A1
+find	{"b":"1"}	B1
+find	{"c":"1"}	C1
+clear
+
+# Complex star path with s and g propagation
+clear	{}		{"gex":true}
+add	{"b":"1"}	B1
+add	{"b":"1","c":"1"}	B1C1
+add	{"b":"x*"}	BXSTAR
+add	{"a":"1","b":"1"}	A1B1
+find	{"a":"1","b":"1"}	A1B1
+find	{"b":"1"}	B1
+find	{"b":"1","c":"1"}	B1C1
+find	{"b":"xy"}	BXSTAR
+clear	{}		{"gex":true}

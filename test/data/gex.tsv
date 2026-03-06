@@ -1,0 +1,51 @@
+# Gex (glob expression) matcher tests
+# Columns: operation	pattern (JSON)	data	expected	options (JSON, optional)
+# Use options {"gex":true} on clear to create gex-enabled instance
+
+# Basic gex wildcard
+clear	{}		{"gex":true}
+add	{"a":"1*"}	A1STAR
+find	{"a":"10"}	A1STAR
+find	{"a":"1x"}	A1STAR
+find	{"a":"1"}	A1STAR
+find	{"a":"2"}	null
+clear	{}		{"gex":true}
+
+# Gex with exact values mixed
+add	{"a":"1"}	A1
+add	{"a":"2*"}	A2STAR
+find	{"a":"1"}	A1
+find	{"a":"20"}	A2STAR
+find	{"a":"2abc"}	A2STAR
+find	{"a":"3"}	null
+clear	{}		{"gex":true}
+
+# Gex question mark
+add	{"a":"1?"}	A1Q
+find	{"a":"1a"}	A1Q
+find	{"a":"1z"}	A1Q
+find	{"a":"1"}	null
+find	{"a":"1ab"}	null
+clear	{}		{"gex":true}
+
+# Gex with multi-key
+add	{"a":"1*","b":"2"}	A1STARB2
+find	{"a":"10","b":"2"}	A1STARB2
+find	{"a":"1x","b":"2"}	A1STARB2
+find	{"a":"10","b":"3"}	null
+clear	{}		{"gex":true}
+
+# Multiple gex patterns
+add	{"a":"x*"}	AX
+add	{"a":"y*"}	AY
+find	{"a":"x1"}	AX
+find	{"a":"y1"}	AY
+find	{"a":"z1"}	null
+clear	{}		{"gex":true}
+
+# Gex remove
+add	{"a":"1*"}	A1STAR
+find	{"a":"1x"}	A1STAR
+remove	{"a":"1*"}
+find	{"a":"1x"}	null
+clear	{}		{"gex":true}

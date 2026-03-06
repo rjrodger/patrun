@@ -1,0 +1,31 @@
+# Collect mode tests (find with collect=true returns array of all matching data)
+# Columns: operation	pattern (JSON)	data	expected
+# For collect operations, expected is a JSON array
+
+# Basic collect
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+collect	{"a":"1","b":"1"}	["A1","AB11"]
+clear
+
+# Collect with root
+add	{}	ROOT
+add	{"a":"1"}	A1
+collect	{"a":"1"}	["ROOT","A1"]
+collect	{"a":"2"}	["ROOT"]
+collect	{}	["ROOT"]
+clear
+
+# Collect multiple levels
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1","b":"1","c":"1"}	ABC111
+collect	{"a":"1","b":"1","c":"1"}	["A1","AB11","ABC111"]
+collect	{"a":"1","b":"1"}	["A1","AB11"]
+collect	{"a":"1"}	["A1"]
+clear
+
+# Collect with no matches
+add	{"a":"1"}	A1
+collect	{"b":"1"}	[]
+clear

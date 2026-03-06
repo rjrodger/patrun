@@ -1,0 +1,139 @@
+# Interval matcher tests
+# Columns: operation	pattern (JSON)	data	expected	options (JSON, optional)
+# Use options {"interval":true} on clear to create interval-enabled instance
+
+# Basic greater than
+clear	{}		{"interval":true}
+add	{"a":">10"}	GT10
+find	{"a":"11"}	GT10
+find	{"a":"20"}	GT10
+find	{"a":"10"}	null
+find	{"a":"5"}	null
+clear	{}		{"interval":true}
+
+# Basic less than
+add	{"a":"<10"}	LT10
+find	{"a":"9"}	LT10
+find	{"a":"5"}	LT10
+find	{"a":"10"}	null
+find	{"a":"15"}	null
+clear	{}		{"interval":true}
+
+# Greater than or equal
+add	{"a":">=10"}	GTE10
+find	{"a":"10"}	GTE10
+find	{"a":"11"}	GTE10
+find	{"a":"9"}	null
+clear	{}		{"interval":true}
+
+# Less than or equal
+add	{"a":"<=10"}	LTE10
+find	{"a":"10"}	LTE10
+find	{"a":"9"}	LTE10
+find	{"a":"11"}	null
+clear	{}		{"interval":true}
+
+# Range with AND
+add	{"a":">10&<20"}	BETWEEN
+find	{"a":"15"}	BETWEEN
+find	{"a":"11"}	BETWEEN
+find	{"a":"19"}	BETWEEN
+find	{"a":"10"}	null
+find	{"a":"20"}	null
+find	{"a":"5"}	null
+find	{"a":"25"}	null
+clear	{}		{"interval":true}
+
+# Range with inclusive bounds
+add	{"a":">=10&<=20"}	RANGE
+find	{"a":"10"}	RANGE
+find	{"a":"15"}	RANGE
+find	{"a":"20"}	RANGE
+find	{"a":"9"}	null
+find	{"a":"21"}	null
+clear	{}		{"interval":true}
+
+# Bracket notation
+add	{"a":"[10,20]"}	CLOSED
+find	{"a":"10"}	CLOSED
+find	{"a":"15"}	CLOSED
+find	{"a":"20"}	CLOSED
+find	{"a":"9"}	null
+find	{"a":"21"}	null
+clear	{}		{"interval":true}
+
+# Open bracket notation
+add	{"a":"(10,20)"}	OPEN
+find	{"a":"15"}	OPEN
+find	{"a":"11"}	OPEN
+find	{"a":"19"}	OPEN
+find	{"a":"10"}	null
+find	{"a":"20"}	null
+clear	{}		{"interval":true}
+
+# Half-open intervals
+add	{"a":"[10,20)"}	HALFOPEN
+find	{"a":"10"}	HALFOPEN
+find	{"a":"15"}	HALFOPEN
+find	{"a":"19"}	HALFOPEN
+find	{"a":"20"}	null
+find	{"a":"9"}	null
+clear	{}		{"interval":true}
+
+# OR intervals (targets gap detection in matchers.js lines 276-286)
+add	{"a":"<=10||>=20"}	OUTSIDE
+find	{"a":"5"}	OUTSIDE
+find	{"a":"10"}	OUTSIDE
+find	{"a":"20"}	OUTSIDE
+find	{"a":"25"}	OUTSIDE
+find	{"a":"15"}	null
+clear	{}		{"interval":true}
+
+# Same-number boundary OR (targets hn===un branch in scan, lines 276-286)
+add	{"a":"<10||>10"}	NOT10
+find	{"a":"5"}	NOT10
+find	{"a":"15"}	NOT10
+find	{"a":"10"}	null
+clear	{}		{"interval":true}
+
+# Same-number boundary with equal
+add	{"a":"<=10||>10"}	ALL
+find	{"a":"5"}	ALL
+find	{"a":"10"}	ALL
+find	{"a":"15"}	ALL
+clear	{}		{"interval":true}
+
+# Same-number with ueq/ult/ulte gap (targets matchers.js lines 276-282)
+add	{"a":">10||<=10"}	ALLGAP
+find	{"a":"5"}	ALLGAP
+find	{"a":"10"}	ALLGAP
+find	{"a":"15"}	ALLGAP
+clear	{}		{"interval":true}
+
+# Same-number both > directions (targets matchers.js lines 283-286 overlap)
+add	{"a":">10||>10"}	GTGT
+find	{"a":"15"}	GTGT
+find	{"a":"10"}	null
+clear	{}		{"interval":true}
+
+# >=10 || >=10
+add	{"a":">=10||>=10"}	GTEGTE
+find	{"a":"10"}	GTEGTE
+find	{"a":"15"}	GTEGTE
+find	{"a":"9"}	null
+clear	{}		{"interval":true}
+
+# Interval with multi-key
+add	{"a":">10","b":"1"}	GT10B1
+find	{"a":"15","b":"1"}	GT10B1
+find	{"a":"15","b":"2"}	null
+find	{"a":"5","b":"1"}	null
+clear	{}		{"interval":true}
+
+# Interval with gex combined
+clear	{}		{"interval":true,"gex":true}
+add	{"a":">10","b":"x*"}	GT10BX
+find	{"a":"15","b":"xyz"}	GT10BX
+find	{"a":"15","b":"abc"}	null
+find	{"a":"5","b":"xyz"}	null
+clear	{}		{"interval":true}

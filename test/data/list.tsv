@@ -1,0 +1,34 @@
+# List tests
+# Columns: operation	pattern (JSON)	data	expected
+# For list operations, expected is a JSON array of {match, data} objects
+
+# Basic list
+add	{"a":"1"}	A1
+add	{"a":"2"}	A2
+list	{}	[{"match":{"a":"1"},"data":"A1"},{"match":{"a":"2"},"data":"A2"}]
+clear
+
+# List with filter
+add	{"a":"1"}	A1
+add	{"a":"2"}	A2
+add	{"b":"1"}	B1
+list	{"a":"1"}	[{"match":{"a":"1"},"data":"A1"}]
+clear
+
+# List multi-key
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1","b":"2"}	AB12
+add	{"a":"2","b":"1"}	AB21
+list	{"a":"1"}	[{"match":{"a":"1","b":"1"},"data":"AB11"},{"match":{"a":"1","b":"2"},"data":"AB12"}]
+clear
+
+# List with root data
+add	{}	ROOT
+add	{"a":"1"}	A1
+list	{}	[{"match":{},"data":"ROOT"},{"match":{"a":"1"},"data":"A1"}]
+clear
+
+# List all empty filter
+add	{"a":"1","b":"1"}	AB11
+list	{}	[{"match":{"a":"1","b":"1"},"data":"AB11"}]
+clear

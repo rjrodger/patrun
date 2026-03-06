@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "src",
     "target": "ES2019",
     "module": "commonjs",
     "sourceMap": true,
@@ -10,7 +11,11 @@
     "strictPropertyInitialization": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "declaration": true
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "dist",
     "node_modules"
