@@ -1,0 +1,48 @@
+# Remove tests
+# Columns: operation	pattern (JSON)	data	expected
+
+# Basic remove
+add	{"a":"1"}	A1
+find	{"a":"1"}	A1
+remove	{"a":"1"}
+find	{"a":"1"}	null
+clear
+
+# Remove one of many
+add	{"a":"1"}	A1
+add	{"a":"2"}	A2
+remove	{"a":"1"}
+find	{"a":"1"}	null
+find	{"a":"2"}	A2
+clear
+
+# Remove with multiple keys
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1","b":"2"}	AB12
+find	{"a":"1","b":"1"}	AB11
+remove	{"a":"1","b":"1"}
+find	{"a":"1","b":"1"}	null
+find	{"a":"1","b":"2"}	AB12
+clear
+
+# Remove does not affect wider matches
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+remove	{"a":"1","b":"1"}
+find	{"a":"1","b":"1"}	A1
+find	{"a":"1"}	A1
+clear
+
+# Remove non-existent pattern (no-op)
+add	{"a":"1"}	A1
+remove	{"a":"2"}
+find	{"a":"1"}	A1
+clear
+
+# Remove intermediate pattern preserves narrower
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+remove	{"a":"1"}
+find	{"a":"1"}	null
+find	{"a":"1","b":"1"}	AB11
+clear

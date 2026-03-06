@@ -1,0 +1,32 @@
+# Exact find tests
+# Columns: operation	pattern (JSON)	data	expected	options (JSON, optional)
+
+# Basic exact match
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+findexact	{"a":"1"}	A1
+findexact	{"a":"1","b":"1"}	AB11
+findexact	{"a":"1","b":"2"}	null
+findexact	{"b":"1"}	null
+findexact	{}	null
+clear
+
+# Exact match does not fall back to wider match
+add	{"a":"1"}	A1
+findexact	{"a":"1","b":"1"}	null
+findexact	{"a":"1"}	A1
+clear
+
+# Root data exact match
+add	{}	ROOT
+findexact	{}	ROOT
+findexact	{"a":"1"}	null
+clear
+
+# Multiple keys exact
+add	{"a":"1","b":"2","c":"3"}	ABC123
+findexact	{"a":"1","b":"2","c":"3"}	ABC123
+findexact	{"a":"1","b":"2"}	null
+findexact	{"a":"1"}	null
+findexact	{"a":"1","b":"2","c":"3","d":"4"}	null
+clear

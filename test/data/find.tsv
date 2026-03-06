@@ -1,0 +1,110 @@
+# Basic find tests: add patterns then find
+# Columns: operation	pattern (JSON)	data	expected	options (JSON, optional)
+# Operations: add, find, findexact, remove, clear
+# For find/findexact: expected is the return value (null means null)
+# "clear" resets the patrun instance
+
+# Simple single-key patterns
+add	{"a":"1"}	A1
+add	{"a":"2"}	A2
+find	{"a":"1"}	A1
+find	{"a":"2"}	A2
+find	{"a":"3"}	null
+find	{}	null
+clear
+
+# Two-key patterns
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1","b":"2"}	AB12
+find	{"a":"1","b":"1"}	AB11
+find	{"a":"1","b":"2"}	AB12
+find	{"a":"1","b":"3"}	null
+find	{"a":"1"}	null
+find	{"b":"1"}	null
+clear
+
+# Wider match fallback (non-exact find falls back to wider match)
+add	{"a":"1"}	A1
+add	{"a":"1","b":"1"}	AB11
+find	{"a":"1","b":"1"}	AB11
+find	{"a":"1","b":"2"}	A1
+find	{"a":"1"}	A1
+clear
+
+# Three keys, ordering
+add	{"a":"1","b":"1","c":"1"}	ABC111
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1"}	A1
+find	{"a":"1","b":"1","c":"1"}	ABC111
+find	{"a":"1","b":"1","c":"2"}	AB11
+find	{"a":"1","b":"2"}	A1
+find	{"a":"1"}	A1
+clear
+
+# Root data catch-all (targets uncovered lines 194-195 in patrun.js)
+add	{}	ROOT
+find	{"a":"1"}	ROOT
+find	{"x":"y"}	ROOT
+find	{}	ROOT
+clear
+
+# Root data with specific patterns
+add	{}	ROOT
+add	{"a":"1"}	A1
+find	{"a":"1"}	A1
+find	{"a":"2"}	ROOT
+find	{"b":"1"}	ROOT
+find	{}	ROOT
+clear
+
+# Star path with existing s and g during insertion (targets uncovered lines 88-89)
+# When inserting a key that is alphabetically before an existing key that has both s and g
+add	{"b":"1"}	B1
+add	{"c":"1"}	C1
+add	{"a":"1","c":"1"}	AC11
+find	{"a":"1","c":"1"}	AC11
+find	{"b":"1"}	B1
+find	{"c":"1"}	C1
+clear
+
+# Multiple overlapping patterns with star path
+add	{"c":"1"}	C1
+add	{"b":"1","c":"1"}	BC11
+add	{"a":"1","c":"1"}	AC11
+find	{"a":"1","c":"1"}	AC11
+find	{"b":"1","c":"1"}	BC11
+find	{"c":"1"}	C1
+clear
+
+# Falsy values
+add	{"a":"0"}	ZERO
+add	{"a":""}	EMPTY
+find	{"a":"0"}	ZERO
+find	{"a":""}	EMPTY
+clear
+
+# Multi-value patterns
+add	{"a":"1","b":"1"}	AB11
+add	{"a":"1","b":"2"}	AB12
+add	{"a":"2","b":"1"}	AB21
+add	{"a":"2","b":"2"}	AB22
+find	{"a":"1","b":"1"}	AB11
+find	{"a":"1","b":"2"}	AB12
+find	{"a":"2","b":"1"}	AB21
+find	{"a":"2","b":"2"}	AB22
+find	{"a":"1","b":"3"}	null
+find	{"a":"3","b":"1"}	null
+clear
+
+# Root catch-all when matched pattern stores null data (targets lines 194-195)
+add	{}	ROOT
+add	{"a":"1"}	null
+find	{"a":"1"}	ROOT
+find	{"a":"2"}	ROOT
+clear
+
+# Pattern with extra keys in query (partial match)
+add	{"a":"1"}	A1
+find	{"a":"1","b":"1"}	A1
+find	{"a":"1","b":"2","c":"3"}	A1
+clear
