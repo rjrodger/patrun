@@ -1,6 +1,6 @@
 {
   "name": "patrun",
-  "version": "7.2.7",
+  "version": "7.3.0",
   "main": "dist/patrun.js",
   "types": "dist/patrun.d.ts",
   "description": "A fast pattern matcher on JavaScript object properties.",
