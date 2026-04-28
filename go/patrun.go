@@ -13,6 +13,8 @@ import (
 	gex "github.com/rjrodger/gex/go"
 )
 
+const Version = "0.1.0"
+
 // Matcher produces MatchValues for pattern values that it recognises.
 type Matcher interface {
 	Make(key, fix string) (MatchValue, bool)

@@ -7,411 +7,377 @@
 [![DeepScan grade](https://deepscan.io/api/teams/5016/projects/13789/branches/241950/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=13789&bid=241950)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9d08de0c9c30f0197bcd/maintainability)](https://codeclimate.com/github/rjrodger/patrun/maintainability)
 
+A fast pattern matcher on JavaScript object properties. Builds a
+decision tree so you can pick out the most-specific match for a given
+subject without writing chains of `if` statements. Used by the
+[Seneca](http://senecajs.org) framework to dispatch actions.
 
-### A fast pattern matcher on JavaScript object properties.
+A Go port is also available — see [`go/README.md`](./go/README.md).
 
-Need to pick out an object based on a subset of its properties? Say you've got:
+From the Irish *patrún*: [pattern](http://www.focloir.ie/en/dictionary/ei/pattern). Pronounced *pah-troon*.
 
-```JavaScript
-{ x:1,     } -> A
-{ x:1, y:1 } -> B
-{ x:1, y:2 } -> C
-```
+---
 
-Then patrun can give you the following results:
+## Tutorial: your first patrun
 
-```JavaScript
-{ x:1 }      -> A
-{ x:2 }      -> no match
-{ x:1, y:1 } -> B
-{ x:1, y:2 } -> C
-{ x:2, y:2 } -> no match
-{ y:1 }      -> no match
-```
-
-It's basically _query-by-example_ for property sets.
-
-This module is used by the [Seneca](http://senecajs.org) framework to pattern match actions.
-
-
-
-### Support
-
-If you're using this library, feel free to contact me on twitter if you have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
-
-This module works on both Node.js and browsers.
-
-
-### Quick example
-
-Here's how you register some patterns, and then search for matches:
-
-```JavaScript
-var patrun = require('patrun')
-
-var pm = patrun()
-      .add({a:1},'A')
-      .add({b:2},'B')
-
-// prints A
-console.log( pm.find({a:1}) )
-
-// prints null
-console.log( pm.find({a:2}) )
-
-// prints A, b:1 is ignored, it was never registered
-console.log( pm.find({a:1,b:1}) )
-
-// prints B, c:3 is ignored, it was never registered
-console.log( pm.find({b:2,c:3}) )
-```
-
-You're matching a subset, so your input can contain any number of other properties.
-
-
-## Install
-
-For Node.js:
+Install:
 
 ```sh
 npm install patrun
 ```
 
-For Bower:
+Register a few patterns, then look one up:
 
-```sh
-bower install patrun
+```js
+const patrun = require('patrun')
+
+const pm = patrun()
+  .add({ a: 1 },         'A')
+  .add({ a: 1, b: 1 },   'B')
+  .add({ a: 1, b: 2 },   'C')
+
+pm.find({ a: 1 })           // → 'A'
+pm.find({ a: 2 })           // → null  (no match)
+pm.find({ a: 1, b: 1 })     // → 'B'   (more specific wins)
+pm.find({ a: 1, b: 2 })     // → 'C'
+pm.find({ a: 1, z: 9 })     // → 'A'   (unknown keys ignored)
 ```
 
+The matcher stores patterns in a trie keyed by sorted property names,
+so `find` makes the minimum number of comparisons needed to pick out
+the most specific match. It's _query-by-example_ for property sets.
 
-# The Why
+You're matching a subset, so your input can contain any number of
+extra properties — they're ignored.
 
-This module lets you build a simple decision tree so you can avoid
-writing _if_ statements. It tries to make the minimum number of
-comparisons necessary to pick out the most specific match.
+---
 
-This is very useful for handling situations where you have lots of
-"cases", some of which have "sub-cases", and even "sub-sub-sub-cases".
+## How-to guides
 
-For example, here are some sales tax rules:
+### Pick the most specific match (the default)
 
-   * default: no sales tax
-   * here's a list of countries with known rates: Ireland: 23%, UK: 20%, Germany: 19%, ...
-   * but wait, that's only standard rates, here's [the other rates](http://www.vatlive.com/vat-rates/european-vat-rates/eu-vat-rates/)
-   * Oh, and we also have the USA, where we need to worry about each state...
+The two rules that govern every match:
 
-Do this:
+1. More specific matches beat less specific ones — more matched
+   key/value pairs always win.
+2. Property names are checked in alphabetical order, so insertion
+   order doesn't matter.
 
-```JavaScript
+```js
+const pm = patrun()
+  .add({ a: 0 },          'A')
+  .add({ b: 1 },          'B')
+  .add({ c: 2 },          'C')
+  .add({ a: 0, b: 1 },    'AB')
 
-// queries return a function, in case there is some
-// really custom logic (and there is, see US, NY below)
-// in the normal case, just pass the rate back out with
-// an identity function
-// also record the rate for custom printing later
-function I(val) { var rate = function(){return val}; rate.val=val; return rate }
+pm.find({ a: 0 })            // → 'A'
+pm.find({ a: 0, b: 1 })      // → 'AB'  (more specific than {a:0})
+pm.find({ a: 0, c: 2 })      // → 'A'   (a comes before c)
+pm.find({ b: 1, c: 2 })      // → 'B'   (b comes before c)
+```
 
+### Require all keys to match
 
-var salestax = patrun()
-salestax
-  .add({}, I(0.0) )
+Pass `true` as the second argument to `find` for exact matching —
+every key in the registered pattern must be present in the subject:
 
-  .add({ country:'IE' }, I(0.25) )
-  .add({ country:'UK' }, I(0.20) )
-  .add({ country:'DE' }, I(0.19) )
+```js
+pm.find({ a: 0, b: 1 }, true)  // → 'AB'
+pm.find({ a: 0, b: 9 }, true)  // → null  (b doesn't match)
+```
 
-  .add({ country:'IE', type:'reduced' }, I(0.135) )
-  .add({ country:'IE', type:'food' },    I(0.048) )
+### Collect every match along the path
 
-  .add({ country:'UK', type:'food' },    I(0.0) )
+Pass `true` as the third argument to `find` to get *all* data
+matched on the way down, widest first:
 
-  .add({ country:'DE', type:'reduced' }, I(0.07) )
+```js
+const pm = patrun()
+  .add({},                 'ROOT')
+  .add({ a: 1 },           'A')
+  .add({ a: 1, b: 1 },     'AB')
 
-  .add({ country:'US' }, I(0.0) ) // no federeal rate (yet!)
+pm.find({ a: 1, b: 1 }, false, true)
+// → ['ROOT', 'A', 'AB']
+```
 
-  .add({ country:'US', state:'AL' }, I(0.04) )
-  .add({ country:'US', state:'AL', city:'Montgomery' }, I(0.10) )
+### Match values with glob expressions
 
-  .add({ country:'US', state:'NY' }, I(0.07) )
-  .add({ country:'US', state:'NY', type:'reduced' }, function under110(net){
-    return net < 110 ? 0.0 : salestax.find( {country:'US', state:'NY'} )
+Enable the `gex` matcher to use `*` and `?` wildcards in pattern
+values (powered by [gex](https://github.com/rjrodger/gex)):
+
+```js
+const pm = patrun({ gex: true })
+  .add({ a: 0 },              'A')
+  .add({ a: '*' },            'AA')
+  .add({ b: 1, c: 'x*y' },    'BC')
+
+pm.find({ a: 0 })             // → 'A'   exact
+pm.find({ a: 1 })             // → 'AA'  glob
+pm.find({ b: 1, c: 'xhy' })   // → 'BC'  exact + glob
+```
+
+Exact matches beat glob matches; otherwise the more-specific rule
+applies as usual. See the
+[multi-gex test](https://github.com/rjrodger/patrun/blob/master/test/patrun.test.js)
+for funky examples.
+
+### Build a decision tree of business rules
+
+A larger example — sales-tax rules with country, state, city, and
+type overrides:
+
+```js
+function I(val) { const rate = () => val; rate.val = val; return rate }
+
+const salestax = patrun()
+  .add({},                                           I(0.0))
+
+  .add({ country: 'IE' },                            I(0.25))
+  .add({ country: 'UK' },                            I(0.20))
+  .add({ country: 'DE' },                            I(0.19))
+
+  .add({ country: 'IE', type: 'reduced' },           I(0.135))
+  .add({ country: 'IE', type: 'food' },              I(0.048))
+  .add({ country: 'UK', type: 'food' },              I(0.0))
+  .add({ country: 'DE', type: 'reduced' },           I(0.07))
+
+  .add({ country: 'US' },                            I(0.0))
+  .add({ country: 'US', state: 'AL' },               I(0.04))
+  .add({ country: 'US', state: 'AL', city: 'Montgomery' }, I(0.10))
+  .add({ country: 'US', state: 'NY' },               I(0.07))
+  .add({ country: 'US', state: 'NY', type: 'reduced' }, function under110(net) {
+    return net < 110 ? 0.0 : salestax.find({ country: 'US', state: 'NY' })
   })
 
-
-console.log('Default rate: ' +
-            salestax.find({})(99) )
-
-console.log('Standard rate in Ireland on E99: ' +
-            salestax.find({country:'IE'})(99) )
-
-console.log('Food rate in Ireland on E99:     ' +
-            salestax.find({country:'IE',type:'food'})(99) )
-
-console.log('Reduced rate in Germany on E99:  ' +
-            salestax.find({country:'IE',type:'reduced'})(99) )
-
-console.log('Standard rate in Alabama on $99: ' +
-            salestax.find({country:'US',state:'AL'})(99) )
-
-console.log('Standard rate in Montgomery, Alabama on $99: ' +
-            salestax.find({country:'US',state:'AL',city:'Montgomery'})(99) )
-
-console.log('Reduced rate in New York for clothes on $99: ' +
-            salestax.find({country:'US',state:'NY',type:'reduced'})(99) )
-
-
-// prints:
-// Default rate: 0
-// Standard rate in Ireland on E99: 0.25
-// Food rate in Ireland on E99:     0.048
-// Reduced rate in Germany on E99:  0.135
-// Standard rate in Alabama on $99: 0.04
-// Standard rate in Montgomery, Alabama on $99: 0.1
-// Reduced rate in New York for clothes on $99: 0
+salestax.find({ country: 'IE', type: 'food' })(99)            // 0.048
+salestax.find({ country: 'US', state: 'AL', city: 'Montgomery' })(99) // 0.1
 ```
 
-You can take a look a the decision tree at any time:
+### List every registered pattern
 
-```JavaScript
+Pass no argument (or an empty object) to `list` to dump everything:
 
-// print out patterns, using a custom format function
-console.log(salestax.toString( function(f){return f.name+':'+f.val} ))
-
-
-// prints:
- -> :0
-city=Montgomery, country=US, state=AL -> :0.1
-country=IE -> :0.25
-country=IE, type=reduced -> :0.135
-country=IE, type=food -> :0.048
-country=UK -> :0.2
-country=UK, type=food -> :0
-country=DE -> :0.19
-country=DE, type=reduced -> :0.07
-country=US -> :0
-country=US, state=AL -> :0.04
-country=US, state=NY -> :0.07
-country=US, state=NY, type=reduced -> under110:undefined
+```js
+pm.list()
 ```
 
+Pass a partial pattern to filter:
 
-# The Rules
+```js
+const pm = patrun()
+  .add({ a: 1, b: 1 }, 'B1')
+  .add({ a: 1, b: 2 }, 'B2')
 
-   * 1: More specific matches beat less specific matches. That is, more property values beat fewer.
-   * 2: Property names are checked in alphabetical order.
+pm.list({ a: 1 })
+// [ { match: { a: '1', b: '1' }, data: 'B1' },
+//   { match: { a: '1', b: '2' }, data: 'B2' } ]
 
-And that's it.
+pm.list({ a: 1, b: '*' })   // wildcards allowed
+pm.list({ a: 1, c: 1 })     // []  (no matches)
+```
 
-OK, some examples might help! Let's say you have patterns:
+Omitted keys are *not* equivalent to `'*'` — you must specify each
+key you want to filter on.
 
-   * `a:0` -> `'A'`
-   * `b:1` -> `'B'`
-   * `c:2` -> `'C'`
-   * `a:0,b:1` -> `'AB'`
+### Remove a pattern
 
-Then you'll get the following results
-  
-   * `a:0` -> `'A'` as exact match
-   * `b:1` -> `'B'` as exact match
-   * `c:2` -> `'C'` as exact match
-   * `a:0,b:1` -> `'AB'` as more specific than `a:0`
-   * `a:0,c:2` -> `'A'` as `a` comes before `c`
-   * `b:1,c:2` -> `'B'` as `b` comes before `c`
+```js
+pm.remove({ a: 1, b: 1 })
+```
 
+### Customise stored data
 
-# Glob matching
+Pass a function as the constructor argument to wrap stored data. It
+runs at `add` time and may return a transform applied at `find` time
+(plus an optional remove handler).
 
-You can also have glob matching using
-[gex](https://github.com/rjrodger/gex). Create a new patrun instance
-with:
+Add a constant property to every stored pattern:
 
-`js
-var glob_patterns = patrun({gex:true})
-`
-
-This extends the rules with glob matching:
-
-   * `a:0` -> `'A'`
-   * `a:*` -> `'AA'`
-   * `b:1,c:x*y` -> `'BC'`
-
-So that you can do this:
-
-   * `a:0` -> `'A'` as exact match
-   * `a:1` -> `'AA'` as glob match `a:*`
-   * `b:1,c:xhy` -> `'BC'` as exact `b:1` and glob `c:x*y`
-
-As always, more specific matches win, and matches are disambiguated
-using alphanumeric sorting, so it doesn't matter what order you add
-them. Exact matches are considered more specific than globs. See the
-tests for an [example
-(multi-gex)](https://github.com/rjrodger/patrun/blob/master/test/patrun.spec.js#L741).
-
-
-# Customization
-
-You can customize the way that data is stored. For example, you might want to add a constant property to each pattern.
-
-To do this, you provide a custom function when you create the _patrun_ object:
-
-```JavaScript
-var alwaysAddFoo = patrun( function(pat){
+```js
+const alwaysAddFoo = patrun(function (pat) {
   pat.foo = true
 })
 
-alwaysAddFoo.add( {a:1}, "bar" )
-
-alwaysAddFoo.find( {a:1} ) // nothing!
-alwaysAddFoo.find( {a:1,foo:true} ) // == "bar"
+alwaysAddFoo.add({ a: 1 }, 'bar')
+alwaysAddFoo.find({ a: 1 })             // null
+alwaysAddFoo.find({ a: 1, foo: true })  // 'bar'
 ```
 
-Your custom function can also return a modifer function for found
-data, and optionally a modifier for removing data.
+Transform found data:
 
-Here's an example that modifies found data:
-
-```JavaScript
-var upperify = patrun( function(pat){
-  return function(args,data) {
-    return (''+data).toUpperCase()
+```js
+const upperify = patrun(function (pat) {
+  return function (args, data) {
+    return ('' + data).toUpperCase()
   }
 })
 
-upperify.add( {a:1}, "bar" )
-
-upperify.find( {a:1} ) // BAR
+upperify.add({ a: 1 }, 'bar')
+upperify.find({ a: 1 })  // 'BAR'
 ```
 
-Finally, here's an example that allows you to add multiple matches for a given pattern:
+Allow multiple matches per pattern:
 
-```JavaScript
-var many = patrun( function(pat,data){
-  var items = this.find(pat,true) || []
+```js
+const many = patrun(function (pat, data) {
+  const items = this.find(pat, true) || []
   items.push(data)
 
   return {
-    find: function(args,data){
-      return 0 < items.length ? items : null
-    },
-    remove: function(args,data){
-      items.pop()
-      return 0 == items.length;
-    }
+    find:   (args, data) => items.length ? items : null,
+    remove: (args, data) => { items.pop(); return items.length === 0 }
   }
 })
 
-many.add( {a:1}, 'A' )
-many.add( {a:1}, 'B' )
-many.add( {b:1}, 'C' )
-
-many.find( {a:1} ) // [ 'A', 'B' ]
-many.find( {b:1} ) // [ 'C' ]
-
-many.remove( {a:1} )
-many.find( {a:1} ) // [ 'A' ]
-
-many.remove( {b:1} )
-many.find( {b:1} ) // null
+many.add({ a: 1 }, 'A')
+many.add({ a: 1 }, 'B')
+many.find({ a: 1 })   // ['A', 'B']
+many.remove({ a: 1 })
+many.find({ a: 1 })   // ['A']
 ```
 
-Check out the [_custom-gex_ test case](https://github.com/rjrodger/patrun/blob/master/test/patrun.spec.js#L324) for some really funky pattern matching using * globs.
+### Inspect the decision tree
 
+`toString` renders the tree as a flat list of patterns and their
+data, optionally with a custom formatter:
 
-# API
-
-## patrun( custom )
-
-Generates a new pattern matcher instance. Optionally provide a customisation function.
-
-
-## .add( {...pattern...}, object )
-
-Register a pattern, and the object that will be returned if an input
-matches.  Both keys and values are considered to be strings. Other
-types are converted to strings.
-
-## .find( {...subject...}, exact, collect )
-
-Return the unique match for this subject, or null if not found. The
-properties of the subject are matched against the patterns previously
-added, and the most specifc pattern wins. Unknown properties in the
-subject are ignored. You can optionally provide a second boolean
-parameter, _exact_. If true, then all properties of the subject must
-match.
-
-If the optional third boolean parameter _collect_ is true, then `find`
-returns an array of all sub matches (i.e run `find` on each element of
-the power set of the subject pattern elements, and collate in breadth
-first order). Thus `{a:1,b:2}` will generate
-`{a:1}`,`{b:2}`,`{a:1,b:2}` searches. If _exact_ is true, only
-increasing sub patterns in lexicographical order are chosen. Thus
-`{a:1,b:2}` will generate `{a:1}`,`{a:1,b:2}`, omitting `{b:2}`. (You
-probably want to set _exact_ to false!).
-
-
-## .list( {...pattern-partial...}, exact)
-
-Return the list of registered patterns that contain this partial
-pattern. You can use wildcards for property values.  Omitted values
-are *not* equivalent to a wildcard of _"*"_, you must specify each
-property explicitly. You can optionally provide a second boolean
-parameter, _exact_. If true, then only those patterns matching the
-pattern-partial exactly are returned.
-
-```JavaScript
-pm = patrun()
-  .add({a:1,b:1},'B1')
-  .add({a:1,b:2},'B2')
-
-// finds: 
-// [ { match: { a: '1', b: '1' }, data: 'B1' },
-//   { match: { a: '1', b: '2' }, data: 'B2' } ]
-console.log( pm.list({a:1}) )
-
-// finds:
-// [ { match: { a: '1', b: '1' }, data: 'B1' },
-//   { match: { a: '1', b: '2' }, data: 'B2' } ]
-console.log( pm.list({a:1,b:'*'}) )
-
-// finds nothing: []
-console.log( pm.list({a:1, c:1}) )
+```js
+console.log(salestax.toString(f => f.name + ':' + f.val))
+//  -> :0
+// city=Montgomery, country=US, state=AL -> :0.1
+// country=IE -> :0.25
+// country=IE, type=food -> :0.048
+// ...
 ```
 
-If you provide no pattern argument at all, _list_ will list all patterns that have been added.
-```JavaScript
-// finds everything
-console.log( pm.list() )
-```
+`toJSON(indent)` returns the raw internal trie as JSON, useful for
+debugging.
 
-## .remove( {...pattern...} )
+---
 
-Remove this pattern, and it's object, from the matcher.
+## Reference
 
+### `patrun(custom?)`
 
-## .toString( func, tree )
+Create a new pattern matcher. `custom` may be:
 
-Generate a string representation of the decision tree for debugging. Optionally provide a formatting function for objects.
+- omitted — plain matcher.
+- `{ gex: true }` — enable `*` / `?` glob matching on values.
+- a function — runs at every `add` to rewrite the pattern and
+  optionally return a `find` transform / `remove` handler. See
+  [Customise stored data](#customise-stored-data).
 
-   * func: format function for data, optional
-   * tree: boolean flag, if true, print an indented tree rather than a list of patterns, default: false
+### `.add(pattern, data)`
 
-## .toJSON( indent )
+Register `pattern` (object of strings — other types are coerced) and
+its associated `data`. Returns the matcher for chaining.
 
-Generate JSON representation of the tree.
+### `.find(subject, exact?, collect?)`
 
+Look up the most-specific match for `subject`. Unknown keys in
+`subject` are ignored.
 
-# Development
+- `exact` *(boolean, default `false`)* — require all pattern keys to
+  be present and equal in `subject`.
+- `collect` *(boolean, default `false`)* — return an array of every
+  data value matched along the way (widest first) instead of a single
+  value. With `collect=true` and `exact=false`, every sub-pattern of
+  `subject` is searched. With `exact=true`, only sub-patterns in
+  lexicographic order are considered.
 
-From the Irish patr&uacute;n: [pattern](http://www.focloir.ie/en/dictionary/ei/pattern). Pronounced _pah-troon_.
+Returns the data, or `null` if no pattern matched.
 
-sudo npm install phantomjs@1.9.1-0 uglify-js -g
+### `.findexact(subject)`
+
+Shorthand for `.find(subject, true)`.
+
+### `.list(partial?, exact?)`
+
+Return all registered patterns matching `partial` (a partial pattern;
+values may be globs). Omitted keys are *not* wildcards. With no
+argument, lists every registered pattern. Returns an array of
+`{ match, data, find }`.
+
+### `.remove(pattern)`
+
+Clear the data stored at `pattern`.
+
+### `.toString(formatter?, tree?)`
+
+Render the decision tree.
+
+- `formatter(data)` — optional custom formatter for stored values.
+- `tree` *(boolean, default `false`)* — if `true`, print as an
+  indented tree instead of a flat list.
+
+`patrun.inspect` is an alias for `toString`.
+
+### `.toJSON(indent?)`
+
+Return the internal trie as JSON.
+
+---
+
+## Explanation: design notes
+
+### The two rules
+
+`patrun` is built around two rules and nothing else:
+
+1. **More specific matches win.** "More specific" means more matched
+   key/value pairs, not insertion order.
+2. **Property names are compared in alphabetical order.**
+
+Rule 2 is what makes the trie layout independent of how callers build
+their patterns. `add({a:1, b:2})` and `add({b:2, a:1})` produce the
+exact same internal structure.
+
+### Why a trie?
+
+A linear scan of N patterns is O(N) per lookup. The trie is O(K) in
+the number of *distinct* keys present in the most specific matched
+pattern. For workloads with many patterns sharing a common prefix —
+Seneca's plugin actions are the canonical example — this is a
+significant win.
+
+### Star paths
+
+When a pattern omits a key that a sibling pattern includes, `add`
+builds a `s` ("star") branch that the lookup falls back to. This is
+what lets `{a:1}` still match `{a:1, b:9}` even though `b` is
+registered elsewhere — without it, more-specific matches would
+shadow wider matches incorrectly.
+
+### Strings everywhere
+
+Keys and values are coerced to strings before storage. This keeps the
+matching logic simple and avoids surprises around `==` vs `===` /
+type coercion. If you need numeric-range matching, the Go port
+includes an `Interval` matcher (the JS port currently only ships
+gex).
+
+### Why not "just write `if` statements"?
+
+A handful of cases is fine as `if` statements. But once your dispatch
+table has sub-cases and sub-sub-cases, the `if` ladder stops being
+readable and stops being maintainable — adding a new branch becomes a
+merge-conflict generator. `patrun` lets each branch be added (and
+removed, listed, inspected) independently.
+
+---
+
+## License
+
+Copyright (c) 2013-2025, Richard Rodger and other contributors.
+Licensed under [MIT](./LICENSE).
 
 
 [npm-badge]: https://badge.fury.io/js/patrun.svg
 [npm-url]: https://badge.fury.io/js/patrun
 [travis-badge]: https://api.travis-ci.org/rjrodger/patrun.svg
 [travis-url]: https://travis-ci.org/rjrodger/patrun
-[coveralls-badge]:https://coveralls.io/repos/rjrodger/patrun/badge.svg?branch=master&service=github
+[coveralls-badge]: https://coveralls.io/repos/rjrodger/patrun/badge.svg?branch=master&service=github
 [coveralls-url]: https://coveralls.io/github/rjrodger/patrun?branch=master
 [david-badge]: https://david-dm.org/rjrodger/patrun.svg
 [david-url]: https://david-dm.org/rjrodger/patrun
