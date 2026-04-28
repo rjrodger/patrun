@@ -363,7 +363,7 @@ describe('matchers', function () {
     var hi = im.half_intervals
 
     var jm = (s) => ({ meta: Jsonic(s[0]) })
-    var j = (s) => Jsonic(s[0])
+    var j = (s) => ({ ...Jsonic(s[0]) })
 
     assert.deepStrictEqual(hi([]), [])
     assert.deepStrictEqual(hi([{ meta: {} }]), [])

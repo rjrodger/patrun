@@ -11,7 +11,8 @@
     "strictPropertyInitialization": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "declaration": true
+    "declaration": true,
+    "types": ["node"]
   },
   "include": [
     "src"

@@ -37,12 +37,11 @@
     "Adrien Becchis (https://github.com/AdrieanKhisbe)"
   ],
   "dependencies": {
-    "gex": "^4.0.1"
+    "gex": "4.1.2"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "jsonic": "^1.0.1",
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.3"
+    "@types/node": "25.6.0",
+    "jsonic": "2.27.0",
+    "typescript": "6.0.3"
   }
 }

@@ -59,7 +59,7 @@ function Patrun(custom?: any) {
       var key = keys[i]
       var fix = pat[key]
 
-      let mv: MatchValue | undefined = matchers.reduce(
+      let mv: MatchValue | undefined = matchers.reduce<MatchValue | undefined>(
         (m, t) => m || t.make(key, fix),
         undefined,
       )
