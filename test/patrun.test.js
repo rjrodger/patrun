@@ -1221,4 +1221,327 @@ a:
       'BC',
     ])
   })
+
+  it('most-specific', async () => {
+    // more pairs win, wherever the keys come in the alphabet
+    var p1 = Patrun()
+    p1.add({ a: 1 }, 'A')
+    p1.add({ b: 2, c: 3 }, 'B')
+
+    assert.equal(p1.find({ a: 1, b: 2, c: 3 }), 'B')
+    assert.equal(p1.find({ a: 1, b: 2, c: 2 }), 'A')
+    assert.equal(p1.find({ a: 1, b: 2 }), 'A')
+    assert.equal(p1.find({ b: 2, c: 3 }), 'B')
+    assert.deepStrictEqual(p1.find({ a: 1, b: 2, c: 3 }, false, true), ['A', 'B'])
+
+    // the same patterns added in the other order
+    var p2 = Patrun()
+    p2.add({ b: 2, c: 3 }, 'B')
+    p2.add({ a: 1 }, 'A')
+    assert.equal(p2.find({ a: 1, b: 2, c: 3 }), 'B')
+    assert.equal(p2.toJSON(), p1.toJSON())
+
+    // equally many pairs: the keys in alphabetical order decide
+    var p3 = Patrun()
+    p3.add({ a: 1, d: 4 }, 'AD')
+    p3.add({ b: 2, c: 3 }, 'BC')
+    assert.equal(p3.find({ a: 1, b: 2, c: 3, d: 4 }), 'AD')
+    p3.add({ b: 2, c: 3, d: 4 }, 'BCD')
+    assert.equal(p3.find({ a: 1, b: 2, c: 3, d: 4 }), 'BCD')
+
+    // a pattern that does not match changes nothing
+    var p4 = Patrun()
+    p4.add({ a: 1 }, 'A')
+    p4.add({ a: 1, c: 3 }, 'AC')
+    assert.equal(p4.find({ a: 1, b: 2, c: 3 }), 'AC')
+    p4.add({ a: 1, b: 2, x: 9 }, 'ABX')
+    assert.equal(p4.find({ a: 1, b: 2, c: 3 }), 'AC')
+
+    // neither does a catch all
+    var p5 = Patrun()
+    p5.add({ a: 1, b: 2 }, 'AB')
+    p5.add({ c: 3 }, 'C')
+    assert.equal(p5.find({ a: 1, c: 3 }), 'C')
+    p5.add({}, 'R')
+    assert.equal(p5.find({ a: 1, c: 3 }), 'C')
+    assert.equal(p5.find({ a: 1 }), 'R')
+
+    // removing the most specific falls back to the next
+    p1.remove({ b: 2, c: 3 })
+    assert.equal(p1.find({ a: 1, b: 2, c: 3 }), 'A')
+    p1.remove({ a: 1 })
+    assert.equal(p1.find({ a: 1, b: 2, c: 3 }), null)
+  })
+
+  it('most-specific-exact', async () => {
+    // one pattern must match every key
+    var p1 = Patrun()
+    p1.add({ a: 1, b: 2 }, 'AB')
+    p1.add({ c: 3 }, 'C')
+
+    assert.equal(p1.findexact({ a: 1, c: 3 }), null)
+    assert.equal(p1.findexact({ a: 1, b: 2, c: 3 }), null)
+    assert.equal(p1.findexact({ a: 1, b: 2 }), 'AB')
+    assert.equal(p1.findexact({ c: 3 }), 'C')
+
+    // exact with collect keeps to the first trail
+    assert.deepStrictEqual(p1.find({ a: 1, c: 3 }, true, true), ['C'])
+    assert.deepStrictEqual(p1.find({ a: 1, b: 2, c: 3 }, true, true), ['AB'])
+  })
+
+  it('most-specific-gex', async () => {
+    var p1 = Patrun({ gex: true })
+    p1.add({ role: 'math', cmd: 'sum', integer: true }, 'L')
+    p1.add({ role: 'math', cmd: '*' }, 'P')
+
+    // the exact value cmd:sum leads nowhere without integer:true
+    assert.equal(p1.find({ role: 'math', cmd: 'sum', integer: true }), 'L')
+    assert.equal(p1.find({ role: 'math', cmd: 'sum' }), 'P')
+    assert.equal(p1.find({ role: 'math', cmd: 'sum', integer: false }), 'P')
+    assert.equal(p1.find({ role: 'math', cmd: 'product' }), 'P')
+    assert.equal(p1.findexact({ role: 'math', cmd: 'sum' }), 'P')
+    assert.equal(p1.find({ cmd: 'sum' }), null)
+
+    // more pairs win, however they match
+    var p2 = Patrun({ gex: true })
+    p2.add({ a: 1, b: 2 }, 'a1b2')
+    p2.add({ a: 1, b: '*', c: 5 }, 'a1b*c5')
+    assert.equal(p2.find({ a: 1, b: 2, c: 5 }), 'a1b*c5')
+    assert.equal(p2.find({ a: 1, b: 2, c: 6 }), 'a1b2')
+
+    // equally many pairs: an exact value beats a glob
+    var p3 = Patrun({ gex: true })
+    p3.add({ a: '*', c: 3 }, 'a*c3')
+    p3.add({ a: 1, e: 5 }, 'a1e5')
+    assert.equal(p3.find({ a: 1, c: 3, e: 5 }), 'a1e5')
+    assert.equal(p3.find({ a: 2, c: 3, e: 5 }), 'a*c3')
+
+    // every match is collected
+    var p4 = Patrun({ gex: true })
+    p4.add({ a: 1 }, 'a1')
+    p4.add({ a: '*' }, 'a*')
+    p4.add({ a: '1*', b: 2 }, 'a1*b2')
+    assert.deepStrictEqual(p4.find({ a: 1, b: 2 }, false, true), ['a1', 'a*', 'a1*b2'])
+    assert.deepStrictEqual(p4.find({ a: 2, b: 2 }, false, true), ['a*'])
+
+    // intervals are matchers too
+    var p5 = Patrun({ interval: true })
+    p5.add({ a: 15, b: 1 }, 'a15b1')
+    p5.add({ a: '>10' }, 'a>10')
+    assert.equal(p5.find({ a: 15, b: 1 }), 'a15b1')
+    assert.equal(p5.find({ a: 15 }), 'a>10')
+    assert.equal(p5.find({ a: 15, b: 2 }), 'a>10')
+    assert.equal(p5.find({ a: 5 }), null)
+  })
+
+  it('most-specific-custom', async () => {
+    // the find function applied is that of the pattern found
+    var p1 = Patrun(function (pat, data) {
+      return function (args, found) {
+        return found + '/' + data
+      }
+    })
+
+    p1.add({}, 'R')
+    p1.add({ a: 1 }, 'A')
+    p1.add({ a: 1, b: 2, c: 3 }, 'ABC')
+    p1.add({ d: 4, e: 5 }, 'DE')
+
+    assert.equal(p1.find({}), 'R/R')
+    assert.equal(p1.find({ x: 1 }), 'R/R')
+    assert.equal(p1.find({ a: 1 }), 'A/A')
+    assert.equal(p1.find({ a: 1, b: 2 }), 'A/A')
+    assert.equal(p1.find({ a: 1, b: 2, c: 3 }), 'ABC/ABC')
+    assert.equal(p1.find({ a: 1, d: 4, e: 5 }), 'DE/DE')
+    assert.equal(p1.find({ d: 4 }), 'R/R')
+  })
+
+  it('most-specific-subjects', async () => {
+    var p1 = Patrun()
+    p1.add({ a: 1 }, 'A')
+    p1.add({ b: 2, c: 3 }, 'BC')
+
+    // keys with no value never match
+    assert.equal(p1.find({ a: 1, b: undefined, c: 3 }), 'A')
+    assert.equal(p1.find({ a: undefined, b: 2, c: 3 }), 'BC')
+
+    // a subject need not be a plain object
+    function Msg() {
+      this.a = 1
+    }
+    Msg.prototype.b = 2
+    Object.defineProperty(Msg.prototype, 'c', {
+      get: function () {
+        return 3
+      },
+    })
+    assert.equal(p1.find(new Msg()), 'BC')
+
+    var bare = Object.create(null)
+    bare.a = 1
+    bare.b = 2
+    bare.c = 3
+    assert.equal(p1.find(bare), 'BC')
+
+    // own properties that are not enumerable match too
+    var hidden = Object.defineProperty({ a: 1 }, 'b', { value: 2 })
+    assert.equal(p1.find(hidden), 'A')
+    Object.defineProperty(hidden, 'c', { value: 3 })
+    assert.equal(p1.find(hidden), 'BC')
+    assert.deepStrictEqual(p1.find(hidden, false, true), ['A', 'BC'])
+    assert.equal(p1.find(Object.defineProperty({}, 'a', { value: 1 })), 'A')
+
+    // as do inherited properties
+    assert.equal(p1.find(Object.create({ b: 2, c: 3 })), 'BC')
+    assert.equal(p1.find(Object.create(hidden)), 'BC')
+
+    // and properties that only a proxy supplies
+    var virtual = new Proxy(
+      {},
+      {
+        get: function (target, key) {
+          return { a: 1, b: 2, c: 3 }[key]
+        },
+      },
+    )
+    assert.equal(p1.find(virtual), 'BC')
+    assert.equal(Patrun().add({ b: 2 }, 'B').find(virtual), 'B')
+
+    // a pattern key may name an inherited property
+    var p2 = Patrun()
+    p2.add({ a: 1 }, 'A')
+    p2.add({ constructor: 'C', d: 4 }, 'CD')
+    p2.add({ toString: 'T', x: 1, y: 2 }, 'TXY')
+
+    assert.equal(p2.find({ a: 1 }), 'A')
+    assert.equal(p2.find({ a: 1, constructor: 'C', d: 4 }), 'CD')
+    assert.equal(p2.find({ a: 1, d: 4 }), 'A')
+    assert.equal(p2.find({ a: 1, toString: 'T', x: 1, y: 2 }), 'TXY')
+    assert.equal(p2.find({ a: 1, constructor: 'C', d: 4, x: 1, y: 2 }), 'CD')
+
+    // ... and a subject that lacks that key is still found exactly
+    var p3 = Patrun()
+    p3.add({ constructor: 'C' }, 'C')
+    p3.add({ d: 4 }, 'D')
+    p3.add({ constructor: 'C', d: 4 }, 'CD')
+
+    assert.equal(p3.find({ d: 4 }), 'D')
+    assert.equal(p3.findexact({ d: 4 }), 'D')
+    assert.equal(p3.findexact({ constructor: 'C' }), 'C')
+    assert.equal(p3.findexact({ constructor: 'C', d: 4 }), 'CD')
+    assert.equal(p3.findexact({ constructor: 'X', d: 4 }), null)
+    assert.equal(p3.findexact({ d: 5 }), null)
+  })
+
+  it('most-specific-reference', async () => {
+    // Compare with a search of every pattern, over many small random sets.
+    var seed = 20261127
+    function rnd() {
+      seed = (seed + 0x6d2b79f5) | 0
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+    function pick(list) {
+      return list[Math.floor(rnd() * list.length)]
+    }
+    var names = ['a', 'b', 'c', 'd', 'e']
+    function obj(max, vals) {
+      var o = {}
+      for (var n = Math.floor(rnd() * (max + 1)); 0 < n; n--) {
+        o[pick(names)] = pick(vals)
+      }
+      return o
+    }
+    function id(o) {
+      return Object.keys(o)
+        .sort()
+        .map((k) => k + '=' + o[k])
+        .join(',')
+    }
+
+    ;[false, true].forEach(function (gex) {
+      // a key that every plain subject inherits a value for
+      names = gex ? ['a', 'b', 'c', 'd', 'e'] : ['a', 'b', 'c', 'd', 'toString']
+
+      var isglob = (fix) => gex && /[*?]/.test(fix)
+      var matches = (fix, val) =>
+        void 0 !== val &&
+        (isglob(fix) ? null != Patrun.Gex(fix).on(val) : fix === val)
+
+      for (var round = 0; round < 1500; round++) {
+        var pm = Patrun(gex ? { gex: true } : {})
+        var pats = []
+        var globs = {}
+
+        for (var n = 1 + Math.floor(rnd() * 6); 0 < n; n--) {
+          var pat = obj(3, gex ? ['1', '2', '*', '1*', '?'] : ['1', '2'])
+          var name = id(pat)
+          if (pats.find((p) => p.name === name)) continue
+
+          // globs for a key rank in the order they were added at that point
+          var rank = {}
+          var path = ''
+          Object.keys(pat)
+            .sort()
+            .forEach(function (k) {
+              if (isglob(pat[k])) {
+                var list = (globs[path + '|' + k] = globs[path + '|' + k] || [])
+                if (!list.includes(pat[k])) list.push(pat[k])
+                rank[k] = list.indexOf(pat[k])
+              }
+              path += ',' + k + '=' + pat[k]
+            })
+
+          pm.add(pat, name)
+          pats.push({ name, pat, rank, keys: Object.keys(pat).sort() })
+        }
+
+        for (var q = 0; q < 6; q++) {
+          var subject = obj(5, ['1', '2'])
+
+          var found = pats
+            .filter((p) => p.keys.every((k) => matches(p.pat[k], subject[k])))
+            .sort(function (x, y) {
+              if (x.keys.length !== y.keys.length) {
+                return y.keys.length - x.keys.length
+              }
+              for (var i = 0; i < x.keys.length; i++) {
+                var k = x.keys[i]
+                if (k !== y.keys[i]) return k < y.keys[i] ? -1 : 1
+                if (x.pat[k] === y.pat[k]) continue
+                if (isglob(x.pat[k]) !== isglob(y.pat[k])) {
+                  return isglob(x.pat[k]) ? 1 : -1
+                }
+                return x.rank[k] - y.rank[k]
+              }
+              return 0
+            })
+
+          var where = ' of ' + id(subject) + ' in ' + JSON.stringify(pm.list())
+
+          assert.equal(
+            pm.find(subject),
+            found.length ? found[0].name : null,
+            'find' + where,
+          )
+
+          var exact = found.find(
+            (p) => p.keys.length === Object.keys(subject).length,
+          )
+          assert.equal(
+            pm.findexact(subject),
+            exact ? exact.name : null,
+            'findexact' + where,
+          )
+
+          assert.deepStrictEqual(
+            pm.find(subject, false, true).sort(),
+            found.map((p) => p.name).sort(),
+            'collect' + where,
+          )
+        }
+      }
+    })
+  })
 })

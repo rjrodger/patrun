@@ -3,6 +3,8 @@
 // Patterns are sets of key-value pairs. A pattern matches a query if all
 // keys in the pattern are present in the query with the same values.
 // When multiple patterns match, the most specific (most keys matched) wins.
+// Patterns that match equally many keys are ranked by their keys in
+// alphabetical order.
 package patrun
 
 import (
@@ -49,6 +51,11 @@ type keymap struct {
 	s *keymap            // star path (skip this key)
 	g map[string][]MatchValue // gex/interval matchers per key
 	d *string           // data stored here (nil = no data)
+
+	// The most pairs that any pattern can still match from this point of
+	// the tree on. find uses this to leave branches that cannot do better
+	// than the match it has.
+	m int
 }
 
 // Patrun is the main pattern matcher.
@@ -108,6 +115,12 @@ func (p *Patrun) Add(pat map[string]string, data *string) *Patrun {
 			}
 		}
 
+		// This pattern has this many pairs still to match from here.
+		reached := km.m
+		if km.m < len(keys)-i {
+			km.m = len(keys) - i
+		}
+
 		if km.v != nil && key == km.k {
 			// Existing key matches
 			if mv != nil {
@@ -136,9 +149,11 @@ func (p *Patrun) Add(pat map[string]string, data *string) *Patrun {
 			oldS := km.s
 			oldG := km.g
 
+			// The keys moved along the star path keep their own reach.
 			km.s = &keymap{
 				k: km.k,
 				v: km.v,
+				m: reached,
 			}
 
 			if oldS != nil {
@@ -222,94 +237,136 @@ func (p *Patrun) Collect(pat map[string]string) []string {
 	return collection
 }
 
+// An alternative not yet tried: where to resume, and the depth of the path.
+type pending struct {
+	km    *keymap
+	alt   int
+	depth int
+}
+
+// find returns the data of the most specific pattern that matches the query:
+// the one with the most key/value pairs. Patterns with equally many pairs
+// are ranked by their keys in alphabetical order, then by an exact value
+// over a matcher, then by the order in which the matchers were added.
+//
+// Each step down the tree matches one more pair, so the depth of a node is
+// the number of pairs in its pattern. The search is depth first, in ranking
+// order, and keeps the first of the deepest nodes that hold data. Every
+// branch that the query matches is a candidate, not only the first.
 func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string, []string) {
 	if pat == nil {
 		return nil, nil
 	}
 
-	km := p.top
-	var data *string
-	if km.d != nil {
-		data = km.d
-	}
-
-	var stars []*keymap
-	foundkeys := make(map[string]bool)
 	patlen := len(pat)
 	var collection []string
 
-	if km.d != nil {
-		collection = append(collection, *km.d)
+	// The most specific match so far. A branch is followed only while it
+	// could match more than beat pairs, going by the reach that Add noted
+	// on its nodes: more than the best match so far has or, for an exact
+	// find, all of the query's. Collect follows every branch.
+	var best *keymap
+	beat := -1
+	if exact {
+		beat = patlen - 1
 	}
 
-	for km != nil {
-		key := km.k
+	var km *keymap
+	alt := 0   // next alternative at km: 0 is the exact value, then matchers
+	depth := 0 // pairs matched on the current path
+	var todo []pending
+	node := p.top // the node just reached; the root matches any query
 
-		if km.v != nil {
-			val, hasVal := pat[key]
-			_ = hasVal
+	for {
+		if node != nil {
+			if node.d != nil {
+				if collect {
+					collection = append(collection, *node.d)
+				} else if (exact && depth == patlen) || (!exact && beat < depth) {
+					best = node
+					beat = depth
 
-			// Try exact match first
-			nextkm := km.v[val]
-
-			// Try gex/interval matchers
-			if nextkm == nil && km.g != nil {
-				if ga, ok := km.g[key]; ok {
-					for _, mv := range ga {
-						if mv.Match(val) {
-							nextkm = mv.Keymap()
-							break
-						}
+					if exact {
+						break
 					}
 				}
 			}
 
-			if nextkm != nil {
-				foundkeys[key] = true
+			km = node
+			alt = 0
+			node = nil
+		}
 
-				if km.s != nil {
-					stars = append(stars, km.s)
+		// Follow the keys at this point, in order, to the next that matches,
+		// unless nothing from here on could beat the best match.
+		for km != nil && km.v != nil && depth+km.m > beat {
+			key := km.k
+
+			if val, has := pat[key]; has {
+				var ga []MatchValue
+				if km.g != nil {
+					ga = km.g[key]
 				}
 
-				if nextkm.d != nil {
-					data = nextkm.d
-				} else if exact {
-					data = nil
-				}
-				// else: keep previous data (wider match)
-
-				if collect && nextkm.d != nil {
-					collection = append(collection, *nextkm.d)
+				// Try the exact value first, then the gex/interval matchers.
+				if alt == 0 {
+					node = km.v[val]
+					alt = 1
 				}
 
-				km = nextkm
-			} else {
-				// No match, follow star trail
-				km = km.s
+				for node == nil && alt <= len(ga) {
+					if ga[alt-1].Match(val) {
+						node = ga[alt-1].Keymap()
+					}
+					alt++
+				}
+
+				if node != nil {
+					// Still to try from here: the other matchers for this key,
+					// and then the patterns that do not have this key (the
+					// star trail).
+					if alt <= len(ga) {
+						todo = append(todo, pending{km, alt, depth})
+					} else if km.s != nil && !exact {
+						todo = append(todo, pending{km.s, 0, depth})
+					}
+					break
+				}
+
+				// The query has this key, but nothing here matches its value,
+				// so an exact match is impossible. Otherwise follow the star
+				// trail.
+				if exact {
+					break
+				}
 			}
-		} else {
-			km = nil
+
+			km = km.s
+			alt = 0
 		}
 
-		if km == nil && len(stars) > 0 && (data == nil || (collect && !exact)) {
-			km = stars[len(stars)-1]
-			stars = stars[:len(stars)-1]
+		if node != nil {
+			depth++
+			continue
 		}
+
+		// Dead end: go back to the latest untried alternative.
+		if len(todo) == 0 {
+			break
+		}
+
+		last := todo[len(todo)-1]
+		todo = todo[:len(todo)-1]
+		km, alt, depth = last.km, last.alt, last.depth
 	}
 
-	if exact {
-		if len(foundkeys) != patlen {
-			data = nil
-		}
-	} else {
-		// Root data catch-all
-		if data == nil && p.top.d != nil {
-			data = p.top.d
-		}
+	var data *string
+	if best != nil {
+		data = best.d
 	}
 
 	if collect {
-		return data, collection
+		return nil, collection
 	}
 	return data, nil
 }

@@ -8,6 +8,8 @@ exports.Patrun = Patrun;
 const gex_1 = require("gex");
 Object.defineProperty(exports, "Gex", { enumerable: true, get: function () { return gex_1.Gex; } });
 const matchers_1 = require("./lib/matchers");
+// True of the keys that Object.keys lists.
+const enumerable = Object.prototype.propertyIsEnumerable;
 function Patrun(custom) {
     custom = custom || {};
     var self = {};
@@ -23,6 +25,18 @@ function Patrun(custom) {
     self.top = function () {
         return top;
     };
+    // Note on a node the most pairs that any pattern can still match from
+    // that point of the tree on. find uses this to leave branches that cannot
+    // do better than the match it has. The property is not enumerable, so the
+    // tree reads the same through top and toJSON.
+    function reach(keymap, pairs) {
+        if (void 0 === keymap.m) {
+            Object.defineProperty(keymap, 'm', { value: pairs, writable: true });
+        }
+        else if (keymap.m < pairs) {
+            keymap.m = pairs;
+        }
+    }
     self.add = function (pat, data) {
         pat = { ...pat };
         var customizer = 'function' === typeof custom ? custom.call(self, pat, data) : null;
@@ -42,6 +56,9 @@ function Patrun(custom) {
             var fix = pat[key];
             let mv = matchers.reduce((m, t) => m || t.make(key, fix), undefined);
             // if (mv) mv.val$ = fix
+            // This pattern has this many pairs still to match from here.
+            var reached = keymap.m;
+            reach(keymap, keys.length - i);
             valmap = keymap.v;
             // console.log('S0',key,fix,keymap,valmap)
             // An existing key
@@ -90,6 +107,8 @@ function Patrun(custom) {
                 if (g) {
                     keymap.s.g = g;
                 }
+                // The keys moved along the star path keep their own reach.
+                reach(keymap.s, reached);
                 if (keymap.g) {
                     keymap.g = {};
                 }
@@ -127,26 +146,125 @@ function Patrun(custom) {
     self.findexact = function (pat) {
         return self.find(pat, true);
     };
+    // Find the data of the most specific pattern that matches the subject:
+    // the one with the most key/value pairs. Patterns with equally many pairs
+    // are ranked by their keys in alphabetical order, then by an exact value
+    // over a matcher, then by the order in which the matchers were added.
+    //
+    // Each step down the tree matches one more pair, so the depth of a node is
+    // the number of pairs in its pattern. The search is depth first, in ranking
+    // order, and keeps the first of the deepest nodes that hold data. Every
+    // branch that the subject matches is a candidate, not only the first.
     self.find = function (pat, exact, collect) {
         if (null == pat)
             return null;
+        if (exact && collect)
+            return trail(pat);
+        var patlen = exact ? Object.keys(pat).length : 0;
+        var collection = [];
+        // The most specific match so far. A branch is followed only while it
+        // could match more than `beat` pairs, going by the reach that add noted
+        // on its nodes: more than the best match so far has or, for an exact
+        // find, all of the subject's. Collect follows every branch.
+        var best = null;
+        var beat = exact ? patlen - 1 : -1;
+        var keymap = null;
+        var alt = 0; // next alternative at keymap: 0 is the exact value, then matchers
+        var depth = 0; // pairs matched on the current path
+        var pending = []; // untried alternatives: keymap, alt, depth
+        var node = top; // the node just reached; the root matches any subject
+        while (true) {
+            if (node) {
+                if (void 0 !== node.d) {
+                    if (collect) {
+                        collection.push(node.d);
+                    }
+                    else if (null != node.d && (exact ? depth === patlen : beat < depth)) {
+                        best = node;
+                        beat = depth;
+                        if (exact)
+                            break;
+                    }
+                }
+                keymap = node;
+                alt = 0;
+                node = null;
+            }
+            // Follow the keys at this point, in order, to the next that matches,
+            // unless nothing from here on could beat the best match.
+            while (keymap && keymap.v && !(depth + keymap.m <= beat)) {
+                var key = keymap.k;
+                var val = pat[key];
+                if (void 0 !== val) {
+                    var ga = keymap.g && keymap.g[key];
+                    var galen = ga ? ga.length : 0;
+                    // Matching operation is either string equality (by prop lookup)
+                    // or a matcher, such as gex.
+                    if (0 === alt) {
+                        node = keymap.v[val];
+                        alt = 1;
+                    }
+                    while (!node && alt <= galen) {
+                        if (ga[alt - 1].match(val)) {
+                            node = ga[alt - 1].keymap;
+                        }
+                        alt++;
+                    }
+                    if (node) {
+                        // Still to try from here: the other matchers for this key, and
+                        // then the patterns that do not have this key (the star trail).
+                        if (alt <= galen) {
+                            pending.push(keymap, alt, depth);
+                        }
+                        else if (keymap.s && !exact) {
+                            pending.push(keymap.s, 0, depth);
+                        }
+                        break;
+                    }
+                    // The subject has a value for this key, but nothing here matches
+                    // it. An exact find fails if the key is one that it must match.
+                    // Otherwise follow the star trail.
+                    if (exact && enumerable.call(pat, key))
+                        break;
+                }
+                keymap = keymap.s;
+                alt = 0;
+            }
+            if (node) {
+                depth++;
+                continue;
+            }
+            // Dead end: go back to the latest untried alternative.
+            if (0 === pending.length)
+                break;
+            depth = pending.pop();
+            alt = pending.pop();
+            keymap = pending.pop();
+        }
+        if (collect)
+            return collection;
+        var data = null == best ? null : best.d;
+        if (null != best && best.f) {
+            data = best.f.call(self, pat, data);
+        }
+        return data;
+    };
+    // The data along the first trail through the tree that the subject
+    // matches, widest first. At each key only the first value or matcher that
+    // matches is taken, and patterns without that key are tried only if the
+    // trail ends without data. This is find with both exact and collect.
+    function trail(pat) {
         var keymap = top;
         var data = void 0 === top.d ? null : top.d;
-        var finalfind = top.f;
-        var key = null;
         var stars = [];
-        var foundkeys = {};
-        var patlen = Object.keys(pat).length;
         var collection = [];
         if (void 0 !== top.d) {
             collection.push(top.d);
         }
         do {
-            key = keymap.k;
+            var key = keymap.k;
             if (keymap.v) {
                 var val = pat[key];
-                // Matching operation is either string equality (by prop lookup)
-                // or gex match.
                 var nextkeymap = keymap.v[val];
                 if (!nextkeymap && keymap.g && keymap.g[key]) {
                     var ga = keymap.g[key];
@@ -158,15 +276,13 @@ function Patrun(custom) {
                     }
                 }
                 if (nextkeymap) {
-                    foundkeys[key] = true;
                     if (keymap.s) {
                         stars.push(keymap.s);
                     }
-                    data = void 0 === nextkeymap.d ? (exact ? null : data) : nextkeymap.d;
-                    if (collect && void 0 !== nextkeymap.d) {
+                    data = void 0 === nextkeymap.d ? null : nextkeymap.d;
+                    if (void 0 !== nextkeymap.d) {
                         collection.push(nextkeymap.d);
                     }
-                    finalfind = nextkeymap.f;
                     keymap = nextkeymap;
                 }
                 // no match found for this value, follow star trail
@@ -177,28 +293,12 @@ function Patrun(custom) {
             else {
                 keymap = null;
             }
-            if (null == keymap &&
-                0 < stars.length &&
-                (null == data || (collect && !exact))) {
+            if (null == keymap && 0 < stars.length && null == data) {
                 keymap = stars.pop();
             }
         } while (keymap);
-        if (exact) {
-            if (Object.keys(foundkeys).length !== patlen) {
-                data = null;
-            }
-        }
-        else {
-            // If there's root data, return as a catch all
-            if (null == data && void 0 !== top.d) {
-                data = top.d;
-            }
-        }
-        if (finalfind) {
-            data = finalfind.call(self, pat, data);
-        }
-        return collect ? collection : data;
-    };
+        return collection;
+    }
     self.remove = function (pat) {
         var keymap = top;
         var data = null;

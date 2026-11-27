@@ -60,8 +60,8 @@ The two rules that govern every match:
 
 1. More specific matches beat less specific ones — more matched
    key/value pairs always win.
-2. Property names are checked in alphabetical order, so insertion
-   order doesn't matter.
+2. Between matches with the same number of pairs, property names are
+   checked in alphabetical order, so insertion order doesn't matter.
 
 ```js
 const pm = patrun()
@@ -74,6 +74,18 @@ pm.find({ a: 0 })            // → 'A'
 pm.find({ a: 0, b: 1 })      // → 'AB'  (more specific than {a:0})
 pm.find({ a: 0, c: 2 })      // → 'A'   (a comes before c)
 pm.find({ b: 1, c: 2 })      // → 'B'   (b comes before c)
+```
+
+Rule 1 comes first. A pattern with more pairs wins even when its keys
+come later in the alphabet:
+
+```js
+const pm = patrun()
+  .add({ a: 1 },          'A')
+  .add({ b: 2, c: 3 },    'BC')
+
+pm.find({ a: 1, b: 2, c: 3 })  // → 'BC'  (two pairs beat one)
+pm.find({ a: 1, b: 2 })        // → 'A'   (only {a:1} matches)
 ```
 
 ### Require all keys to match
@@ -117,8 +129,10 @@ pm.find({ a: 1 })             // → 'AA'  glob
 pm.find({ b: 1, c: 'xhy' })   // → 'BC'  exact + glob
 ```
 
-Exact matches beat glob matches; otherwise the more-specific rule
-applies as usual. See the
+The more-specific rule applies as usual: a glob match counts as a
+matched pair, so the pattern with the most pairs wins. Between
+patterns with the same number of pairs, an exact value beats a glob,
+and of two globs for the same key the one added first wins. See the
 [multi-gex test](https://github.com/rjrodger/patrun/blob/master/test/patrun.test.js)
 for funky examples.
 
@@ -327,7 +341,8 @@ Return the internal trie as JSON.
 
 1. **More specific matches win.** "More specific" means more matched
    key/value pairs, not insertion order.
-2. **Property names are compared in alphabetical order.**
+2. **Property names are compared in alphabetical order.** This
+   decides between matches with the same number of pairs.
 
 Rule 2 is what makes the trie layout independent of how callers build
 their patterns. `add({a:1, b:2})` and `add({b:2, a:1})` produce the
@@ -335,11 +350,14 @@ exact same internal structure.
 
 ### Why a trie?
 
-A linear scan of N patterns is O(N) per lookup. The trie is O(K) in
-the number of *distinct* keys present in the most specific matched
-pattern. For workloads with many patterns sharing a common prefix —
-Seneca's plugin actions are the canonical example — this is a
-significant win.
+A linear scan of N patterns is O(N) per lookup. In the trie, `find`
+follows only the branches that the subject matches. When one pattern
+accounts for all of the subject's keys, that is O(K) in the number of
+*distinct* keys in that pattern. When several patterns match the same
+subject, `find` visits each of them to compare their sizes, and stops
+as soon as no remaining branch could match more pairs. For workloads
+with many patterns sharing a common prefix — Seneca's plugin actions
+are the canonical example — this is a significant win.
 
 ### Star paths
 
@@ -348,6 +366,10 @@ builds a `s` ("star") branch that the lookup falls back to. This is
 what lets `{a:1}` still match `{a:1, b:9}` even though `b` is
 registered elsewhere — without it, more-specific matches would
 shadow wider matches incorrectly.
+
+`find` follows the star branch as well as the matching value, and
+keeps the match with more pairs. So a short pattern on an early key
+does not hide a longer pattern on later keys.
 
 ### Strings everywhere
 
