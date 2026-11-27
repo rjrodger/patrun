@@ -1,0 +1,149 @@
+# Most specific match: the pattern with the most matching key/value pairs
+# wins, wherever its keys come in the alphabet. Patterns with equally many
+# pairs are ranked by their keys in alphabetical order.
+# Columns: operation	pattern (JSON)	data	expected	options (JSON, optional)
+
+# A longer pattern beats a shorter pattern on an earlier key
+add	{"a":"1"}	A
+add	{"b":"2","c":"3"}	BC
+find	{"a":"1","b":"2","c":"3"}	BC
+find	{"a":"1","b":"2","c":"2"}	A
+find	{"a":"1","b":"2"}	A
+find	{"a":"1"}	A
+find	{"b":"2","c":"3"}	BC
+find	{"a":"2","b":"2","c":"3"}	BC
+find	{"a":"2","b":"2","c":"2"}	null
+clear
+
+# The order of insertion makes no difference
+add	{"b":"2","c":"3"}	BC
+add	{"a":"1"}	A
+find	{"a":"1","b":"2","c":"3"}	BC
+find	{"a":"1","b":"2"}	A
+clear
+
+# Equally many pairs: the keys in alphabetical order decide
+add	{"a":"1","d":"4"}	AD
+add	{"b":"2","c":"3"}	BC
+add	{"b":"2","d":"4"}	BD
+find	{"a":"1","b":"2","c":"3","d":"4"}	AD
+find	{"b":"2","c":"3","d":"4"}	BC
+find	{"a":"2","b":"2","d":"4"}	BD
+clear
+
+# Three pairs beat two, and two beat one
+add	{"a":"1"}	A
+add	{"a":"1","b":"2"}	AB
+add	{"c":"3","d":"4","e":"5"}	CDE
+find	{"a":"1","b":"2","c":"3","d":"4","e":"5"}	CDE
+find	{"a":"1","b":"2","c":"3","d":"4"}	AB
+find	{"a":"1","c":"3","d":"4","e":"5"}	CDE
+find	{"a":"1","c":"3","d":"4"}	A
+clear
+
+# A later branch is still tried when an earlier one runs out
+add	{"a":"1"}	A
+add	{"a":"1","c":"3"}	AC
+find	{"a":"1","b":"2","c":"3"}	AC
+add	{"a":"1","b":"2","x":"9"}	ABX
+find	{"a":"1","b":"2","c":"3"}	AC
+find	{"a":"1","b":"2","c":"3","x":"9"}	ABX
+find	{"a":"1","b":"2"}	A
+clear
+
+# A catch-all root pattern does not hide a more specific match
+add	{"a":"1","b":"2"}	AB
+add	{"c":"3"}	C
+find	{"a":"1","c":"3"}	C
+add	{}	ROOT
+find	{"a":"1","c":"3"}	C
+find	{"a":"1","b":"2","c":"3"}	AB
+find	{"a":"1"}	ROOT
+find	{"c":"4"}	ROOT
+clear
+
+# Many overlapping patterns: the longest match wins
+add	{"a":"1"}	A
+add	{"b":"1"}	B
+add	{"c":"1"}	C
+add	{"a":"1","b":"1"}	AB
+add	{"b":"1","c":"1"}	BC
+add	{"b":"1","c":"1","d":"1"}	BCD
+find	{"a":"1","b":"1","c":"1","d":"1"}	BCD
+find	{"a":"1","b":"1","c":"1"}	AB
+find	{"a":"1","c":"1","d":"1"}	A
+find	{"b":"1","c":"1","d":"2"}	BC
+find	{"c":"1","d":"1"}	C
+clear
+
+# Exact find needs one pattern to match every key
+add	{"a":"1","b":"2"}	AB
+add	{"c":"3"}	C
+findexact	{"a":"1","c":"3"}	null
+findexact	{"a":"1","b":"2","c":"3"}	null
+findexact	{"c":"3"}	C
+findexact	{"a":"1","b":"2"}	AB
+find	{"a":"1","c":"3"}	C
+clear
+
+# Collect still returns every match, widest first along each branch
+add	{"a":"1"}	A
+add	{"b":"2","c":"3"}	BC
+collect	{"a":"1","b":"2","c":"3"}	["A","BC"]
+clear
+
+# A key that the subject does not have never matches
+add	{"a":""}	EMPTY
+find	{}	null
+find	{"b":"1"}	null
+find	{"a":""}	EMPTY
+findexact	{}	null
+collect	{}	[]
+clear	{}		{"gex":true}
+
+# gex: a missing key does not match a glob
+add	{"b":"*"}	BSTAR
+find	{}	null
+find	{"a":"1"}	null
+find	{"b":""}	BSTAR
+find	{"b":"x"}	BSTAR
+clear	{}		{"gex":true}
+
+# gex: a glob is still tried when the exact value leads nowhere
+add	{"cmd":"sum","integer":"true","role":"math"}	LOCAL
+add	{"cmd":"*","role":"math"}	PIN
+find	{"cmd":"sum","integer":"true","role":"math"}	LOCAL
+find	{"cmd":"sum","role":"math"}	PIN
+find	{"cmd":"product","role":"math"}	PIN
+find	{"cmd":"sum","integer":"false","role":"math"}	PIN
+findexact	{"cmd":"sum","role":"math"}	PIN
+find	{"cmd":"sum"}	null
+clear	{}		{"gex":true}
+
+# gex: more pairs still win, whether matched exactly or by glob
+add	{"a":"1","b":"2"}	A1B2
+add	{"a":"1","b":"*","c":"5"}	A1BSC5
+find	{"a":"1","b":"2","c":"5"}	A1BSC5
+find	{"a":"1","b":"2","c":"6"}	A1B2
+find	{"a":"1","b":"3","c":"5"}	A1BSC5
+clear	{}		{"gex":true}
+
+# gex: with equally many pairs an exact value beats a glob
+add	{"a":"*","c":"3"}	ASC3
+add	{"a":"1","e":"5"}	A1E5
+add	{"a":"*"}	AS
+add	{"a":"1"}	A1
+find	{"a":"1","c":"3","e":"5"}	A1E5
+find	{"a":"2","c":"3","e":"5"}	ASC3
+find	{"a":"1","c":"3"}	ASC3
+find	{"a":"1"}	A1
+find	{"a":"2"}	AS
+clear	{}		{"gex":true}
+
+# gex: collect returns the glob matches as well as the exact one
+add	{"a":"1"}	A1
+add	{"a":"*"}	AS
+add	{"a":"1*","b":"2"}	A1SB2
+collect	{"a":"1","b":"2"}	["A1","AS","A1SB2"]
+collect	{"a":"2","b":"2"}	["AS"]
+clear	{}		{"gex":true}

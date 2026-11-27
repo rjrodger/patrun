@@ -89,6 +89,23 @@ pm.Find(map[string]string{"a": "1"})           // -> "A"
 Property names are checked in alphabetical order, so `{a, b}` and
 `{b, a}` produce the same trie.
 
+The pattern with the most matched pairs wins, even when its keys come
+later in the alphabet. Alphabetical order only decides between
+patterns with the same number of pairs:
+
+```go
+pm := patrun.New()
+pm.Add(map[string]string{"a": "1"},                       s("A"))
+pm.Add(map[string]string{"b": "2", "c": "3"},             s("BC"))
+
+pm.Find(map[string]string{"a": "1", "b": "2", "c": "3"}) // -> "BC" (two pairs beat one)
+pm.Find(map[string]string{"a": "1", "b": "2"})           // -> "A"
+```
+
+A pattern key must be present in the query to match. A pattern with an
+empty-string value, or a `*` glob, does not match a query that lacks
+the key.
+
 ### Require all keys to match
 
 `FindExact` only returns data when every key in the pattern is present
@@ -130,8 +147,10 @@ pm.Find(map[string]string{"a": "1"})                 // -> "AA"  glob
 pm.Find(map[string]string{"b": "1", "c": "xhy"})     // -> "BC"  exact + glob
 ```
 
-Exact matches beat glob matches; otherwise the most-specific rule
-applies as usual.
+The most-specific rule applies as usual: a glob match counts as a
+matched pair, so the pattern with the most pairs wins. Between
+patterns with the same number of pairs, an exact value beats a glob,
+and of two globs for the same key the one added first wins.
 
 ### Match numeric intervals
 
@@ -287,7 +306,8 @@ behavior are:
 1. More specific matches win. "More specific" means more matched
    key/value pairs, not pattern insertion order.
 2. Property names are compared in alphabetical order, so the trie
-   layout is independent of how callers build the pattern map.
+   layout is independent of how callers build the pattern map. This
+   order decides between matches with the same number of pairs.
 
 **Why `map[string]string` instead of `map[string]any`?** The original
 JS API coerces all keys and values to strings before storing them, so
@@ -317,16 +337,23 @@ non-empty payloads, a tiny helper (`func s(v string) *string { return
   uses `String()` (the `fmt.Stringer` convention) and `ToJSON()`.
 
 **Why a trie at all?** A linear scan of N patterns is O(N) per
-lookup; the trie is O(K) in the number of *distinct* keys present in
-the most specific matched pattern. For workloads with many patterns
-sharing a common prefix (Seneca's plugin actions are the canonical
-example) this is a significant win.
+lookup. In the trie, `Find` follows only the branches that the query
+matches. When one pattern accounts for all of the query's keys, that
+is O(K) in the number of *distinct* keys in that pattern. When several
+patterns match the same query, `Find` visits each of them to compare
+their sizes, and stops as soon as no remaining branch could match more
+pairs. For workloads with many patterns sharing a common prefix
+(Seneca's plugin actions are the canonical example) this is a
+significant win.
 
 **Star paths.** When a pattern omits a key that a sibling pattern
 includes, `add` builds an `s` ("star") branch that the lookup falls
 back to. This is what lets `{a:1}` still match `{a:1, b:9}` even
 though `b` was registered elsewhere — without it, more-specific
-matches would shadow wider matches incorrectly.
+matches would shadow wider matches incorrectly. `Find` follows the
+star branch as well as the matching value, and keeps the match with
+more pairs, so a short pattern on an early key does not hide a longer
+pattern on later keys.
 
 ---
 
