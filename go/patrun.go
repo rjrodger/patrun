@@ -9,7 +9,6 @@ package patrun
 
 import (
 	"encoding/json"
-	"math"
 	"sort"
 	"strings"
 
@@ -52,19 +51,17 @@ type keymap struct {
 	s *keymap            // star path (skip this key)
 	g map[string][]MatchValue // gex/interval matchers per key
 	d *string           // data stored here (nil = no data)
+
+	// The most pairs that any pattern can still match from this point of
+	// the tree on. find uses this to leave branches that cannot do better
+	// than the match it has.
+	m int
 }
 
 // Patrun is the main pattern matcher.
 type Patrun struct {
 	top      *keymap
 	matchers []Matcher
-
-	// Every key used by a pattern, so that find can tell how many of a
-	// query's keys could ever be matched.
-	keys map[string]struct{}
-
-	// The number of pairs in the longest pattern: no match can have more.
-	maxpairs int
 }
 
 // New creates a new Patrun instance with the given options.
@@ -75,8 +72,7 @@ func New(opts ...Options) *Patrun {
 	}
 
 	p := &Patrun{
-		top:  &keymap{},
-		keys: make(map[string]struct{}),
+		top: &keymap{},
 	}
 
 	if o.Gex {
@@ -104,13 +100,6 @@ func (p *Patrun) Add(pat map[string]string, data *string) *Patrun {
 	}
 	sort.Strings(keys)
 
-	for _, key := range keys {
-		p.keys[key] = struct{}{}
-	}
-	if p.maxpairs < len(keys) {
-		p.maxpairs = len(keys)
-	}
-
 	km := p.top
 
 	for i := 0; i < len(keys); {
@@ -124,6 +113,12 @@ func (p *Patrun) Add(pat map[string]string, data *string) *Patrun {
 				mv = v
 				break
 			}
+		}
+
+		// This pattern has this many pairs still to match from here.
+		reached := km.m
+		if km.m < len(keys)-i {
+			km.m = len(keys) - i
 		}
 
 		if km.v != nil && key == km.k {
@@ -154,9 +149,11 @@ func (p *Patrun) Add(pat map[string]string, data *string) *Patrun {
 			oldS := km.s
 			oldG := km.g
 
+			// The keys moved along the star path keep their own reach.
 			km.s = &keymap{
 				k: km.k,
 				v: km.v,
+				m: reached,
 			}
 
 			if oldS != nil {
@@ -240,12 +237,11 @@ func (p *Patrun) Collect(pat map[string]string) []string {
 	return collection
 }
 
-// An alternative not yet tried: where to resume, and the state of the path.
+// An alternative not yet tried: where to resume, and the depth of the path.
 type pending struct {
 	km    *keymap
 	alt   int
 	depth int
-	limit int
 }
 
 // find returns the data of the most specific pattern that matches the query:
@@ -265,22 +261,14 @@ func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string,
 	patlen := len(pat)
 	var collection []string
 
-	// The most specific match so far, and the number of pairs it matched.
+	// The most specific match so far. A branch is followed only while it
+	// could match more than beat pairs, going by the reach that Add noted
+	// on its nodes: more than the best match so far has or, for an exact
+	// find, all of the query's. Collect follows every branch.
 	var best *keymap
-	bestdepth := -1
-
-	// The most pairs the current path can end up with. A key can match once,
-	// and only at its place in the key order, so each key of the query that
-	// a path passes over lowers this. A path that cannot beat the best match
-	// so far is not followed.
-	limit := math.MaxInt
-	if !exact && !collect {
-		limit = 0
-		for key := range pat {
-			if _, ok := p.keys[key]; ok {
-				limit++
-			}
-		}
+	beat := -1
+	if exact {
+		beat = patlen - 1
 	}
 
 	var km *keymap
@@ -294,14 +282,11 @@ func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string,
 			if node.d != nil {
 				if collect {
 					collection = append(collection, *node.d)
-				}
-
-				if (exact && depth == patlen) || (!exact && bestdepth < depth) {
+				} else if (exact && depth == patlen) || (!exact && beat < depth) {
 					best = node
-					bestdepth = depth
+					beat = depth
 
-					// No pattern has more pairs than this.
-					if exact || (!collect && p.maxpairs <= depth) {
+					if exact {
 						break
 					}
 				}
@@ -312,8 +297,9 @@ func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string,
 			node = nil
 		}
 
-		// Follow the keys at this point, in order, to the next that matches.
-		for km != nil && km.v != nil && depth < limit && bestdepth < limit {
+		// Follow the keys at this point, in order, to the next that matches,
+		// unless nothing from here on could beat the best match.
+		for km != nil && km.v != nil && depth+km.m > beat {
 			key := km.k
 
 			if val, has := pat[key]; has {
@@ -340,20 +326,19 @@ func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string,
 					// and then the patterns that do not have this key (the
 					// star trail).
 					if alt <= len(ga) {
-						todo = append(todo, pending{km, alt, depth, limit})
+						todo = append(todo, pending{km, alt, depth})
 					} else if km.s != nil && !exact {
-						todo = append(todo, pending{km.s, 0, depth, limit - 1})
+						todo = append(todo, pending{km.s, 0, depth})
 					}
 					break
 				}
 
-				// The query has this key, but nothing here matches its value.
-				// An exact match is now impossible. Otherwise follow the star
-				// trail, with one less key that could match.
+				// The query has this key, but nothing here matches its value,
+				// so an exact match is impossible. Otherwise follow the star
+				// trail.
 				if exact {
 					break
 				}
-				limit--
 			}
 
 			km = km.s
@@ -372,7 +357,7 @@ func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string,
 
 		last := todo[len(todo)-1]
 		todo = todo[:len(todo)-1]
-		km, alt, depth, limit = last.km, last.alt, last.depth, last.limit
+		km, alt, depth = last.km, last.alt, last.depth
 	}
 
 	var data *string
@@ -381,7 +366,7 @@ func (p *Patrun) find(pat map[string]string, exact bool, collect bool) (*string,
 	}
 
 	if collect {
-		return data, collection
+		return nil, collection
 	}
 	return data, nil
 }

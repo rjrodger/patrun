@@ -13,6 +13,9 @@ import {
   IntervalMatcher,
 } from './lib/matchers'
 
+// True of the keys that Object.keys lists.
+const enumerable = Object.prototype.propertyIsEnumerable
+
 function Patrun(custom?: any) {
   custom = custom || {}
 
@@ -20,17 +23,6 @@ function Patrun(custom?: any) {
   var top: any = {}
 
   let matchers: Matcher[] = []
-
-  // Every key used by a pattern, so that find can tell how many of a
-  // subject's keys could ever be matched.
-  var keyset: any = Object.create(null)
-
-  // A pattern key that names an inherited property (such as `constructor`)
-  // can be read from a subject that does not have it.
-  var oddkeys = false
-
-  // The number of pairs in the longest pattern: no match can have more.
-  var maxpairs = 0
 
   if (custom.gex) {
     matchers.push(new GexMatcher())
@@ -45,6 +37,18 @@ function Patrun(custom?: any) {
     return top
   }
 
+  // Note on a node the most pairs that any pattern can still match from
+  // that point of the tree on. find uses this to leave branches that cannot
+  // do better than the match it has. The property is not enumerable, so the
+  // tree reads the same through top and toJSON.
+  function reach(keymap: any, pairs: number) {
+    if (void 0 === keymap.m) {
+      Object.defineProperty(keymap, 'm', { value: pairs, writable: true })
+    } else if (keymap.m < pairs) {
+      keymap.m = pairs
+    }
+  }
+
   self.add = function (pat: any, data: any) {
     pat = { ...pat }
 
@@ -57,11 +61,7 @@ function Patrun(custom?: any) {
 
     keys.forEach(function (key) {
       pat[key] = String(pat[key])
-      keyset[key] = true
-      oddkeys = oddkeys || key in Object.prototype
     })
-
-    maxpairs = Math.max(maxpairs, keys.length)
 
     var keymap: any = top
     var valmap: any
@@ -80,6 +80,10 @@ function Patrun(custom?: any) {
       )
 
       // if (mv) mv.val$ = fix
+
+      // This pattern has this many pairs still to match from here.
+      var reached = keymap.m
+      reach(keymap, keys.length - i)
 
       valmap = keymap.v
 
@@ -135,6 +139,9 @@ function Patrun(custom?: any) {
         if (g) {
           keymap.s.g = g
         }
+
+        // The keys moved along the star path keep their own reach.
+        reach(keymap.s, reached)
 
         if (keymap.g) {
           keymap.g = {}
@@ -194,34 +201,20 @@ function Patrun(custom?: any) {
 
     if (exact && collect) return trail(pat)
 
-    var subkeys = Object.keys(pat)
-    var patlen = subkeys.length
+    var patlen = exact ? Object.keys(pat).length : 0
     var collection: any[] = []
 
-    // The most specific match so far, and the number of pairs it matched.
+    // The most specific match so far. A branch is followed only while it
+    // could match more than `beat` pairs, going by the reach that add noted
+    // on its nodes: more than the best match so far has or, for an exact
+    // find, all of the subject's. Collect follows every branch.
     var best: any = null
-    var bestdepth = -1
-
-    // The most pairs the current path can end up with. A key can match once,
-    // and only at its place in the key order, so each key of the subject that
-    // a path passes over lowers this. A path that cannot beat the best match
-    // so far is not followed. This relies on the subject's own keys being
-    // the only ones that can match, which is true of a plain object.
-    var limit = Infinity
-    if (!exact && !collect && !oddkeys) {
-      var proto = Object.getPrototypeOf(pat)
-      if (Object.prototype === proto || null === proto) {
-        limit = 0
-        for (var ki = 0; ki < patlen; ki++) {
-          if (true === keyset[subkeys[ki]]) limit++
-        }
-      }
-    }
+    var beat = exact ? patlen - 1 : -1
 
     var keymap: any = null
     var alt = 0 // next alternative at keymap: 0 is the exact value, then matchers
     var depth = 0 // pairs matched on the current path
-    var pending: any[] = [] // untried alternatives: keymap, alt, depth, limit
+    var pending: any[] = [] // untried alternatives: keymap, alt, depth
     var node: any = top // the node just reached; the root matches any subject
 
     while (true) {
@@ -229,14 +222,11 @@ function Patrun(custom?: any) {
         if (void 0 !== node.d) {
           if (collect) {
             collection.push(node.d)
-          }
-
-          if (null != node.d && (exact ? depth === patlen : bestdepth < depth)) {
+          } else if (null != node.d && (exact ? depth === patlen : beat < depth)) {
             best = node
-            bestdepth = depth
+            beat = depth
 
-            // No pattern has more pairs than this.
-            if (exact || (!collect && maxpairs <= depth)) break
+            if (exact) break
           }
         }
 
@@ -245,8 +235,9 @@ function Patrun(custom?: any) {
         node = null
       }
 
-      // Follow the keys at this point, in order, to the next that matches.
-      while (keymap && keymap.v && depth < limit && bestdepth < limit) {
+      // Follow the keys at this point, in order, to the next that matches,
+      // unless nothing from here on could beat the best match.
+      while (keymap && keymap.v && !(depth + keymap.m <= beat)) {
         var key = keymap.k
         var val = pat[key]
 
@@ -272,18 +263,17 @@ function Patrun(custom?: any) {
             // Still to try from here: the other matchers for this key, and
             // then the patterns that do not have this key (the star trail).
             if (alt <= galen) {
-              pending.push(keymap, alt, depth, limit)
+              pending.push(keymap, alt, depth)
             } else if (keymap.s && !exact) {
-              pending.push(keymap.s, 0, depth, limit - 1)
+              pending.push(keymap.s, 0, depth)
             }
             break
           }
 
-          // The subject has this key, but nothing here matches its value.
-          // An exact match is now impossible. Otherwise follow the star
-          // trail, with one less key that could match.
-          if (exact) break
-          limit--
+          // The subject has a value for this key, but nothing here matches
+          // it. An exact find fails if the key is one that it must match.
+          // Otherwise follow the star trail.
+          if (exact && enumerable.call(pat, key)) break
         }
 
         keymap = keymap.s
@@ -298,7 +288,6 @@ function Patrun(custom?: any) {
       // Dead end: go back to the latest untried alternative.
       if (0 === pending.length) break
 
-      limit = pending.pop()
       depth = pending.pop()
       alt = pending.pop()
       keymap = pending.pop()

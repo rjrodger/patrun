@@ -1383,6 +1383,30 @@ a:
     bare.c = 3
     assert.equal(p1.find(bare), 'BC')
 
+    // own properties that are not enumerable match too
+    var hidden = Object.defineProperty({ a: 1 }, 'b', { value: 2 })
+    assert.equal(p1.find(hidden), 'A')
+    Object.defineProperty(hidden, 'c', { value: 3 })
+    assert.equal(p1.find(hidden), 'BC')
+    assert.deepStrictEqual(p1.find(hidden, false, true), ['A', 'BC'])
+    assert.equal(p1.find(Object.defineProperty({}, 'a', { value: 1 })), 'A')
+
+    // as do inherited properties
+    assert.equal(p1.find(Object.create({ b: 2, c: 3 })), 'BC')
+    assert.equal(p1.find(Object.create(hidden)), 'BC')
+
+    // and properties that only a proxy supplies
+    var virtual = new Proxy(
+      {},
+      {
+        get: function (target, key) {
+          return { a: 1, b: 2, c: 3 }[key]
+        },
+      },
+    )
+    assert.equal(p1.find(virtual), 'BC')
+    assert.equal(Patrun().add({ b: 2 }, 'B').find(virtual), 'B')
+
     // a pattern key may name an inherited property
     var p2 = Patrun()
     p2.add({ a: 1 }, 'A')
@@ -1394,6 +1418,19 @@ a:
     assert.equal(p2.find({ a: 1, d: 4 }), 'A')
     assert.equal(p2.find({ a: 1, toString: 'T', x: 1, y: 2 }), 'TXY')
     assert.equal(p2.find({ a: 1, constructor: 'C', d: 4, x: 1, y: 2 }), 'CD')
+
+    // ... and a subject that lacks that key is still found exactly
+    var p3 = Patrun()
+    p3.add({ constructor: 'C' }, 'C')
+    p3.add({ d: 4 }, 'D')
+    p3.add({ constructor: 'C', d: 4 }, 'CD')
+
+    assert.equal(p3.find({ d: 4 }), 'D')
+    assert.equal(p3.findexact({ d: 4 }), 'D')
+    assert.equal(p3.findexact({ constructor: 'C' }), 'C')
+    assert.equal(p3.findexact({ constructor: 'C', d: 4 }), 'CD')
+    assert.equal(p3.findexact({ constructor: 'X', d: 4 }), null)
+    assert.equal(p3.findexact({ d: 5 }), null)
   })
 
   it('most-specific-reference', async () => {
@@ -1408,10 +1445,11 @@ a:
     function pick(list) {
       return list[Math.floor(rnd() * list.length)]
     }
+    var names = ['a', 'b', 'c', 'd', 'e']
     function obj(max, vals) {
       var o = {}
       for (var n = Math.floor(rnd() * (max + 1)); 0 < n; n--) {
-        o[pick(['a', 'b', 'c', 'd', 'e'])] = pick(vals)
+        o[pick(names)] = pick(vals)
       }
       return o
     }
@@ -1423,6 +1461,9 @@ a:
     }
 
     ;[false, true].forEach(function (gex) {
+      // a key that every plain subject inherits a value for
+      names = gex ? ['a', 'b', 'c', 'd', 'e'] : ['a', 'b', 'c', 'd', 'toString']
+
       var isglob = (fix) => gex && /[*?]/.test(fix)
       var matches = (fix, val) =>
         void 0 !== val &&
